@@ -1,0 +1,61 @@
+using BusinessObject.Enums;
+
+namespace BusinessObject.Entities;
+
+public class TaskItem
+{
+    /// <summary>
+    /// Gets or sets the unique identifier of the task item.
+    /// </summary>
+    public Guid Id { get; set; }
+
+    /// <summary>
+    /// Gets or sets the unique identifier of the project that contains this task item.
+    /// </summary>
+    public Guid ProjectId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the project that contains this task item.
+    /// </summary>
+    public Project Project { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the title of the task item.
+    /// </summary>
+    public string Title { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets the optional detailed description of the task item.
+    /// </summary>
+    public string? Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional unique identifier of the user assigned to this task item.
+    /// </summary>
+    public Guid? AssignedToId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the user assigned to this task item.
+    /// </summary>
+    public User? AssignedTo { get; set; }
+
+    /// <summary>
+    /// Gets or sets the priority of the task item from 1 to 3.
+    /// </summary>
+    public int Priority { get; set; }
+
+    /// <summary>
+    /// Gets or sets the current status of the task item.
+    /// </summary>
+    public TaskItemStatus Status { get; set; }
+
+    /// <summary>
+    /// Gets or sets the date and time when the task item was created.
+    /// </summary>
+    public DateTime CreatedAt { get; set; }
+
+    /// <summary>
+    /// Gets or sets the optional due date of the task item.
+    /// </summary>
+    public DateTime? DueDate { get; set; }
+}
