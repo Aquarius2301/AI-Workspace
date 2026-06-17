@@ -131,22 +131,24 @@ const axiosClient: AxiosInstance = axios.create({
  * - Lưu request body vào log cục bộ
  * - Kiểm tra thời gian active, nếu > 10 phút thì gọi /api/auth/me/active trước
  */
-axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const url = `${config.baseURL ?? ""}${config.url ?? ""}`;
-  writeRequestLog(url, config.data);
+axiosClient.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    const url = `${config.url ?? ""}`;
+    writeRequestLog(url, config.data);
 
-  // Chỉ áp dụng cho tất cả api ngoài login
-  if (!url.includes("/api/auth/login") && shouldUpdateActive()) {
-    try {
-      await refreshClient.post("/api/auth/me/active");
-      setLastActiveTimestamp();
-    } catch {
-      // Nếu gọi active thất bại thì vẫn cho request gốc đi tiếp
+    // Chỉ áp dụng cho tất cả api ngoài login
+    if (!url.includes("/api/auth/login") && shouldUpdateActive()) {
+      try {
+        await refreshClient.post("/api/auth/me/active");
+        setLastActiveTimestamp();
+      } catch {
+        // Nếu gọi active thất bại thì vẫn cho request gốc đi tiếp
+      }
     }
-  }
 
-  return config;
-});
+    return config;
+  },
+);
 
 /**
  * Gắn interceptor cho response:

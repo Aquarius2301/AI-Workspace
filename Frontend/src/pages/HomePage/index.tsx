@@ -43,14 +43,8 @@ export default function HomePage() {
   const tasks = (myTasksQuery.data as MyTaskItemResponse[]) ?? [];
   const projects = (projectsQuery.data as TeamProjectItem[]) ?? [];
 
-  const isLoading =
-    teamsQuery.isLoading || myTasksQuery.isLoading || projectsQuery.isLoading;
-
   return (
-    <MainLayout
-      isLoading={isLoading}
-      breadcrumbItems={[{ title: "Tổng quan" }]}
-    >
+    <MainLayout breadcrumbItems={[{ title: "Tổng quan" }]}>
       <Space
         vertical
         size={24}
@@ -69,15 +63,21 @@ export default function HomePage() {
         {/* Row 2: Task Status and Project List */}
         <Row gutter={[24, 24]}>
           <Col xs={24} lg={12}>
-            <TaskStatusOverview tasks={tasks} />
+            <TaskStatusOverview
+              tasks={tasks}
+              isLoading={myTasksQuery.isLoading}
+            />
           </Col>
           <Col xs={24} lg={12}>
-            <ProjectList projects={projects} />
+            <ProjectList
+              projects={projects}
+              isLoading={projectsQuery.isLoading}
+            />
           </Col>
         </Row>
 
         {/* Row 3: Upcoming Tasks */}
-        <UpcomingTasks tasks={tasks} />
+        <UpcomingTasks tasks={tasks} isLoading={myTasksQuery.isLoading} />
       </Space>
     </MainLayout>
   );

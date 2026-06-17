@@ -35,7 +35,7 @@ export function UserGreeting({ name, email, avatar }: UserGreetingProps) {
         <Avatar
           size={64}
           src={avatar}
-          icon={!avatar ? <UserOutlined /> : undefined}
+          icon={avatar || <UserOutlined />}
           style={{
             border: `3px solid ${token.colorPrimary}`,
             boxShadow: `0 4px 12px ${token.colorPrimary}30`,

@@ -1,14 +1,15 @@
 import type { TeamProjectItem } from "@/types";
-import { Empty, Table, Tag } from "antd";
+import { Button, Empty, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Text from "antd/es/typography/Text";
+import { EyeOutlined } from "@ant-design/icons";
 
 interface ProjectListProps {
   projects?: TeamProjectItem[];
-  isProjectsLoading: boolean;
+  isLoading: boolean;
 }
 
-export function ProjectList({ projects, isProjectsLoading }: ProjectListProps) {
+export function ProjectList({ projects, isLoading }: ProjectListProps) {
   const projectColumns: ColumnsType<TeamProjectItem> = [
     {
       title: "Tên dự án",
@@ -33,6 +34,14 @@ export function ProjectList({ projects, isProjectsLoading }: ProjectListProps) {
         </Tag>
       ),
     },
+    {
+      title: "Xem",
+      render: () => (
+        <Button>
+          <EyeOutlined />
+        </Button>
+      ),
+    },
   ];
 
   return (
@@ -40,7 +49,7 @@ export function ProjectList({ projects, isProjectsLoading }: ProjectListProps) {
       dataSource={projects ?? []}
       columns={projectColumns}
       rowKey="id"
-      loading={isProjectsLoading}
+      loading={isLoading}
       locale={{ emptyText: <Empty description="Chưa có dự án nào" /> }}
       pagination={false}
     />

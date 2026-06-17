@@ -1,7 +1,11 @@
 import { Spin, theme } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 
-export function FullscreenLoading() {
+interface FullscreenLoadingProps {
+  description?: string;
+}
+
+export function FullscreenLoading({ description }: FullscreenLoadingProps) {
   // Lấy token hiện tại để đồng bộ màu sắc tự động
   const { token } = theme.useToken();
 
@@ -35,7 +39,7 @@ export function FullscreenLoading() {
         transition: "all 0.3s ease",
       }}
     >
-      <Spin indicator={loadingIcon} size="large" />
+      <Spin indicator={loadingIcon} size="large" description={description} />
     </div>
   );
 }

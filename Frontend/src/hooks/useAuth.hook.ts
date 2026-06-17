@@ -21,7 +21,7 @@ export const useAuth = () => {
   const logout = useMutation({
     mutationFn: authApi.logout,
     onSuccess: () => {
-      queryClient.removeQueries();
+      queryClient.clear();
       localStorage.clear(); //remove all local storage items related to auth
     },
   });

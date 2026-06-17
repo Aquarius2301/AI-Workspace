@@ -60,7 +60,7 @@ export function SidebarNav() {
       label: "Tổng quan",
     },
     {
-      key: "/team",
+      key: "/teams",
       icon: <TeamOutlined style={{ fontSize: "18px" }} />,
       label: "Nhóm của tôi",
     },
@@ -82,7 +82,13 @@ export function SidebarNav() {
   };
 
   // Lấy key hiện tại từ pathname
-  const selectedKey = location.pathname;
+  const getSelectedKey = (pathname: string) => {
+    if (pathname.startsWith("/teams")) return "/teams";
+    if (pathname.startsWith("/projects")) return "/projects";
+    if (pathname.startsWith("/settings")) return "/settings";
+
+    return "/";
+  };
 
   return (
     <Sider
@@ -144,7 +150,7 @@ export function SidebarNav() {
           {/* MENU CHÍNH */}
           <Menu
             mode="inline"
-            selectedKeys={[selectedKey]}
+            selectedKeys={[getSelectedKey(location.pathname)]}
             items={menuItems}
             onClick={handleMenuClick}
             style={{

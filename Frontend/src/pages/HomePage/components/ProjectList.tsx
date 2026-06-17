@@ -1,4 +1,13 @@
-import { Card, Typography, List, Tag, Button, Empty, theme } from "antd";
+import {
+  Card,
+  Typography,
+  List,
+  Tag,
+  Button,
+  Empty,
+  theme,
+  Skeleton,
+} from "antd";
 import { RightOutlined, FolderOpenOutlined } from "@ant-design/icons";
 import type { TeamProjectItem } from "@/types";
 
@@ -6,10 +15,10 @@ const { Text } = Typography;
 
 interface ProjectListProps {
   projects: TeamProjectItem[];
-  loading?: boolean;
+  isLoading: boolean;
 }
 
-export function ProjectList({ projects }: ProjectListProps) {
+export function ProjectList({ projects, isLoading }: ProjectListProps) {
   const { token } = theme.useToken();
 
   return (
@@ -33,7 +42,9 @@ export function ProjectList({ projects }: ProjectListProps) {
         body: { padding: 12 },
       }}
     >
-      {projects.length === 0 ? (
+      {isLoading ? (
+        <Skeleton active={true} />
+      ) : projects.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description="Chưa có dự án nào"

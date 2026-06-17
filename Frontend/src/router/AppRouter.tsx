@@ -16,7 +16,7 @@ export function ProtectedRoute() {
   const { data: user, isLoading, isError } = me;
 
   if (isLoading) {
-    return <FullscreenLoading />;
+    return <FullscreenLoading description="Đang xác thực" />;
   }
 
   if (!isError && user) {
@@ -36,13 +36,13 @@ type AppRoute = {
 const routes: AppRoute[] = [
   {
     name: "Team",
-    path: "/team",
+    path: "/teams",
     component: TeamPage,
     isProtected: true,
   },
   {
     name: "TeamPageDetail",
-    path: "/team/:id",
+    path: "/teams/:id",
     component: TeamPageDetail,
     isProtected: true,
   },

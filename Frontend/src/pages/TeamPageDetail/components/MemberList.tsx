@@ -7,15 +7,11 @@ import Text from "antd/es/typography/Text";
 
 interface MemberListProps {
   members?: TeamMemberItem[];
-  isMembersLoading: boolean;
+  isLoading: boolean;
   userId: string;
 }
 
-export function MemberList({
-  members,
-  isMembersLoading,
-  userId,
-}: MemberListProps) {
+export function MemberList({ members, isLoading, userId }: MemberListProps) {
   const memberColumns: ColumnsType<TeamMemberItem> = [
     {
       title: "Tên người dùng",
@@ -65,14 +61,11 @@ export function MemberList({
 
   return (
     <Space vertical size="large" style={{ width: "100%" }}>
-      {/* {(role === "Admin" || role === "Leader") && (
-        <Button>Thêm thành viên</Button>
-      )} */}
       <Table<TeamMemberItem>
         dataSource={members ?? []}
         columns={memberColumns}
         rowKey="userId"
-        loading={isMembersLoading}
+        loading={isLoading}
         locale={{ emptyText: <Empty description="Chưa có thành viên nào" /> }}
         pagination={false}
       />

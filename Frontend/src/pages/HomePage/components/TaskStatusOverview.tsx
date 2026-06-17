@@ -1,4 +1,13 @@
-import { Card, Typography, Statistic, Row, Col, Button, theme } from "antd";
+import {
+  Card,
+  Typography,
+  Statistic,
+  Row,
+  Col,
+  Button,
+  theme,
+  Skeleton,
+} from "antd";
 import {
   RightOutlined,
   UnorderedListOutlined,
@@ -11,10 +20,13 @@ const { Text } = Typography;
 
 interface TaskStatusOverviewProps {
   tasks: MyTaskItemResponse[];
-  loading?: boolean;
+  isLoading: boolean;
 }
 
-export function TaskStatusOverview({ tasks }: TaskStatusOverviewProps) {
+export function TaskStatusOverview({
+  tasks,
+  isLoading,
+}: TaskStatusOverviewProps) {
   // export default function TaskStatusOverview({) => {
   const { token } = theme.useToken();
 
@@ -87,24 +99,33 @@ export function TaskStatusOverview({ tasks }: TaskStatusOverviewProps) {
                 },
               }}
             >
-              <Statistic
-                title={
-                  <Text
-                    style={{ color: token.colorTextDescription, fontSize: 13 }}
-                  >
-                    {status.label}
-                  </Text>
-                }
-                value={status.count}
-                styles={{
-                  content: {
-                    color: status.color,
-                    fontSize: 28,
-                    fontWeight: 700,
-                  },
-                }}
-              />
-              {status.icon}
+              {isLoading ? (
+                <Skeleton active={true} />
+              ) : (
+                <>
+                  <Statistic
+                    title={
+                      <Text
+                        style={{
+                          color: token.colorTextDescription,
+                          fontSize: 13,
+                        }}
+                      >
+                        {status.label}
+                      </Text>
+                    }
+                    value={status.count}
+                    styles={{
+                      content: {
+                        color: status.color,
+                        fontSize: 28,
+                        fontWeight: 700,
+                      },
+                    }}
+                  />
+                  {status.icon}
+                </>
+              )}
             </Card>
           </Col>
         ))}

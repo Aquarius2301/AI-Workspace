@@ -1,28 +1,39 @@
-import { Card, Typography, List, Tag, Button, Empty, theme } from "antd";
+import {
+  Card,
+  Typography,
+  List,
+  Tag,
+  Button,
+  Empty,
+  theme,
+  Skeleton,
+} from "antd";
 import {
   RightOutlined,
   ClockCircleOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
-import type { MyTaskItemResponse } from "@/types";
+import type { MyTaskItemResponse, TaskStatus } from "@/types";
 
 const { Text } = Typography;
 
 interface UpcomingTasksProps {
   tasks: MyTaskItemResponse[];
-  loading?: boolean;
+  isLoading: boolean;
 }
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: TaskStatus) => {
   switch (status) {
     case "Open":
-      return "#FF4D4F";
+      return "default";
     case "InProgress":
-      return "#FAAD14";
+      return "processing";
     case "Done":
-      return "#52C41A";
+      return "success";
+    case "Blocked":
+      return "error";
     default:
-      return "#999";
+      return "error";
   }
 };
 
@@ -63,7 +74,7 @@ const getDaysUntilDue = (dueDate?: string): number | null => {
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-export function UpcomingTasks({ tasks }: UpcomingTasksProps) {
+export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
   const { token } = theme.useToken();
 
   // Filter out Done tasks, sort by dueDate (earliest first), take top 10
@@ -98,7 +109,9 @@ export function UpcomingTasks({ tasks }: UpcomingTasksProps) {
         body: { padding: 12 },
       }}
     >
-      {sortedTasks.length === 0 ? (
+      {isLoading ? (
+        <Skeleton active={true} />
+      ) : sortedTasks.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
           description="Không có công việc nào cần làm"

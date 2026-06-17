@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Tabs, Typography, Empty, Space } from "antd";
+import { Tabs, Typography, Empty, Space, Skeleton, Card } from "antd";
 import {
   FolderOutlined,
   UserOutlined,
@@ -25,7 +25,7 @@ export default function TeamPageDetail() {
   const { data: me } = meQuery;
 
   const breadcrumbItems = [
-    { title: "Nhóm của tôi", href: "/team" },
+    { title: "Nhóm của tôi", href: "/teams" },
     { title: teamDetail?.name || "Chi tiết nhóm" },
   ];
 
@@ -38,10 +38,7 @@ export default function TeamPageDetail() {
         </span>
       ),
       children: (
-        <ProjectList
-          projects={projects}
-          isProjectsLoading={isProjectsLoading}
-        />
+        <ProjectList projects={projects} isLoading={isProjectsLoading} />
       ),
     },
     {
@@ -54,12 +51,15 @@ export default function TeamPageDetail() {
       children: (
         <MemberList
           members={members}
-          isMembersLoading={isMembersLoading}
+          isLoading={isMembersLoading}
           userId={me?.userId || ""}
         />
       ),
     },
-    {
+  ];
+
+  if (me && (me.role == "Admin" || me.role == "Leader")) {
+    tabItems.push({
       key: "settings",
       label: (
         <span>
@@ -67,19 +67,27 @@ export default function TeamPageDetail() {
         </span>
       ),
       children: <Empty description="Tính năng đang phát triển" />,
-    },
-  ];
+    });
+  }
 
   return (
-    <MainLayout isLoading={isTeamLoading} breadcrumbItems={breadcrumbItems}>
+    <MainLayout breadcrumbItems={breadcrumbItems}>
       <Space vertical size={16} style={{ width: "100%" }}>
-        <Typography.Title level={4} style={{ margin: 0 }}>
-          {teamDetail?.name || "Chi tiết nhóm"}
-        </Typography.Title>
-        {teamDetail?.description && (
-          <Text type="secondary">{teamDetail.description}</Text>
-        )}
-        <Tabs defaultActiveKey="projects" items={tabItems} />
+        <Card>
+          {isTeamLoading ? (
+            <Skeleton active={true} />
+          ) : (
+            <>
+              <Typography.Title level={4} style={{ margin: 0 }}>
+                {teamDetail?.name || "Chi tiết nhóm"}
+              </Typography.Title>
+              <Text type="secondary">{teamDetail?.description}</Text>
+            </>
+          )}
+        </Card>
+        <Card>
+          <Tabs defaultActiveKey="projects" items={tabItems} />
+        </Card>
       </Space>
     </MainLayout>
   );
