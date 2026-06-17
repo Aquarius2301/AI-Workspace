@@ -1,7 +1,7 @@
 import AppRouter from "@/router/AppRouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { ConfigProvider } from "antd";
+import { ConfigProvider, App as AntdApp } from "antd";
 import { aiWorkspaceTheme } from "@/components/types";
 import { useTheme } from "@/hooks";
 
@@ -22,7 +22,9 @@ export default function App() {
       theme={theme === "dark" ? aiWorkspaceTheme.dark : aiWorkspaceTheme.light}
     >
       <QueryClientProvider client={queryClient}>
-        <AppRouter />
+        <AntdApp>
+          <AppRouter />
+        </AntdApp>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </ConfigProvider>

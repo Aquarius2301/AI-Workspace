@@ -1,4 +1,4 @@
-import { Button, Form, Input, Typography, message } from "antd";
+import { Button, Form, Input, Typography, App } from "antd";
 import {
   MailOutlined,
   LockOutlined,
@@ -16,6 +16,7 @@ export default function LoginForm() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const { message } = App.useApp();
 
   const handleLogin = async (values: LoginRequest) => {
     try {

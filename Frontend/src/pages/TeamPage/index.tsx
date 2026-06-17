@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDebounce, useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
 import { Button, Card, Flex, Input, Select, Space } from "antd";
-import { TeamList } from "./components/TeamList";
+import { TeamList, TeamModal } from "./components";
 
 export default function TeamPage() {
   const [search, setSearch] = React.useState("");
@@ -10,6 +10,7 @@ export default function TeamPage() {
   const [pageSize, setPageSize] = React.useState(10);
   const [hasFetched, setHasFetched] = React.useState(false);
   const [hasData, setHasData] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
 
@@ -70,7 +71,14 @@ export default function TeamPage() {
                 />
               </Space>
             ) : null}
-            <Button onClick={() => setSearch("")}>Tạo nhóm</Button>
+            <Button type="primary" onClick={() => setIsModalOpen(true)}>
+              Tạo nhóm
+            </Button>
+
+            <TeamModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
           </Flex>
         </Card>
         <Card>

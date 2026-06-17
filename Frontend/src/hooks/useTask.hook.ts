@@ -33,6 +33,7 @@ export const useTask = () => {
     useQuery({
       queryKey: [...MY_TASKS_QUERY_KEY, teamId],
       queryFn: () => taskApi.getMyTasks(teamId),
+      enabled: !!teamId,
     });
 
   const create = useMutation({

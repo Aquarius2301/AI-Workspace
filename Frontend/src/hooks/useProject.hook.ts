@@ -18,6 +18,7 @@ export const useProject = () => {
     useQuery({
       queryKey: [...PROJECTS_BY_TEAM_QUERY_KEY, teamId],
       queryFn: () => projectApi.getByTeam(teamId),
+      enabled: !!teamId,
     });
 
   const getAllByTeam = (teamId: string) =>

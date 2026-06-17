@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { Tabs, Typography, Empty, Space, Skeleton, Card } from "antd";
+import { Tabs, Typography, Space, Skeleton, Card, Spin } from "antd";
 import {
   FolderOutlined,
   UserOutlined,
@@ -7,7 +7,7 @@ import {
 } from "@ant-design/icons";
 import { useTeam, useProject } from "@/hooks";
 import MainLayout from "@/layouts";
-import { ProjectList, MemberList } from "./components";
+import { ProjectList, MemberList, SettingList } from "./components";
 
 const { Text } = Typography;
 
@@ -66,7 +66,7 @@ export default function TeamPageDetail() {
           <SettingOutlined /> Cài đặt
         </span>
       ),
-      children: <Empty description="Tính năng đang phát triển" />,
+      children: <SettingList teamId={id!} teamName={teamDetail?.name || ""} />,
     });
   }
 
@@ -86,7 +86,9 @@ export default function TeamPageDetail() {
           )}
         </Card>
         <Card>
-          <Tabs defaultActiveKey="projects" items={tabItems} />
+          <Spin spinning={isProjectsLoading || isMembersLoading}>
+            <Tabs defaultActiveKey="projects" items={tabItems} />
+          </Spin>
         </Card>
       </Space>
     </MainLayout>
