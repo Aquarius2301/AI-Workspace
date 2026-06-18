@@ -66,7 +66,14 @@ export default function TeamPageDetail() {
           <SettingOutlined /> Cài đặt
         </span>
       ),
-      children: <SettingList teamId={id!} teamName={teamDetail?.name || ""} />,
+      children: (
+        <SettingList
+          teamId={id!}
+          teamName={teamDetail?.name || ""}
+          teamDescription={teamDetail?.description || ""}
+          role={me.role}
+        />
+      ),
     });
   }
 

@@ -6,6 +6,7 @@ export const TEAMS_QUERY_KEY = ["teams", "list"];
 export const TEAM_DETAIL_QUERY_KEY = ["teams", "detail"];
 export const TEAM_MEMBERS_QUERY_KEY = ["teams", "members"];
 export const TEAM_ME_QUERY_KEY = ["teams", "me"];
+export const TEAM_AVAILABLE_MEMBERS_QUERY_KEY = ["teams", "available-members"];
 
 export const useTeam = () => {
   const queryClient = useQueryClient();
@@ -69,7 +70,7 @@ export const useTeam = () => {
   const addMembers = useMutation({
     mutationFn: (params: {
       id: string;
-      data: { members: { userId: string; role?: string }[] };
+      data: { members: { userId: string; role?: TeamRole }[] };
     }) => teamApi.addMembers(params.id, params.data),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({
@@ -103,7 +104,7 @@ export const useTeam = () => {
 
   const getAvailableMembers = () =>
     useQuery({
-      queryKey: ["teams", "available-members"],
+      queryKey: TEAM_AVAILABLE_MEMBERS_QUERY_KEY,
       queryFn: teamApi.getAvailableMembers,
     });
 

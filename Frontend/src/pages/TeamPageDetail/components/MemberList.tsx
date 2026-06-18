@@ -60,15 +60,13 @@ export function MemberList({ members, isLoading, userId }: MemberListProps) {
   ];
 
   return (
-    <Space vertical size="large" style={{ width: "100%" }}>
-      <Table<TeamMemberItem>
-        dataSource={members ?? []}
-        columns={memberColumns}
-        rowKey="userId"
-        loading={isLoading}
-        locale={{ emptyText: <Empty description="Chưa có thành viên nào" /> }}
-        pagination={false}
-      />
-    </Space>
+    <Table<TeamMemberItem>
+      dataSource={members ?? []}
+      columns={memberColumns}
+      rowKey="userId"
+      loading={isLoading}
+      locale={{ emptyText: <Empty description="Chưa có thành viên nào" /> }}
+      pagination={false}
+    />
   );
 }
