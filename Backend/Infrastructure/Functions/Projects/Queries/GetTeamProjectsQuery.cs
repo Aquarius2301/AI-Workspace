@@ -34,7 +34,7 @@ public sealed class GetTeamProjectsQueryHandler
     {
         // Check user is a team member
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -45,7 +45,7 @@ public sealed class GetTeamProjectsQueryHandler
 
         // Get projects: public projects + private projects where user is a member
         var teamRole = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .Where(tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId)
             .Select(tm => tm.Role)
             .FirstOrDefaultAsync(cancellationToken);
@@ -56,7 +56,7 @@ public sealed class GetTeamProjectsQueryHandler
         if (isAdminOrLeader)
         {
             return await _unitOfWork
-                .Projects.GetQuery()
+                .Projects.ReadOnly()
                 .Where(p => p.TeamId == request.TeamId)
                 .Select(p => new TeamProjectItem(
                     p.Id,
@@ -70,13 +70,13 @@ public sealed class GetTeamProjectsQueryHandler
 
         // Regular members: public projects + private projects they are members of
         var userProjectIds = await _unitOfWork
-            .ProjectMembers.GetQuery()
+            .ProjectMembers.ReadOnly()
             .Where(pm => pm.Project.TeamId == request.TeamId && pm.UserId == request.CurrentUserId)
             .Select(pm => pm.ProjectId)
             .ToListAsync(cancellationToken);
 
         return await _unitOfWork
-            .Projects.GetQuery()
+            .Projects.ReadOnly()
             .Where(p =>
                 p.TeamId == request.TeamId
                 && (p.Visibility == ProjectVisibility.Public || userProjectIds.Contains(p.Id))

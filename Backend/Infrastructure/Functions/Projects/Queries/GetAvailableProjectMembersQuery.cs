@@ -31,13 +31,13 @@ public sealed class GetAvailableProjectMembersQueryHandler
     {
         var project =
             await _unitOfWork
-                .Projects.GetQuery()
+                .Projects.ReadOnly()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
             ?? throw new NotFoundException("Project not found");
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .Where(tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId)
             .Select(tm => tm.Role)
             .FirstOrDefaultAsync(cancellationToken);
@@ -59,13 +59,13 @@ public sealed class GetAvailableProjectMembersQueryHandler
 
         // Get team members who are NOT already in the project
         var existingProjectMemberIds = await _unitOfWork
-            .ProjectMembers.GetQuery()
+            .ProjectMembers.ReadOnly()
             .Where(pm => pm.ProjectId == request.ProjectId)
             .Select(pm => pm.UserId)
             .ToListAsync(cancellationToken);
 
         return await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .Where(tm =>
                 tm.TeamId == request.TeamId && !existingProjectMemberIds.Contains(tm.UserId)
             )

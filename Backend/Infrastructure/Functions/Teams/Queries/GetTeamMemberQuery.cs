@@ -21,7 +21,7 @@ public sealed class GetTeamMemberQueryHandler : IRequestHandler<GetTeamMemberQue
     )
     {
         var member = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .Where(tm => tm.TeamId == request.TeamId && tm.UserId == request.MemberId)
             .Select(tm => new TeamMemberItem(
                 tm.UserId,

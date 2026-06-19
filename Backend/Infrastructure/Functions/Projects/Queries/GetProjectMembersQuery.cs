@@ -33,13 +33,13 @@ public sealed class GetProjectMembersQueryHandler
     {
         var project =
             await _unitOfWork
-                .Projects.GetQuery()
+                .Projects.ReadOnly()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
             ?? throw new NotFoundException("Project not found");
 
         // Check user is a team member
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == project.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -52,7 +52,7 @@ public sealed class GetProjectMembersQueryHandler
         if (project.Visibility == ProjectVisibility.Private)
         {
             var teamRole = await _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm => tm.TeamId == project.TeamId && tm.UserId == request.CurrentUserId)
                 .Select(tm => tm.Role)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -63,7 +63,7 @@ public sealed class GetProjectMembersQueryHandler
             if (!isAdminOrLeader)
             {
                 var isProjectMember = await _unitOfWork
-                    .ProjectMembers.GetQuery()
+                    .ProjectMembers.ReadOnly()
                     .AnyAsync(
                         pm =>
                             pm.ProjectId == request.ProjectId && pm.UserId == request.CurrentUserId,
@@ -76,7 +76,7 @@ public sealed class GetProjectMembersQueryHandler
         }
 
         return await _unitOfWork
-            .ProjectMembers.GetQuery()
+            .ProjectMembers.ReadOnly()
             .Where(pm => pm.ProjectId == request.ProjectId)
             .Select(pm => new ProjectMemberItem(
                 pm.UserId,

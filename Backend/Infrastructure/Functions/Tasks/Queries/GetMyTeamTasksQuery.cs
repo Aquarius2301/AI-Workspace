@@ -1,5 +1,3 @@
-using BusinessObject.Entities;
-using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Exceptions;
 using MediatR;
@@ -39,7 +37,7 @@ public sealed class GetMyTeamTasksQueryHandler
     {
         // Check user is a member of the team
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -50,12 +48,12 @@ public sealed class GetMyTeamTasksQueryHandler
 
         // Get all tasks assigned to the current user within projects belonging to this team
         var teamProjectIds = _unitOfWork
-            .Projects.GetQuery()
+            .Projects.ReadOnly()
             .Where(p => p.TeamId == request.TeamId)
             .Select(p => p.Id);
 
         var tasks = await _unitOfWork
-            .TaskItems.GetQuery()
+            .TaskItems.ReadOnly()
             .Include(t => t.Project)
             .Where(t =>
                 t.AssignedToId == request.CurrentUserId && teamProjectIds.Contains(t.ProjectId)

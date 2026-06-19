@@ -25,7 +25,7 @@ public sealed class GetUsersQueryHandler
         CancellationToken cancellationToken
     )
     {
-        var query = _unitOfWork.Users.GetQuery();
+        var query = _unitOfWork.Users.ReadOnly();
 
         var total = await query.CountAsync(cancellationToken);
 

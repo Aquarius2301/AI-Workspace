@@ -1,4 +1,3 @@
-using BusinessObject.Entities;
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Exceptions;
@@ -37,7 +36,7 @@ public sealed class GetDocumentDetailQueryHandler
     {
         var document =
             await _unitOfWork
-                .Documents.GetQuery()
+                .Documents.ReadOnly()
                 .Include(d => d.Project)
                 .Include(d => d.Creator)
                 .FirstOrDefaultAsync(d => d.Id == request.DocumentId, cancellationToken)
@@ -45,7 +44,7 @@ public sealed class GetDocumentDetailQueryHandler
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == document.Project.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -58,7 +57,7 @@ public sealed class GetDocumentDetailQueryHandler
         if (document.Project.Visibility == ProjectVisibility.Private)
         {
             var teamRole = await _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm =>
                     tm.TeamId == document.Project.TeamId && tm.UserId == request.CurrentUserId
                 )
@@ -71,7 +70,7 @@ public sealed class GetDocumentDetailQueryHandler
             if (!isAdminOrLeader)
             {
                 var isProjectMember = await _unitOfWork
-                    .ProjectMembers.GetQuery()
+                    .ProjectMembers.ReadOnly()
                     .AnyAsync(
                         pm =>
                             pm.ProjectId == document.ProjectId

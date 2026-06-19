@@ -1,4 +1,3 @@
-using BusinessObject.Entities;
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Exceptions;
@@ -36,14 +35,14 @@ public sealed class GetTaskCommentsQueryHandler
     {
         var task =
             await _unitOfWork
-                .TaskItems.GetQuery()
+                .TaskItems.ReadOnly()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
             ?? throw new NotFoundException("Task not found");
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == task.Project.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -56,7 +55,7 @@ public sealed class GetTaskCommentsQueryHandler
         if (task.Project.Visibility == ProjectVisibility.Private)
         {
             var teamRole = await _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm => tm.TeamId == task.Project.TeamId && tm.UserId == request.CurrentUserId)
                 .Select(tm => tm.Role)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -67,7 +66,7 @@ public sealed class GetTaskCommentsQueryHandler
             if (!isAdminOrLeader)
             {
                 var isProjectMember = await _unitOfWork
-                    .ProjectMembers.GetQuery()
+                    .ProjectMembers.ReadOnly()
                     .AnyAsync(
                         pm => pm.ProjectId == task.ProjectId && pm.UserId == request.CurrentUserId,
                         cancellationToken
@@ -79,7 +78,7 @@ public sealed class GetTaskCommentsQueryHandler
         }
 
         var comments = await _unitOfWork
-            .Comments.GetQuery()
+            .Comments.ReadOnly()
             .Include(c => c.Creator)
             .Where(c =>
                 c.ReferenceType == ReferenceType.TaskItem && c.ReferenceId == request.TaskId

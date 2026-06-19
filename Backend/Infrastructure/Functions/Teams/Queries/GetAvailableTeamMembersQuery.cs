@@ -25,13 +25,13 @@ public sealed class GetAvailableTeamMembersQueryHandler
     )
     {
         var memberUserIds = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .Where(tm => tm.TeamId == request.TeamId)
             .Select(tm => tm.UserId)
             .ToListAsync(cancellationToken);
 
         var availableMembers = await _unitOfWork
-            .Users.GetQuery()
+            .Users.ReadOnly()
             .Where(u => !memberUserIds.Contains(u.Id))
             .Select(u => new AvailableTeamMemberItem(u.Id, u.Name, u.Email))
             .ToListAsync(cancellationToken);

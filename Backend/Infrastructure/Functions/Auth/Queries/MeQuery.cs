@@ -20,7 +20,7 @@ public sealed class MeQueryHandler : IRequestHandler<MeQuery, MeResult>
     public async Task<MeResult> Handle(MeQuery request, CancellationToken cancellationToken)
     {
         var user = await _unitOfWork
-            .Users.GetQuery()
+            .Users.ReadOnly()
             .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
         if (user is null)
             return new MeResult("", "", "");

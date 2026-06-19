@@ -1,4 +1,3 @@
-using BusinessObject.Entities;
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Exceptions;
@@ -36,14 +35,14 @@ public sealed class GetDocumentCommentsQueryHandler
     {
         var document =
             await _unitOfWork
-                .Documents.GetQuery()
+                .Documents.ReadOnly()
                 .Include(d => d.Project)
                 .FirstOrDefaultAsync(d => d.Id == request.DocumentId, cancellationToken)
             ?? throw new NotFoundException("Document not found");
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == document.Project.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -56,7 +55,7 @@ public sealed class GetDocumentCommentsQueryHandler
         if (document.Project.Visibility == ProjectVisibility.Private)
         {
             var teamRole = await _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm =>
                     tm.TeamId == document.Project.TeamId && tm.UserId == request.CurrentUserId
                 )
@@ -69,7 +68,7 @@ public sealed class GetDocumentCommentsQueryHandler
             if (!isAdminOrLeader)
             {
                 var isProjectMember = await _unitOfWork
-                    .ProjectMembers.GetQuery()
+                    .ProjectMembers.ReadOnly()
                     .AnyAsync(
                         pm =>
                             pm.ProjectId == document.ProjectId
@@ -83,7 +82,7 @@ public sealed class GetDocumentCommentsQueryHandler
         }
 
         var comments = await _unitOfWork
-            .Comments.GetQuery()
+            .Comments.ReadOnly()
             .Include(c => c.Creator)
             .Where(c =>
                 c.ReferenceType == ReferenceType.Document && c.ReferenceId == request.DocumentId

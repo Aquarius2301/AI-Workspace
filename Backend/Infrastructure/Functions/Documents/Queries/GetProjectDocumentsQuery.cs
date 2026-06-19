@@ -1,4 +1,3 @@
-using BusinessObject.Entities;
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Common.Models;
@@ -39,13 +38,13 @@ public sealed class GetProjectDocumentsQueryHandler
     {
         var project =
             await _unitOfWork
-                .Projects.GetQuery()
+                .Projects.ReadOnly()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
             ?? throw new NotFoundException("Project not found");
 
         // Check access: team member (for public) or Admin/Leader, or project member (for private)
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == project.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -57,7 +56,7 @@ public sealed class GetProjectDocumentsQueryHandler
         if (project.Visibility == ProjectVisibility.Private)
         {
             var teamRole = await _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm => tm.TeamId == project.TeamId && tm.UserId == request.CurrentUserId)
                 .Select(tm => tm.Role)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -68,7 +67,7 @@ public sealed class GetProjectDocumentsQueryHandler
             if (!isAdminOrLeader)
             {
                 var isProjectMember = await _unitOfWork
-                    .ProjectMembers.GetQuery()
+                    .ProjectMembers.ReadOnly()
                     .AnyAsync(
                         pm =>
                             pm.ProjectId == request.ProjectId && pm.UserId == request.CurrentUserId,
@@ -82,7 +81,7 @@ public sealed class GetProjectDocumentsQueryHandler
 
         // Build query
         var query = _unitOfWork
-            .Documents.GetQuery()
+            .Documents.ReadOnly()
             .Include(d => d.Creator)
             .Where(d => d.ProjectId == request.ProjectId);
 

@@ -29,12 +29,12 @@ public sealed class GetTeamsQueryHandler
         CancellationToken cancellationToken
     )
     {
-        var query = _unitOfWork.Teams.GetQuery();
+        var query = _unitOfWork.Teams.ReadOnly();
 
         if (request.MyTeams)
         {
             var userTeamIds = _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm => tm.UserId == request.CurrentUserId)
                 .Select(tm => tm.TeamId);
 

@@ -1,4 +1,3 @@
-using BusinessObject.Entities;
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Exceptions;
@@ -40,7 +39,7 @@ public sealed class GetTaskDetailQueryHandler
     {
         var task =
             await _unitOfWork
-                .TaskItems.GetQuery()
+                .TaskItems.ReadOnly()
                 .Include(t => t.Project)
                 .Include(t => t.AssignedTo)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
@@ -48,7 +47,7 @@ public sealed class GetTaskDetailQueryHandler
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .AnyAsync(
                 tm => tm.TeamId == task.Project.TeamId && tm.UserId == request.CurrentUserId,
                 cancellationToken
@@ -61,7 +60,7 @@ public sealed class GetTaskDetailQueryHandler
         if (task.Project.Visibility == ProjectVisibility.Private)
         {
             var teamRole = await _unitOfWork
-                .TeamMembers.GetQuery()
+                .TeamMembers.ReadOnly()
                 .Where(tm => tm.TeamId == task.Project.TeamId && tm.UserId == request.CurrentUserId)
                 .Select(tm => tm.Role)
                 .FirstOrDefaultAsync(cancellationToken);
@@ -72,7 +71,7 @@ public sealed class GetTaskDetailQueryHandler
             if (!isAdminOrLeader)
             {
                 var isProjectMember = await _unitOfWork
-                    .ProjectMembers.GetQuery()
+                    .ProjectMembers.ReadOnly()
                     .AnyAsync(
                         pm => pm.ProjectId == task.ProjectId && pm.UserId == request.CurrentUserId,
                         cancellationToken

@@ -20,7 +20,7 @@ public sealed class GetTeamQueryHandler : IRequestHandler<GetTeamQuery, TeamDeta
     public async Task<TeamDetail?> Handle(GetTeamQuery request, CancellationToken cancellationToken)
     {
         var team = await _unitOfWork
-            .Teams.GetQuery()
+            .Teams.ReadOnly()
             .Where(t => t.Id == request.TeamId)
             .Select(t => new TeamDetail(t.Id, t.Name, t.Description))
             .FirstOrDefaultAsync(cancellationToken);

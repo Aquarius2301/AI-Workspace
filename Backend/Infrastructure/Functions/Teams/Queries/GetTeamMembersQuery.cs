@@ -31,7 +31,7 @@ public sealed class GetTeamMembersQueryHandler
     )
     {
         var members = await _unitOfWork
-            .TeamMembers.GetQuery()
+            .TeamMembers.ReadOnly()
             .Where(tm => tm.TeamId == request.TeamId)
             .Select(tm => new TeamMemberItem(
                 tm.UserId,

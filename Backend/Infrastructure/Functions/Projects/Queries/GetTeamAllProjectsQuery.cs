@@ -31,7 +31,7 @@ public sealed class GetTeamAllProjectsQueryHandler
     )
     {
         return await _unitOfWork
-            .Projects.GetQuery()
+            .Projects.ReadOnly()
             .Where(p => p.TeamId == request.TeamId)
             .Select(p => new TeamProjectItem(
                 p.Id,
