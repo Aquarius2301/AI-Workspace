@@ -26,7 +26,7 @@ public sealed class GetGlobalAvailableMembersQueryHandler
     {
         // Verify the current user is an Admin in at least one team
         var isAdmin = await _unitOfWork
-            .TeamMembers.ReadOnly()
+            .TeamMembers.GetQuery()
             .AnyAsync(
                 tm => tm.UserId == request.CurrentUserId && tm.Role == TeamMemberRole.Admin,
                 cancellationToken
@@ -37,13 +37,13 @@ public sealed class GetGlobalAvailableMembersQueryHandler
 
         // Get all users who are not members of any team
         var memberUserIds = await _unitOfWork
-            .TeamMembers.ReadOnly()
+            .TeamMembers.GetQuery()
             .Select(tm => tm.UserId)
             .Distinct()
             .ToListAsync(cancellationToken);
 
         var availableMembers = await _unitOfWork
-            .Users.ReadOnly()
+            .Users.GetQuery()
             .Where(u => !memberUserIds.Contains(u.Id))
             .Select(u => new AvailableTeamMemberItem(u.Id, u.Name, u.Email))
             .ToListAsync(cancellationToken);

@@ -1,11 +1,16 @@
 using DataAccess.UnitOfWork;
+using Infrastructure.Common.Models;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Functions.Teams;
 
-public sealed record GetAvailableTeamMembersQuery(Guid CurrentUserId, Guid TeamId)
-    : IRequest<List<AvailableTeamMemberItem>>;
+public sealed record GetAvailableTeamMembersQuery(
+    Guid CurrentUserId,
+    Guid TeamId,
+    PaginationRequest Pagination,
+    string Search
+) : IRequest<List<AvailableTeamMemberItem>>;
 
 public sealed record AvailableTeamMemberItem(Guid UserId, string UserName, string? Email);
 
@@ -30,12 +35,25 @@ public sealed class GetAvailableTeamMembersQueryHandler
             .Select(tm => tm.UserId)
             .ToListAsync(cancellationToken);
 
-        var availableMembers = await _unitOfWork
+        var availableMembers = _unitOfWork
             .Users.ReadOnly()
-            .Where(u => !memberUserIds.Contains(u.Id))
+            .Where(u => !memberUserIds.Contains(u.Id));
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            var searchLower = request.Search.ToLower();
+            availableMembers = availableMembers.Where(u =>
+                u.Name.Contains(searchLower) || u.Email.Contains(searchLower)
+            );
+        }
+
+        var res = await availableMembers
+            .OrderBy(u => u.Name)
+            .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
+            .Take(request.Pagination.PageSize)
             .Select(u => new AvailableTeamMemberItem(u.Id, u.Name, u.Email))
             .ToListAsync(cancellationToken);
 
-        return availableMembers;
+        return res;
     }
 }
