@@ -5,7 +5,7 @@ import {
   UserOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { useTeam, useProject } from "@/hooks";
+import { useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
 import { ProjectList, MemberList, SettingList } from "./components";
 
@@ -15,12 +15,12 @@ export default function TeamPageDetail() {
   const { id } = useParams<{ id: string }>();
 
   const teamDetailQuery = useTeam().getDetail(id!);
-  const projectsQuery = useProject().getByTeam(id!);
+  // Fetch first 100 projects for the team
   const membersQuery = useTeam().getMembers(id!);
   const meQuery = useTeam().me(id!);
 
   const { data: teamDetail, isLoading: isTeamLoading } = teamDetailQuery;
-  const { data: projects, isLoading: isProjectsLoading } = projectsQuery;
+
   const { data: members, isLoading: isMembersLoading } = membersQuery;
   const { data: me } = meQuery;
 
@@ -37,9 +37,7 @@ export default function TeamPageDetail() {
           <FolderOutlined /> Dự án
         </span>
       ),
-      children: (
-        <ProjectList projects={projects} isLoading={isProjectsLoading} />
-      ),
+      children: <ProjectList teamId={id!} />,
     },
     {
       key: "members",
@@ -93,7 +91,7 @@ export default function TeamPageDetail() {
           )}
         </Card>
         <Card>
-          <Spin spinning={isProjectsLoading || isMembersLoading}>
+          <Spin spinning={isMembersLoading}>
             <Tabs defaultActiveKey="projects" items={tabItems} />
           </Spin>
         </Card>

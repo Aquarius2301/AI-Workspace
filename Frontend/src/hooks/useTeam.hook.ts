@@ -108,10 +108,22 @@ export const useTeam = () => {
       queryFn: teamApi.getAvailableMembers,
     });
 
-  const getAvailableMembersByTeam = (id: string) =>
+  const getAvailableMembersByTeam = (
+    id: string,
+    search?: string,
+    page?: number,
+    pageSize?: number,
+  ) =>
     useQuery({
-      queryKey: ["teams", id, "available-members"],
-      queryFn: () => teamApi.getAvailableMembersByTeam(id),
+      queryKey: [
+        ...TEAM_AVAILABLE_MEMBERS_QUERY_KEY,
+        id,
+        search,
+        page,
+        pageSize,
+      ],
+      queryFn: () =>
+        teamApi.getAvailableMembersByTeam(id, search, page, pageSize),
     });
 
   const leave = useMutation({

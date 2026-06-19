@@ -1,4 +1,5 @@
 using BusinessObject.Enums;
+using Infrastructure.Common.Models;
 using Infrastructure.Exceptions;
 using Infrastructure.Functions.Projects.Commands;
 using Infrastructure.Functions.Projects.Queries;
@@ -41,11 +42,18 @@ public class ProjectController : ControllerBase
     /// Gồm các dự án Public và dự án Private mà User là thành viên.
     /// </summary>
     [HttpGet("team/{teamId:guid}")]
-    public async Task<IActionResult> GetTeamProjects(Guid teamId)
+    public async Task<IActionResult> GetTeamProjects(
+        Guid teamId,
+        [FromQuery] string? search = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20
+    )
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(new GetTeamProjectsQuery(userId, teamId));
+        var result = await _mediator.Send(
+            new GetTeamProjectsQuery(userId, teamId, search, new PaginationRequest(page, pageSize))
+        );
 
         return Ok(result);
     }

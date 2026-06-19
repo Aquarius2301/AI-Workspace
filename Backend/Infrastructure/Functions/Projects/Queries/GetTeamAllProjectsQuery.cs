@@ -36,6 +36,7 @@ public sealed class GetTeamAllProjectsQueryHandler
             .Select(p => new TeamProjectItem(
                 p.Id,
                 p.CreatorId,
+                true, // Admin can view all projects
                 p.Name,
                 p.Description,
                 p.Visibility.ToString()

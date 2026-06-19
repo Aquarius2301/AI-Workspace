@@ -74,8 +74,17 @@ export const teamApi = {
 
   getAvailableMembersByTeam: (
     id: string,
+    search?: string,
+    page?: number,
+    pageSize?: number,
   ): Promise<AvailableTeamMemberItem[]> => {
-    return axiosClient.get(`${baseUrl}/${id}/available-members`);
+    return axiosClient.get(`${baseUrl}/${id}/available-members`, {
+      params: {
+        search,
+        page,
+        pageSize,
+      },
+    });
   },
 
   leave: (id: string): Promise<void> => {

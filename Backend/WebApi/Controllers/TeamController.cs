@@ -151,11 +151,23 @@ public class TeamController : ControllerBase
     }
 
     [HttpGet("{id:guid}/available-members")]
-    public async Task<IActionResult> GetAvailableTeamMembers(Guid id)
+    public async Task<IActionResult> GetAvailableTeamMembers(
+        Guid id,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        [FromQuery] string? search = null
+    )
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(new GetAvailableTeamMembersQuery(userId, id));
+        var result = await _mediator.Send(
+            new GetAvailableTeamMembersQuery(
+                userId,
+                id,
+                new PaginationRequest(page, pageSize),
+                search ?? ""
+            )
+        );
 
         return Ok(result);
     }

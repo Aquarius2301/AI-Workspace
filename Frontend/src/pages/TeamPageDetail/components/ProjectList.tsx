@@ -3,13 +3,15 @@ import { Button, Empty, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import Text from "antd/es/typography/Text";
 import { EyeOutlined } from "@ant-design/icons";
+import { SearchPagination } from "@/components";
+import { useDebounce, useProject } from "@/hooks";
+import { useState } from "react";
 
 interface ProjectListProps {
-  projects?: TeamProjectItem[];
-  isLoading: boolean;
+  teamId: string;
 }
 
-export function ProjectList({ projects, isLoading }: ProjectListProps) {
+export function ProjectList({ teamId }: ProjectListProps) {
   const projectColumns: ColumnsType<TeamProjectItem> = [
     {
       title: "Tên dự án",
@@ -36,22 +38,53 @@ export function ProjectList({ projects, isLoading }: ProjectListProps) {
     },
     {
       title: "Xem",
-      render: () => (
-        <Button>
-          <EyeOutlined />
-        </Button>
-      ),
+      render: (_, record) =>
+        record.canView && (
+          <Button>
+            <EyeOutlined />
+          </Button>
+        ),
     },
   ];
 
+  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { getByTeam } = useProject();
+
+  const debounceText = useDebounce(searchText, 500);
+
+  const { data, isLoading } = getByTeam(teamId, debounceText, page, pageSize);
+
   return (
-    <Table<TeamProjectItem>
-      dataSource={projects ?? []}
-      columns={projectColumns}
-      rowKey="id"
-      loading={isLoading}
-      locale={{ emptyText: <Empty description="Chưa có dự án nào" /> }}
-      pagination={false}
-    />
+    <SearchPagination
+      search={{
+        searchText: searchText,
+        onSearchChange: (value) => {
+          setSearchText(value);
+          setPage(1);
+        },
+      }}
+      pagination={{
+        page: page,
+        pageSize: pageSize,
+        total: data?.total ?? 0,
+        onPageChange: (page) => setPage(page),
+        onPageSizeChange: (pageSize) => {
+          setPageSize(pageSize);
+          setPage(1);
+        },
+      }}
+    >
+      <Table<TeamProjectItem>
+        dataSource={data?.items ?? []}
+        columns={projectColumns}
+        rowKey="id"
+        loading={isLoading}
+        locale={{ emptyText: <Empty description="Chưa có dự án nào" /> }}
+        pagination={false}
+      />
+    </SearchPagination>
   );
 }

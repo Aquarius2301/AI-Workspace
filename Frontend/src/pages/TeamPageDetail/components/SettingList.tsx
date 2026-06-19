@@ -23,6 +23,7 @@ import { SettingOutlined } from "@ant-design/icons";
 import type { TeamRole } from "@/types";
 import {
   AddMemberModal,
+  AssignMemberModal,
   CreateProjectModal,
   DeleteTeamModal,
   EditTeamModal,
@@ -37,7 +38,13 @@ interface SettingListProps {
   role: TeamRole;
 }
 
-type ModalItems = "none" | "delete" | "edit" | "createProject" | "addMember";
+type ModalItems =
+  | "none"
+  | "delete"
+  | "edit"
+  | "createProject"
+  | "addMember"
+  | "assignMember";
 
 const cardStyle: React.CSSProperties = {
   borderRadius: 12,
@@ -86,7 +93,7 @@ export function SettingList({
 
       <Row gutter={[24, 24]}>
         {/* Dự án */}
-        <Col xs={24} lg={12}>
+        <Col lg={24} xl={12}>
           <Card style={cardStyle} styles={{ body: cardBodyStyle }} hoverable>
             <Space vertical size={20} style={{ width: "100%" }}>
               <Space align="start" size={16} style={{ width: "100%" }}>
@@ -137,7 +144,7 @@ export function SettingList({
         </Col>
 
         {/* Thành viên */}
-        <Col xs={24} lg={12}>
+        <Col lg={24} xl={12}>
           <Card style={cardStyle} bodyStyle={cardBodyStyle} hoverable>
             <Space direction="vertical" size={20} style={{ width: "100%" }}>
               <Space align="start" size={16} style={{ width: "100%" }}>
@@ -192,6 +199,7 @@ export function SettingList({
                       icon={<SafetyCertificateOutlined />}
                       block
                       size="large"
+                      onClick={() => setIsModalOpen("assignMember")}
                     >
                       Gán quyền
                     </Button>
@@ -204,7 +212,7 @@ export function SettingList({
 
         {/* Chỉnh sửa & Xóa nhóm */}
         {role == "Admin" && (
-          <Col xs={24} lg={12}>
+          <Col lg={24} xl={12}>
             <Card
               style={{
                 ...cardStyle,
@@ -300,6 +308,12 @@ export function SettingList({
         teamId={teamId}
         isOpen={isModalOpen == "addMember"}
         onClose={() => setIsModalOpen("none")}
+      />
+
+      <AssignMemberModal
+        isOpen={isModalOpen == "assignMember"}
+        onClose={() => setIsModalOpen("none")}
+        teamId={teamId}
       />
     </div>
   );

@@ -12,6 +12,7 @@ export interface ProjectDetail {
 export interface TeamProjectItem {
   id: string;
   creatorId: string;
+  canView: boolean;
   name: string;
   description?: string;
   visibility: ProjectVisibility;

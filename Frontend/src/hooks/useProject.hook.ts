@@ -14,10 +14,15 @@ export const useProject = () => {
       queryFn: () => projectApi.getDetail(projectId),
     });
 
-  const getByTeam = (teamId: string) =>
+  const getByTeam = (
+    teamId: string,
+    search: string | undefined,
+    page: number,
+    pageSize: number,
+  ) =>
     useQuery({
-      queryKey: [...PROJECTS_BY_TEAM_QUERY_KEY, teamId],
-      queryFn: () => projectApi.getByTeam(teamId),
+      queryKey: [...PROJECTS_BY_TEAM_QUERY_KEY, teamId, search, page, pageSize],
+      queryFn: () => projectApi.getByTeam(teamId, search, page, pageSize),
       enabled: !!teamId,
     });
 

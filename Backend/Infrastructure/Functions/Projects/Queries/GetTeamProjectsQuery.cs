@@ -1,24 +1,30 @@
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
+using Infrastructure.Common.Models;
 using Infrastructure.Exceptions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Functions.Projects.Queries;
 
-public sealed record GetTeamProjectsQuery(Guid CurrentUserId, Guid TeamId)
-    : IRequest<List<TeamProjectItem>>;
+public sealed record GetTeamProjectsQuery(
+    Guid CurrentUserId,
+    Guid TeamId,
+    string? Search,
+    PaginationRequest Pagination
+) : IRequest<PaginationResult<TeamProjectItem>>;
 
 public sealed record TeamProjectItem(
     Guid Id,
     Guid CreatorId,
+    bool CanView,
     string Name,
     string? Description,
     string Visibility
 );
 
 public sealed class GetTeamProjectsQueryHandler
-    : IRequestHandler<GetTeamProjectsQuery, List<TeamProjectItem>>
+    : IRequestHandler<GetTeamProjectsQuery, PaginationResult<TeamProjectItem>>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -27,67 +33,86 @@ public sealed class GetTeamProjectsQueryHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<List<TeamProjectItem>> Handle(
+    public async Task<PaginationResult<TeamProjectItem>> Handle(
         GetTeamProjectsQuery request,
         CancellationToken cancellationToken
     )
     {
         // Check user is a team member
-        var isTeamMember = await _unitOfWork
-            .TeamMembers.ReadOnly()
-            .AnyAsync(
-                tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId,
-                cancellationToken
-            );
+        var teamMember =
+            await _unitOfWork
+                .TeamMembers.ReadOnly()
+                .Where(tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId)
+                .FirstOrDefaultAsync(cancellationToken)
+            ?? throw new ForbiddenException("You are not a member of this team");
 
-        if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
-
-        // Get projects: public projects + private projects where user is a member
-        var teamRole = await _unitOfWork
-            .TeamMembers.ReadOnly()
-            .Where(tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId)
-            .Select(tm => tm.Role)
-            .FirstOrDefaultAsync(cancellationToken);
-
-        var isAdminOrLeader = teamRole == TeamMemberRole.Admin || teamRole == TeamMemberRole.Leader;
-
-        // Admins/Leaders can see all projects in the team
-        if (isAdminOrLeader)
+        // Get projects: public projects + private projects where user is a member;
+        // Admins can see all projects in the team
+        if (teamMember.Role == TeamMemberRole.Admin)
         {
-            return await _unitOfWork
+            var projects = _unitOfWork
                 .Projects.ReadOnly()
-                .Where(p => p.TeamId == request.TeamId)
+                .Where(p =>
+                    p.TeamId == request.TeamId
+                    && (string.IsNullOrEmpty(request.Search) || p.Name.Contains(request.Search))
+                )
                 .Select(p => new TeamProjectItem(
                     p.Id,
                     p.CreatorId,
+                    true, // Admin can view all projects
                     p.Name,
                     p.Description,
                     p.Visibility.ToString()
-                ))
+                ));
+
+            var projectCount = await projects.CountAsync(cancellationToken);
+
+            var result = await projects
+                .Take(request.Pagination.PageSize)
+                .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
                 .ToListAsync(cancellationToken);
+
+            return new PaginationResult<TeamProjectItem>(
+                request.Pagination.Page,
+                request.Pagination.PageSize,
+                projectCount,
+                result
+            );
         }
 
         // Regular members: public projects + private projects they are members of
-        var userProjectIds = await _unitOfWork
-            .ProjectMembers.ReadOnly()
-            .Where(pm => pm.Project.TeamId == request.TeamId && pm.UserId == request.CurrentUserId)
-            .Select(pm => pm.ProjectId)
-            .ToListAsync(cancellationToken);
 
-        return await _unitOfWork
+        var query = _unitOfWork
             .Projects.ReadOnly()
             .Where(p =>
                 p.TeamId == request.TeamId
-                && (p.Visibility == ProjectVisibility.Public || userProjectIds.Contains(p.Id))
-            )
+                && (
+                    p.Visibility == ProjectVisibility.Public
+                    || p.ProjectMembers.Any(pm => pm.UserId == request.CurrentUserId)
+                )
+                && (string.IsNullOrEmpty(request.Search) || p.Name.Contains(request.Search))
+            );
+
+        var totalCount = await query.CountAsync(cancellationToken);
+        var items = await query
             .Select(p => new TeamProjectItem(
                 p.Id,
                 p.CreatorId,
+                p.CreatorId == request.CurrentUserId
+                    || p.ProjectMembers.Any(pm => pm.UserId == request.CurrentUserId), // Can view if creator or member
                 p.Name,
                 p.Description,
                 p.Visibility.ToString()
             ))
+            .Take(request.Pagination.PageSize)
+            .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
             .ToListAsync(cancellationToken);
+
+        return new PaginationResult<TeamProjectItem>(
+            request.Pagination.Page,
+            request.Pagination.PageSize,
+            totalCount,
+            items
+        );
     }
 }
