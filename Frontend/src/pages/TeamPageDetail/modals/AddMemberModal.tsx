@@ -7,7 +7,6 @@ import { Modal, App, Button, Table, Select, Tag } from "antd";
 import type { AvailableTeamMemberItem, TeamRole } from "@/types";
 import { useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { SearchPagination } from "@/components";
 
 interface AddMemberModalProps {
   teamId: string;
@@ -127,7 +126,7 @@ export function AddMemberModal({
     {
       title: "",
       key: "action",
-      width: 60,
+      width: 60,  
       render: (_: unknown, record: AvailableTeamMemberItem) => {
         const isSelected = selectedUserIds.has(record.userId);
         return isSelected ? (
@@ -223,9 +222,9 @@ export function AddMemberModal({
       {/* ─── Table 1: Available Members ─── */}
       <div style={{ marginBottom: 16 }}>
         <h4 style={{ marginBottom: 8 }}>Danh sách thành viên có sẵn</h4>
-        <SearchPagination
+        {/* <SearchPagination
           search={{
-            searchText,
+            search: searchText,
             onSearchChange: handleSearchChange,
           }}
           pagination={{
@@ -248,7 +247,7 @@ export function AddMemberModal({
             size="small"
             locale={{ emptyText: "Không có thành viên nào" }}
           />
-        </SearchPagination>
+        </SearchPagination> */}
       </div>
 
       {/* ─── Table 2: Selected Members ─── */}

@@ -1,13 +1,14 @@
 import { useParams } from "react-router-dom";
-import { Tabs, Typography, Space, Skeleton, Card, Spin } from "antd";
+import { Tabs, Typography, Space, Skeleton, Card } from "antd";
 import {
   FolderOutlined,
   UserOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { useTeam } from "@/hooks";
+import { useProject, useSearch, useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
 import { ProjectList, MemberList, SettingList } from "./components";
+import { useEffect, useState } from "react";
 
 const { Text } = Typography;
 
@@ -15,19 +16,69 @@ export default function TeamPageDetail() {
   const { id } = useParams<{ id: string }>();
 
   const teamDetailQuery = useTeam().getDetail(id!);
-  // Fetch first 100 projects for the team
-  const membersQuery = useTeam().getMembers(id!);
+
   const meQuery = useTeam().me(id!);
 
   const { data: teamDetail, isLoading: isTeamLoading } = teamDetailQuery;
 
-  const { data: members, isLoading: isMembersLoading } = membersQuery;
   const { data: me } = meQuery;
+
+  const {
+    searchProps: searchProjectProps,
+    paginationProps: paginationProjectProps,
+    queryParams: queryProjectParams,
+  } = useSearch({});
+  const [hasProjectHadData, setHasProjectHadData] = useState(false);
+
+  const { getByTeam } = useProject();
+
+  const { data: projects, isLoading: isProjectLoading } = getByTeam(
+    teamDetail?.id || "",
+    queryProjectParams.search,
+    queryProjectParams.page,
+    queryProjectParams.pageSize,
+  );
+  useEffect(() => {
+    if (
+      !isProjectLoading &&
+      projects &&
+      projects.total > 0 &&
+      !hasProjectHadData
+    ) {
+      setHasProjectHadData(true);
+    }
+  }, [projects, isProjectLoading, hasProjectHadData]);
+
+  const {
+    searchProps: searchMemberProps,
+    paginationProps: paginationMemberProps,
+    roleProps: roleMemberProps,
+    queryParams: queryMemberParams,
+  } = useSearch({});
+  const [hasMemberHadData, setHasMemberHadData] = useState(false);
+
+  const { getMembers } = useTeam();
+
+  const { data: members, isLoading: isMemberLoading } = getMembers(
+    teamDetail?.id || "",
+    queryMemberParams.search,
+    queryMemberParams.role ?? undefined,
+    queryMemberParams.page,
+    queryMemberParams.pageSize,
+  );
+
+  useEffect(() => {
+    if (!isMemberLoading && members && members.total > 0 && !hasMemberHadData) {
+      setHasMemberHadData(true);
+    }
+  }, [members, isMemberLoading, hasMemberHadData]);
 
   const breadcrumbItems = [
     { title: "Nhóm của tôi", href: "/teams" },
     { title: teamDetail?.name || "Chi tiết nhóm" },
   ];
+
+  const isLoading = isTeamLoading || isProjectLoading || isMemberLoading;
 
   const tabItems = [
     {
@@ -37,7 +88,18 @@ export default function TeamPageDetail() {
           <FolderOutlined /> Dự án
         </span>
       ),
-      children: <ProjectList teamId={id!} />,
+      children: (
+        <ProjectList
+          data={projects?.items || []}
+          isLoading={isProjectLoading}
+          hasHadData={hasProjectHadData}
+          searchProps={searchProjectProps}
+          paginationProps={{
+            ...paginationProjectProps,
+            total: projects?.total || 0,
+          }}
+        />
+      ),
     },
     {
       key: "members",
@@ -48,8 +110,15 @@ export default function TeamPageDetail() {
       ),
       children: (
         <MemberList
-          members={members}
-          isLoading={isMembersLoading}
+          data={members?.items || []}
+          isLoading={isMemberLoading}
+          hasHadData={hasMemberHadData}
+          searchProps={searchMemberProps}
+          roleProps={roleMemberProps}
+          paginationProps={{
+            ...paginationMemberProps,
+            total: members?.total || 0,
+          }}
           userId={me?.userId || ""}
         />
       ),
@@ -91,9 +160,14 @@ export default function TeamPageDetail() {
           )}
         </Card>
         <Card>
-          <Spin spinning={isMembersLoading}>
-            <Tabs defaultActiveKey="projects" items={tabItems} />
-          </Spin>
+          <Tabs
+            style={{
+              pointerEvents: isLoading ? "none" : "auto",
+              opacity: isLoading ? 0.5 : 1,
+            }}
+            defaultActiveKey="projects"
+            items={tabItems}
+          />
         </Card>
       </Space>
     </MainLayout>

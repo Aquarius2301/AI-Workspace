@@ -1,121 +1,102 @@
-import { useEffect, useState } from "react";
-import { useDebounce, useTeam } from "@/hooks";
+import { useEffect, useMemo, useState } from "react";
+import { useSearch, useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
-import { Button, Card, Empty, Space, Table } from "antd";
-import { SearchPagination } from "@/components";
-import { EyeOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { Button, Card, Space } from "antd";
 import { TeamModal } from "./modals";
 import Paragraph from "antd/es/typography/Paragraph";
+import { useNavigate } from "react-router-dom";
+import type { TeamItem } from "@/types";
+import { SearchPagination, type CustomColumnsType } from "@/components";
 
 export default function TeamPage() {
-  const [search, setSearch] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
-  const [hasFetched, setHasFetched] = useState(false);
-  const [hasData, setHasData] = useState(false);
+  const { searchProps, paginationProps, queryParams } = useSearch({});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const debouncedSearch = useDebounce(search, 500);
-  const navigate = useNavigate();
+  const [hasHadData, setHasHadData] = useState(false);
 
   const teamsQuery = useTeam().getList({
     myTeams: true,
-    search: debouncedSearch,
-    page: currentPage,
-    pageSize,
+    ...queryParams,
   });
 
   const { data, isLoading } = teamsQuery;
 
-  // Set flags after first fetch completes
+  const navigate = useNavigate();
+
   useEffect(() => {
-    if (!isLoading && !hasFetched) {
-      setHasFetched(true);
-      if (data && data.items.length > 0) {
-        setHasData(true);
-      }
+    if (!isLoading && data && data.total > 0 && !hasHadData) {
+      setHasHadData(true);
     }
-  }, [isLoading, hasFetched, data]);
+  }, [data, isLoading, hasHadData]);
 
-  const handleSearchChange = (value: string) => {
-    setSearch(value);
-    setCurrentPage(1); // Reset to first page when search changes
-  };
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handlePageSizeChange = (size: number) => {
-    setPageSize(size);
-    setCurrentPage(1); // Reset to first page when page size changes
-  };
+  const columns = useMemo<CustomColumnsType<TeamItem>>(
+    () => [
+      {
+        title: "Tên nhóm",
+        dataIndex: "name",
+        key: "name",
+      },
+      {
+        title: "Mô tả",
+        dataIndex: "description",
+        key: "description",
+        render: (description: string) => (
+          <Paragraph
+            ellipsis={{ rows: 2, expandable: true }}
+            style={{ margin: 0 }}
+          >
+            {description}
+          </Paragraph>
+        ),
+      },
+      {
+        title: "Hành động",
+        noShowMobileTitle: true,
+        render: (_, record) => (
+          <Button
+            style={{ width: "100%" }}
+            onClick={() => navigate(`/teams/${record.id}`)}
+          >
+            View
+          </Button>
+        ),
+      },
+    ],
+    [navigate],
+  );
 
   return (
     <MainLayout breadcrumbItems={[{ title: "Nhóm của tôi" }]}>
-      <Space vertical style={{ width: "100%" }} size={24}>
-        <Card style={{ width: "100%" }}>
+      <Space vertical size={24} style={{ width: "100%" }}>
+        <Card>
           <Button
-            style={{ marginBottom: 16 }}
             type="primary"
             onClick={() => setIsModalOpen(true)}
+            style={{ marginBottom: "16px" }}
           >
-            Tạo nhóm
+            Tạo nhóm mới
           </Button>
           <SearchPagination
             search={
-              hasFetched && hasData
-                ? {
-                    searchText: search,
-                    onSearchChange: handleSearchChange,
-                  }
+              hasHadData
+                ? { ...searchProps, placeholder: "Tên nhóm..." }
                 : undefined
             }
             pagination={{
-              page: currentPage,
-              pageSize: pageSize,
+              ...paginationProps,
               total: data?.total ?? 0,
-              onPageChange: handlePageChange,
-              onPageSizeChange: handlePageSizeChange,
             }}
-          >
-            <Table
-              dataSource={data?.items ?? []}
-              rowKey={"id"}
-              loading={isLoading}
-              locale={{
-                emptyText: <Empty description="Không tìm thấy nhóm nào" />,
-              }}
-              columns={[
-                {
-                  title: "Name",
-                  dataIndex: "name",
-                  key: "name",
-                },
-                {
-                  title: "Description",
-                  dataIndex: "description",
-                  key: "description",
-                  render: (description: string) => (
-                    <Paragraph ellipsis={{ rows: 2, expandable: true }}>
-                      {description}
-                    </Paragraph>
-                  ),
-                },
-                {
-                  title: "View",
-
-                  render: (_, record) => (
-                    <Button onClick={() => navigate(`/teams/${record.id}`)}>
-                      <EyeOutlined />
-                    </Button>
-                  ),
-                },
-              ]}
-              pagination={false}
-            />
-          </SearchPagination>
+            tableProps={{
+              dataSource: data?.items ?? [],
+              loading: isLoading,
+              rowKey: "id",
+              columns: columns,
+              locale: {
+                emptyText: "Chưa có nhóm nào",
+              },
+            }}
+          />
         </Card>
       </Space>
 

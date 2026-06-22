@@ -145,8 +145,8 @@ export function SettingList({
 
         {/* Thành viên */}
         <Col lg={24} xl={12}>
-          <Card style={cardStyle} bodyStyle={cardBodyStyle} hoverable>
-            <Space direction="vertical" size={20} style={{ width: "100%" }}>
+          <Card style={cardStyle} styles={{ body: cardBodyStyle }} hoverable>
+            <Space vertical size={20} style={{ width: "100%" }}>
               <Space align="start" size={16} style={{ width: "100%" }}>
                 <div
                   style={{
@@ -218,10 +218,10 @@ export function SettingList({
                 ...cardStyle,
                 border: "1px solid #fff1f0",
               }}
-              bodyStyle={cardBodyStyle}
+              styles={{ body: cardBodyStyle }}
               hoverable
             >
-              <Space direction="vertical" size={20} style={{ width: "100%" }}>
+              <Space vertical size={20} style={{ width: "100%" }}>
                 <Space align="start" size={16} style={{ width: "100%" }}>
                   <div
                     style={{

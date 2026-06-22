@@ -1,3 +1,4 @@
+using BusinessObject.Enums;
 using Infrastructure.Common.Models;
 using Infrastructure.Exceptions;
 using Infrastructure.Functions.Teams;
@@ -84,9 +85,17 @@ public class TeamController : ControllerBase
     }
 
     [HttpGet("{id:guid}/members")]
-    public async Task<IActionResult> GetTeamMembers(Guid id)
+    public async Task<IActionResult> GetTeamMembers(
+        Guid id,
+        [FromQuery] string? search = null,
+        [FromQuery] TeamMemberRole? role = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20
+    )
     {
-        var result = await _mediator.Send(new GetTeamMembersQuery(id));
+        var result = await _mediator.Send(
+            new GetTeamMembersQuery(id, new PaginationRequest(page, pageSize), search, role)
+        );
         return Ok(result);
     }
 

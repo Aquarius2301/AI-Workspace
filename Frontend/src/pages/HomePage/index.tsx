@@ -37,11 +37,11 @@ export default function HomePage() {
 
   // Fetch tasks and projects for the current team
   const myTasksQuery = useTask().getMyTasks(teamId);
-  const projectsQuery = useProject().getByTeam(teamId);
+  const projectsQuery = useProject().getByTeam(teamId, "", 1, 10);
 
   // Runtime: axios interceptor unwraps response.data, so .data contains the actual result
   const tasks = (myTasksQuery.data as MyTaskItemResponse[]) ?? [];
-  const projects = (projectsQuery.data as TeamProjectItem[]) ?? [];
+  const projects = (projectsQuery.data?.items as TeamProjectItem[]) ?? [];
 
   return (
     <MainLayout breadcrumbItems={[{ title: "Tổng quan" }]}>

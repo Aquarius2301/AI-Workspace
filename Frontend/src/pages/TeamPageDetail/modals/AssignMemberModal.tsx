@@ -1,6 +1,6 @@
 import { TEAM_MEMBERS_QUERY_KEY, useTeam } from "@/hooks";
 import type { TeamMemberItem, TeamRole } from "@/types";
-import { Modal, App, Table, Select, Button } from "antd";
+import { Modal, App, Select, Button } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -27,7 +27,7 @@ export function AssignMemberModal({
   const { message } = App.useApp();
 
   const {
-    data: members = [],
+    data: members,
     isLoading: isMembersLoading,
     isError,
   } = getMembers(teamId);
@@ -78,7 +78,9 @@ export function AssignMemberModal({
 
   const handleClose = () => {
     setRoleChanges({});
-    queryClient.removeQueries({ queryKey: [...TEAM_MEMBERS_QUERY_KEY, teamId] });
+    queryClient.removeQueries({
+      queryKey: [...TEAM_MEMBERS_QUERY_KEY, teamId],
+    });
     onClose();
   };
 
@@ -90,9 +92,7 @@ export function AssignMemberModal({
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <img
             src={
-              record.email
-                ? `/avatar/${record.email}`
-                : "/default-avatar.png"
+              record.email ? `/avatar/${record.email}` : "/default-avatar.png"
             }
             alt={record.userName}
             style={{ width: 32, height: 32, borderRadius: "50%" }}
@@ -189,14 +189,14 @@ export function AssignMemberModal({
           Không thể tải danh sách thành viên. Vui lòng thử lại sau.
         </div>
       )}
-      <Table
+      {/* <Table
         dataSource={members}
         columns={columns}
         rowKey="userId"
         loading={isMembersLoading}
         pagination={false}
         scroll={{ y: 400 }}
-      />
+      /> */}
     </Modal>
   );
 }

@@ -8,6 +8,7 @@ import type {
   UpdateMemberRoleRequest,
   AvailableTeamMemberItem,
   PageResponse,
+  TeamRole,
 } from "@/types";
 import axiosClient from "./config.api";
 
@@ -45,8 +46,21 @@ export const teamApi = {
     return axiosClient.delete(`${baseUrl}/${id}`);
   },
 
-  getMembers: (id: string): Promise<TeamMemberItem[]> => {
-    return axiosClient.get(`${baseUrl}/${id}/members`);
+  getMembers: (
+    id: string,
+    search?: string,
+    role?: TeamRole,
+    page?: number,
+    pageSize?: number,
+  ): Promise<PageResponse<TeamMemberItem>> => {
+    return axiosClient.get(`${baseUrl}/${id}/members`, {
+      params: {
+        search,
+        role,
+        page,
+        pageSize,
+      },
+    });
   },
 
   addMembers: (

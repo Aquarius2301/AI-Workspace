@@ -4,3 +4,5 @@ export interface PageResponse<T> {
   total: number;
   items: T[];
 }
+
+export type PageSize = 5 | 10 | 20 | 50;
