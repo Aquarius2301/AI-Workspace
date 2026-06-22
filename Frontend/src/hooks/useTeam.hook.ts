@@ -67,10 +67,12 @@ export const useTeam = () => {
     role?: TeamRole,
     page?: number,
     pageSize?: number,
+    enabled: boolean = true,
   ) =>
     useQuery({
       queryKey: [...TEAM_MEMBERS_QUERY_KEY, id, search, role, page, pageSize],
       queryFn: () => teamApi.getMembers(id, search, role, page, pageSize),
+      enabled: enabled,
     });
 
   const addMembers = useMutation({

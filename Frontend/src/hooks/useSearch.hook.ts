@@ -5,7 +5,7 @@ import type { PageSize, TeamRole } from "@/types";
 interface SearchProps {
   debounceTime?: number;
   initialSearch?: string;
-  initialRole?: TeamRole | null;
+  initialRole?: TeamRole | undefined;
   initialPage?: number;
   initialPageSize?: PageSize;
   total?: number;
@@ -15,13 +15,13 @@ interface SearchProps {
 export function useSearch({
   debounceTime = 500,
   initialSearch = "",
-  initialRole = null,
+  initialRole = undefined,
   initialPage = 1,
   initialPageSize = 10,
   total = 0,
   isLoading,
 }: SearchProps) {
-  const [role, setRole] = useState<TeamRole | null>(initialRole);
+  const [role, setRole] = useState<TeamRole | undefined>(initialRole);
   const [search, setSearch] = useState<string>(initialSearch);
   const [page, setPage] = useState<number>(initialPage);
   const [pageSize, setPageSize] = useState<PageSize>(initialPageSize);
@@ -46,7 +46,7 @@ export function useSearch({
     setPage(1);
   };
 
-  const onRoleChange = (value: TeamRole | null) => {
+  const onRoleChange = (value: TeamRole | undefined) => {
     setRole(value);
     setPage(1);
   };

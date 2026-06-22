@@ -29,6 +29,23 @@ const ACTIVE_TIMESTAMP_KEY = "last-active-timestamp";
 const ACTIVE_THRESHOLD_MS = 10 * 60 * 1000;
 
 /**
+ * Flag để kiểm tra xem refresh token đang trong quá trình thực hiện không.
+ * Ngăn chặn nhiều request gọi refresh cùng lúc gây ra race condition.
+ */
+let isRefreshing = false;
+
+/**
+ * Queue subscriber cho các request bị 401 khi refresh token đang chạy.
+ * resolve được gọi khi refresh thành công, reject khi refresh thất bại.
+ */
+interface RefreshSubscriber {
+  resolve: (value: unknown) => void;
+  reject: (error: unknown) => void;
+}
+
+let refreshSubscribers: RefreshSubscriber[] = [];
+
+/**
  * Thêm một dòng log vào "file log" cục bộ.
  */
 function appendToLogFile(message: string): void {
@@ -153,7 +170,9 @@ axiosClient.interceptors.request.use(
 /**
  * Gắn interceptor cho response:
  * - Log response thành công
- * - Khi gặp 401 ở trang ngoài login/refresh thì gọi refresh() rồi retry request một lần
+ * - Khi gặp 401 ở trang ngoài login/refresh thì:
+ *   1) Nếu đang refresh → queue request lại
+ *   2) Nếu chưa refresh → gọi refresh một lần, resolve tất cả queue
  */
 axiosClient.interceptors.response.use(
   (response) => {
@@ -184,15 +203,47 @@ axiosClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
+    // Nếu refresh token đang thực hiện, thêm request này vào queue
+    if (isRefreshing) {
+      return new Promise((resolve, reject) => {
+        refreshSubscribers.push({
+          resolve: (token: unknown) => {
+            // Thêm token mới vào header và retry request
+            originalRequest.headers = originalRequest.headers || {};
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(axiosClient(originalRequest));
+          },
+          reject,
+        });
+      });
+    }
+
+    // Đánh dấu đang refresh
+    isRefreshing = true;
     originalRequest._retry = true;
 
     try {
       // Gọi refresh token khi bị 401 ở các màn hình ngoài login.
-      await refreshClient.post("/api/auth/refresh");
+      const response = await refreshClient.post("/api/auth/refresh");
+      const accessToken = response.data?.accessToken;
 
-      // Sau khi refresh thành công, gọi lại API ban đầu.
+      // Resolve tất cả request đang chờ trong queue với token mới
+      refreshSubscribers.forEach((sub) => sub.resolve(accessToken));
+      refreshSubscribers = []; // Clear queue
+
+      // Reset flag
+      isRefreshing = false;
+
+      // Sau khi refresh thành công, gọi lại API ban đầu với token mới
+      originalRequest.headers = originalRequest.headers || {};
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
       return axiosClient(originalRequest);
     } catch (refreshError) {
+      // Nếu refresh thất bại, reject tất cả request trong queue
+      refreshSubscribers.forEach((sub) => sub.reject(refreshError));
+      refreshSubscribers = [];
+      isRefreshing = false;
+
       return Promise.reject(refreshError);
     }
   },

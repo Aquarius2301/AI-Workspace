@@ -19,11 +19,12 @@ export const useProject = () => {
     search: string | undefined,
     page: number,
     pageSize: number,
+    enabled: boolean = true,
   ) =>
     useQuery({
       queryKey: [...PROJECTS_BY_TEAM_QUERY_KEY, teamId, search, page, pageSize],
       queryFn: () => projectApi.getByTeam(teamId, search, page, pageSize),
-      enabled: !!teamId,
+      enabled: enabled,
     });
 
   const getAllByTeam = (teamId: string) =>

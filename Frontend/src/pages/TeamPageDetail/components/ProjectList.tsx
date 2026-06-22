@@ -1,5 +1,5 @@
-import type { TeamProjectItem } from "@/types";
-import { Button, Tag } from "antd";
+import type { TeamProjectItem, TeamRole } from "@/types";
+import { Button, Space, Tag } from "antd";
 import Text from "antd/es/typography/Text";
 import {
   SearchPagination,
@@ -8,7 +8,8 @@ import {
   type SearchProps,
 } from "@/components";
 import Paragraph from "antd/es/typography/Paragraph";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { CreateProjectModal } from "../modals";
 
 interface ProjectListProps {
   hasHadData: boolean;
@@ -16,6 +17,8 @@ interface ProjectListProps {
   data: TeamProjectItem[];
   searchProps: SearchProps;
   paginationProps: PaginationProps;
+  teamId: string;
+  role: TeamRole;
 }
 
 export function ProjectList({
@@ -24,6 +27,8 @@ export function ProjectList({
   data,
   searchProps,
   paginationProps,
+  teamId,
+  role,
 }: ProjectListProps) {
   const projectColumns = useMemo<CustomColumnsType<TeamProjectItem>>(
     () => [
@@ -70,21 +75,38 @@ export function ProjectList({
     [],
   );
 
+  const [createProjectModal, setCreateProjectModal] = useState(false);
+
   return (
-    <SearchPagination
-      search={
-        hasHadData ? { ...searchProps, placeholder: "Tên dự án..." } : undefined
-      }
-      pagination={{ ...paginationProps }}
-      tableProps={{
-        dataSource: data,
-        columns: projectColumns,
-        rowKey: "id",
-        loading: isLoading,
-        locale: {
-          emptyText: "Chưa có dự án nào",
-        },
-      }}
-    />
+    <Space vertical style={{ width: "100%" }} size={12}>
+      {(role == "Admin" || role == "Leader") && (
+        <Button type="primary" onClick={() => setCreateProjectModal(true)}>
+          Tạo dự án mới
+        </Button>
+      )}
+      <SearchPagination<TeamProjectItem>
+        search={
+          hasHadData
+            ? { ...searchProps, placeholder: "Tên dự án..." }
+            : undefined
+        }
+        pagination={{ ...paginationProps }}
+        tableProps={{
+          dataSource: data,
+          columns: projectColumns,
+          rowKey: "id",
+          loading: isLoading,
+          locale: {
+            emptyText: "Chưa có dự án nào",
+          },
+        }}
+      />
+
+      <CreateProjectModal
+        isOpen={createProjectModal}
+        onClose={() => setCreateProjectModal(false)}
+        teamId={teamId}
+      />
+    </Space>
   );
 }

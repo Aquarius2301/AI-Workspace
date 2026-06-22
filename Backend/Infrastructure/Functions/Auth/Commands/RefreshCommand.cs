@@ -44,8 +44,21 @@ public sealed class RefreshCommandHandler : IRequestHandler<RefreshCommand, Refr
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Email, _authSetting);
         var refreshToken = Guid.NewGuid().ToString();
 
-        // Save the new refresh token
-        storedToken.Token = refreshToken;
+        // Tạo refresh token record mới
+        var newRefreshToken = new RefreshToken
+        {
+            Id = Guid.NewGuid(),
+            UserId = user.Id,
+            Token = refreshToken,
+            CreatedAt = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.AddDays(_authSetting.RefreshTokenDays),
+        };
+
+        // Thêm record mới vào DB
+        _unitOfWork.RefreshTokens.Add(newRefreshToken);
+
+        // Xóa record cũ sau khi tạo mới thành công
+        _unitOfWork.RefreshTokens.Remove(storedToken);
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 

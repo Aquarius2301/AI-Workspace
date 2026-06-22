@@ -39,6 +39,7 @@ export function TeamModal({ isOpen, onClose }: TeamModalProps) {
       confirmLoading={submitting}
       okText="Tạo"
       cancelText="Hủy"
+      closeIcon={null}
     >
       <Form
         form={form}

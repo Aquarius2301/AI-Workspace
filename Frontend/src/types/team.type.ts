@@ -25,14 +25,14 @@ export interface UpdateTeamRequest {
 export interface TeamMemberItem {
   userId: string;
   userName: string;
-  role?: TeamRole;
+  role: TeamRole;
   joinedAt: string;
   email: string;
   lastActiveAt: string;
 }
 
 export interface AddTeamMemberRequest {
-  members: { userId: string; role?: string }[];
+  members: { userId: string; role?: TeamRole }[];
 }
 
 export interface UpdateMemberRoleRequest {

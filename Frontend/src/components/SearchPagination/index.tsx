@@ -1,10 +1,11 @@
 import type { PageSize, TeamRole } from "@/types";
-import { Col, Input, Row, Select, Space, type TableProps } from "antd";
+import { Col, Input, Row, Space, type TableProps } from "antd";
 import { Table } from "../Table";
+import { RoleSelect } from "../RoleSelect";
 
 export interface RoleProps {
-  role: TeamRole | null;
-  onRoleChange: (value: TeamRole | null) => void;
+  role: TeamRole | undefined;
+  onRoleChange: (value: TeamRole | undefined) => void;
 }
 
 export interface SearchProps {
@@ -56,17 +57,10 @@ export function SearchPagination<T>({
 
         {role && (
           <Col xs={24} sm={12} md={8} lg={6} xl={4}>
-            <Select<TeamRole | null>
-              style={{ width: "100%" }}
-              placeholder="Chọn vai trò..."
-              options={[
-                { value: null, label: "Tất cả vai trò" },
-                { value: "Admin", label: "Admin" },
-                { value: "Leader", label: "Leader" },
-                { value: "Member", label: "Member" },
-              ]}
+            <RoleSelect
               value={role.role}
-              onChange={(e) => role.onRoleChange(e)}
+              onChange={role.onRoleChange}
+              placeholder="Chọn vai trò..."
             />
           </Col>
         )}

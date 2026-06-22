@@ -3,10 +3,11 @@ import {
   useDebounce,
   useTeam,
 } from "@/hooks";
-import { Modal, App, Button, Table, Select, Tag } from "antd";
+import { Modal, App, Button, Select, Tag } from "antd";
 import type { AvailableTeamMemberItem, TeamRole } from "@/types";
 import { useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { SearchPagination, Table } from "@/components";
 
 interface AddMemberModalProps {
   teamId: string;
@@ -126,7 +127,7 @@ export function AddMemberModal({
     {
       title: "",
       key: "action",
-      width: 60,  
+      width: 60,
       render: (_: unknown, record: AvailableTeamMemberItem) => {
         const isSelected = selectedUserIds.has(record.userId);
         return isSelected ? (
@@ -197,6 +198,9 @@ export function AddMemberModal({
       onCancel={handleClose}
       width={768}
       centered
+      closeIcon={null}
+      confirmLoading={addMembers.isPending}
+      mask={{ closable: false }}
       styles={{
         body: { paddingTop: "16px" },
       }}
@@ -221,9 +225,9 @@ export function AddMemberModal({
     >
       {/* ─── Table 1: Available Members ─── */}
       <div style={{ marginBottom: 16 }}>
-        <h4 style={{ marginBottom: 8 }}>Danh sách thành viên có sẵn</h4>
-        {/* <SearchPagination
+        <SearchPagination
           search={{
+            placeholder: "Tên hoặc email thành viên...",
             search: searchText,
             onSearchChange: handleSearchChange,
           }}
@@ -237,17 +241,15 @@ export function AddMemberModal({
               setPage(1);
             },
           }}
-        >
-          <Table
-            dataSource={paginatedMembers}
-            columns={availableColumns}
-            pagination={false}
-            loading={isAvailableMembersLoading}
-            rowKey="userId"
-            size="small"
-            locale={{ emptyText: "Không có thành viên nào" }}
-          />
-        </SearchPagination> */}
+          tableProps={{
+            dataSource: paginatedMembers,
+            columns: availableColumns,
+            loading: isAvailableMembersLoading,
+            rowKey: "userId",
+            size: "small",
+            locale: { emptyText: "Không có thành viên nào" },
+          }}
+        ></SearchPagination>
       </div>
 
       {/* ─── Table 2: Selected Members ─── */}

@@ -8,78 +8,66 @@ import {
 import { useProject, useSearch, useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
 import { ProjectList, MemberList, SettingList } from "./components";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 export default function TeamPageDetail() {
   const { id } = useParams<{ id: string }>();
+  const teamId = id!;
 
-  const teamDetailQuery = useTeam().getDetail(id!);
+  // State kiểm soát Tab hiện tại để phục vụ Lazy Loading API
+  const [activeTab, setActiveTab] = useState("projects");
 
-  const meQuery = useTeam().me(id!);
+  // ================= 1. CORE API (Luôn chạy khi vào trang) =================
+  const { data: teamDetail, isLoading: isTeamLoading } =
+    useTeam().getDetail(teamId);
+  const { data: me, isLoading: isMeLoading } = useTeam().me(teamId);
 
-  const { data: teamDetail, isLoading: isTeamLoading } = teamDetailQuery;
+  const userRole = me?.role || "Member";
+  const isAdminOrLeader = userRole === "Admin" || userRole === "Leader";
 
-  const { data: me } = meQuery;
-
+  // ================= 2. TAB PROJECTS API (Chỉ chạy khi ở tab projects) =================
   const {
     searchProps: searchProjectProps,
     paginationProps: paginationProjectProps,
     queryParams: queryProjectParams,
   } = useSearch({});
-  const [hasProjectHadData, setHasProjectHadData] = useState(false);
 
   const { getByTeam } = useProject();
-
   const { data: projects, isLoading: isProjectLoading } = getByTeam(
     teamDetail?.id || "",
     queryProjectParams.search,
     queryProjectParams.page,
     queryProjectParams.pageSize,
+    activeTab === "projects" && !!teamDetail?.id,
   );
-  useEffect(() => {
-    if (
-      !isProjectLoading &&
-      projects &&
-      projects.total > 0 &&
-      !hasProjectHadData
-    ) {
-      setHasProjectHadData(true);
-    }
-  }, [projects, isProjectLoading, hasProjectHadData]);
 
+  // ================= 3. TAB MEMBERS API (Chỉ chạy khi ở tab members) =================
   const {
     searchProps: searchMemberProps,
     paginationProps: paginationMemberProps,
     roleProps: roleMemberProps,
     queryParams: queryMemberParams,
   } = useSearch({});
-  const [hasMemberHadData, setHasMemberHadData] = useState(false);
 
   const { getMembers } = useTeam();
-
   const { data: members, isLoading: isMemberLoading } = getMembers(
     teamDetail?.id || "",
     queryMemberParams.search,
-    queryMemberParams.role ?? undefined,
+    queryMemberParams.role,
     queryMemberParams.page,
     queryMemberParams.pageSize,
+    !!teamDetail?.id && activeTab === "members",
   );
 
-  useEffect(() => {
-    if (!isMemberLoading && members && members.total > 0 && !hasMemberHadData) {
-      setHasMemberHadData(true);
-    }
-  }, [members, isMemberLoading, hasMemberHadData]);
-
+  // ================= 4. BREADCRUMBS & NAVIGATION =================
   const breadcrumbItems = [
     { title: "Nhóm của tôi", href: "/teams" },
     { title: teamDetail?.name || "Chi tiết nhóm" },
   ];
 
-  const isLoading = isTeamLoading || isProjectLoading || isMemberLoading;
-
+  // ================= 5. ĐỊNH NGHĨA DANH SÁCH TABS =================
   const tabItems = [
     {
       key: "projects",
@@ -90,9 +78,16 @@ export default function TeamPageDetail() {
       ),
       children: (
         <ProjectList
+          role={userRole}
+          teamId={teamId}
           data={projects?.items || []}
           isLoading={isProjectLoading}
-          hasHadData={hasProjectHadData}
+          // Thay vì dùng useEffect tạo state riêng, ta check trực tiếp độ dài mảng dữ liệu
+          hasHadData={
+            (projects && projects?.total > 0) ||
+            !!queryProjectParams.search ||
+            queryProjectParams.page > 1
+          }
           searchProps={searchProjectProps}
           paginationProps={{
             ...paginationProjectProps,
@@ -110,22 +105,30 @@ export default function TeamPageDetail() {
       ),
       children: (
         <MemberList
+          role={userRole}
+          teamId={teamId}
+          userId={me?.userId || ""}
           data={members?.items || []}
           isLoading={isMemberLoading}
-          hasHadData={hasMemberHadData}
+          hasHadData={
+            (members && members?.total > 0) ||
+            !!queryMemberParams.search ||
+            !!queryMemberParams.role ||
+            queryMemberParams.page > 1
+          }
           searchProps={searchMemberProps}
           roleProps={roleMemberProps}
           paginationProps={{
             ...paginationMemberProps,
             total: members?.total || 0,
           }}
-          userId={me?.userId || ""}
         />
       ),
     },
   ];
 
-  if (me && (me.role == "Admin" || me.role == "Leader")) {
+  // Nếu là Admin/Leader thì đẩy thêm tab Cài đặt vào cấu trúc mảng
+  if (isAdminOrLeader) {
     tabItems.push({
       key: "settings",
       label: (
@@ -135,10 +138,10 @@ export default function TeamPageDetail() {
       ),
       children: (
         <SettingList
-          teamId={id!}
+          teamId={teamId}
           teamName={teamDetail?.name || ""}
           teamDescription={teamDetail?.description || ""}
-          role={me.role}
+          role={userRole}
         />
       ),
     });
@@ -147,26 +150,29 @@ export default function TeamPageDetail() {
   return (
     <MainLayout breadcrumbItems={breadcrumbItems}>
       <Space vertical size={16} style={{ width: "100%" }}>
+        {/* CARD TIÊU ĐỀ THÔNG TIN NHÓM */}
         <Card>
-          {isTeamLoading ? (
-            <Skeleton active={true} />
+          {isTeamLoading || isMeLoading ? (
+            <Skeleton active paragraph={{ rows: 1 }} />
           ) : (
-            <>
-              <Typography.Title level={4} style={{ margin: 0 }}>
+            <Space vertical size={4}>
+              <Title level={4} style={{ margin: 0 }}>
                 {teamDetail?.name || "Chi tiết nhóm"}
-              </Typography.Title>
+              </Title>
               <Text type="secondary">{teamDetail?.description}</Text>
-            </>
+            </Space>
           )}
         </Card>
+
+        {/* CARD NỘI DUNG TABS HOẠT ĐỘNG */}
         <Card>
           <Tabs
-            style={{
-              pointerEvents: isLoading ? "none" : "auto",
-              opacity: isLoading ? 0.5 : 1,
-            }}
+            activeKey={activeTab}
+            onChange={(key) => setActiveTab(key)} // Cập nhật active tab để trigger lazy loading API
             defaultActiveKey="projects"
             items={tabItems}
+            // Loại bỏ hoàn toàn hiệu ứng làm mờ (opacity) và khóa pointer khi loading
+            // để người dùng vẫn có thể click chuyển tab thoải mái, tăng trải nghiệm mượt mà!
           />
         </Card>
       </Space>
