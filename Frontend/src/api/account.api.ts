@@ -6,9 +6,9 @@ import type {
 } from "@/types";
 import axiosClient from "./config.api";
 
-const baseUrl = "/api/account";
+const baseUrl = "/api/users";
 
-export const accountApi = {
+export const userApi = {
   getUsers: (params: {
     page: number;
     pageSize: number;
@@ -23,6 +23,6 @@ export const accountApi = {
   },
 
   changePassword: (id: string, data: ChangePasswordRequest): Promise<void> => {
-    return axiosClient.patch(`/api/users/${id}/password`, data);
+    return axiosClient.patch(`${baseUrl}/${id}/password`, data);
   },
 };

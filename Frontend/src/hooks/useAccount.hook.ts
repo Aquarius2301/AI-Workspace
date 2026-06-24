@@ -1,8 +1,8 @@
-import { accountApi } from "@/api";
+import { userApi } from "@/api";
 import type { UserItem } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-export const USERS_QUERY_KEY = ["account", "users"];
+export const USERS_QUERY_KEY = ["users"];
 
 export const useAccount = () => {
   const queryClient = useQueryClient();
@@ -10,11 +10,11 @@ export const useAccount = () => {
   const getUsers = (params: { page: number; pageSize: number }) =>
     useQuery({
       queryKey: [...USERS_QUERY_KEY, params.page, params.pageSize],
-      queryFn: () => accountApi.getUsers(params),
+      queryFn: () => userApi.getUsers(params),
     });
 
   const updateProfile = useMutation({
-    mutationFn: accountApi.updateProfile,
+    mutationFn: userApi.updateProfile,
     onSuccess: (data) => {
       const user = data as unknown as UserItem;
       queryClient.setQueryData(USERS_QUERY_KEY, (old: any) => {
@@ -33,7 +33,7 @@ export const useAccount = () => {
     mutationFn: (params: {
       id: string;
       data: { oldPassword: string; newPassword: string };
-    }) => accountApi.changePassword(params.id, params.data),
+    }) => userApi.changePassword(params.id, params.data),
   });
 
   return {

@@ -24,16 +24,18 @@ export const useTeam = () => {
       queryFn: () => teamApi.getList(params),
     });
 
-  const getDetail = (id: string) =>
+  const getDetail = (id: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...TEAM_DETAIL_QUERY_KEY, id],
       queryFn: () => teamApi.getDetail(id),
+      enabled: !!id && enabled,
     });
 
-  const me = (teamId: string) =>
+  const me = (teamId: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...TEAM_ME_QUERY_KEY, teamId],
       queryFn: () => teamApi.me(teamId),
+      enabled: !!teamId && enabled,
     });
 
   const create = useMutation({
@@ -72,7 +74,7 @@ export const useTeam = () => {
     useQuery({
       queryKey: [...TEAM_MEMBERS_QUERY_KEY, id, search, role, page, pageSize],
       queryFn: () => teamApi.getMembers(id, search, role, page, pageSize),
-      enabled: enabled,
+      enabled: !!id && enabled,
     });
 
   const addMembers = useMutation({
@@ -121,6 +123,7 @@ export const useTeam = () => {
     search?: string,
     page?: number,
     pageSize?: number,
+    enabled: boolean = true,
   ) =>
     useQuery({
       queryKey: [
@@ -132,6 +135,7 @@ export const useTeam = () => {
       ],
       queryFn: () =>
         teamApi.getAvailableMembersByTeam(id, search, page, pageSize),
+      enabled: !!id && enabled,
     });
 
   const leave = useMutation({

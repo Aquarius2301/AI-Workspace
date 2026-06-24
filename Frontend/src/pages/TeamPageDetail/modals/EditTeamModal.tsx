@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTeam } from "@/hooks";
 import { Modal, App, Form, Input } from "antd";
 
@@ -18,11 +19,13 @@ export function EditTeamModal({
 }: EditTeamModalProps) {
   const { update } = useTeam();
   const [form] = Form.useForm();
+  const [hasChanges, setHasChanges] = useState(false);
 
   const { message } = App.useApp();
 
   const resetForm = () => {
     form.resetFields();
+    setHasChanges(false);
   };
 
   const handleClose = () => {
@@ -53,6 +56,13 @@ export function EditTeamModal({
     }
   };
 
+  const handleValuesChange = () => {
+    const values = form.getFieldsValue();
+    const nameChanged = values.name !== teamName;
+    const descChanged = values.description !== (teamDescription || "");
+    setHasChanges(nameChanged || descChanged);
+  };
+
   return (
     <Modal
       title="Chỉnh sửa nhóm"
@@ -62,6 +72,7 @@ export function EditTeamModal({
       okText="Chỉnh sửa"
       cancelText="Hủy"
       confirmLoading={update.isPending}
+      okButtonProps={{ disabled: !hasChanges }}
     >
       <Form
         disabled={update.isPending}
@@ -71,6 +82,7 @@ export function EditTeamModal({
           name: teamName,
           description: teamDescription || "",
         }}
+        onValuesChange={handleValuesChange}
       >
         <Form.Item
           label="Tên nhóm"

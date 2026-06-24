@@ -1,8 +1,4 @@
-import {
-  TEAM_AVAILABLE_MEMBERS_QUERY_KEY,
-  useDebounce,
-  useTeam,
-} from "@/hooks";
+import { TEAM_AVAILABLE_MEMBERS_QUERY_KEY, useSearch, useTeam } from "@/hooks";
 import { Modal, App, Button, Select, Tag } from "antd";
 import type { AvailableTeamMemberItem, TeamRole } from "@/types";
 import { useState, useMemo } from "react";
@@ -35,23 +31,29 @@ export function AddMemberModal({
   const queryClient = useQueryClient();
   const { getAvailableMembersByTeam, addMembers } = useTeam();
 
-  const [searchText, setSearchText] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const { paginationProps, searchProps, queryParams } = useSearch({});
+
+  // const [searchText, setSearchText] = useState("");
+  // const [page, setPage] = useState(1);
+  // const [pageSize, setPageSize] = useState(5);
   const [selectedMembers, setSelectedMembers] = useState<SelectedMember[]>([]);
 
-  const debounceText = useDebounce(searchText, 500);
-
   const { data: availableMembers = [], isLoading: isAvailableMembersLoading } =
-    getAvailableMembersByTeam(teamId, debounceText);
+    getAvailableMembersByTeam(
+      teamId,
+      queryParams.search,
+      queryParams.page,
+      queryParams.pageSize,
+      isOpen,
+    );
 
   const { message } = App.useApp();
 
   // Client-side pagination over the API result
-  const paginatedMembers = useMemo(() => {
-    const start = (page - 1) * pageSize;
-    return availableMembers.slice(start, start + pageSize);
-  }, [availableMembers, page, pageSize]);
+  // const paginatedMembers = useMemo(() => {
+  //   const start = (page - 1) * pageSize;
+  //   return availableMembers.slice(start, start + pageSize);
+  // }, [availableMembers, page, pageSize]);
 
   // Set of selected userIds for quick lookup
   const selectedUserIds = useMemo(
@@ -83,8 +85,6 @@ export function AddMemberModal({
       queryKey: [...TEAM_AVAILABLE_MEMBERS_QUERY_KEY],
     });
     setSelectedMembers([]);
-    setSearchText("");
-    setPage(1);
     onClose();
   };
 
@@ -105,11 +105,6 @@ export function AddMemberModal({
       console.error("Failed to add members:", error);
       message.error("Đã xảy ra lỗi khi thêm thành viên. Vui lòng thử lại.");
     }
-  };
-
-  const handleSearchChange = (value: string) => {
-    setSearchText(value);
-    setPage(1);
   };
 
   // Columns for Table 1 – Available members
@@ -204,6 +199,7 @@ export function AddMemberModal({
       styles={{
         body: { paddingTop: "16px" },
       }}
+      destroyOnHidden
       footer={[
         <Button
           key="back"
@@ -227,22 +223,12 @@ export function AddMemberModal({
       <div style={{ marginBottom: 16 }}>
         <SearchPagination
           search={{
-            placeholder: "Tên hoặc email thành viên...",
-            search: searchText,
-            onSearchChange: handleSearchChange,
+            ...searchProps,
+            placeholder: "Tìm kiếm thành viên theo tên hoặc email",
           }}
-          pagination={{
-            page,
-            pageSize,
-            total: availableMembers.length,
-            onPageChange: (p: number) => setPage(p),
-            onPageSizeChange: (size: number) => {
-              setPageSize(size);
-              setPage(1);
-            },
-          }}
+          pagination={{ ...paginationProps, total: availableMembers.length }}
           tableProps={{
-            dataSource: paginatedMembers,
+            dataSource: availableMembers,
             columns: availableColumns,
             loading: isAvailableMembersLoading,
             rowKey: "userId",

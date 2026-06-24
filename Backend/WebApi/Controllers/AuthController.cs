@@ -28,7 +28,11 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             throw new BadRequestException("EmailPasswordRequired");
 
-        var result = await _mediator.Send(new LoginCommand(request.Email, request.Password));
+        var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
+
+        var result = await _mediator.Send(
+            new LoginCommand(request.Email, request.Password, deviceInfo)
+        );
 
         CookieHelper.AddCookie(
             HttpContext.Response,
@@ -79,7 +83,9 @@ public class AuthController : ControllerBase
         if (string.IsNullOrEmpty(refreshToken))
             throw new UnauthorizedException();
 
-        var result = await _mediator.Send(new RefreshCommand(refreshToken));
+        var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
+
+        var result = await _mediator.Send(new RefreshCommand(refreshToken, deviceInfo));
 
         CookieHelper.AddCookie(
             HttpContext.Response,

@@ -9,10 +9,11 @@ export const MY_TASKS_QUERY_KEY = ["tasks", "my"];
 export const useTask = () => {
   const queryClient = useQueryClient();
 
-  const getDetail = (taskId: string) =>
+  const getDetail = (taskId: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...TASK_DETAIL_QUERY_KEY, taskId],
       queryFn: () => taskApi.getDetail(taskId),
+      enabled: !!taskId && enabled,
     });
 
   const getByProject = (
@@ -23,17 +24,19 @@ export const useTask = () => {
       page: number;
       pageSize: number;
     },
+    enabled: boolean = true,
   ) =>
     useQuery({
       queryKey: [...TASKS_BY_PROJECT_QUERY_KEY, projectId, params],
       queryFn: () => taskApi.getByProject(projectId, params),
+      enabled: !!projectId && enabled,
     });
 
-  const getMyTasks = (teamId: string) =>
+  const getMyTasks = (teamId: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...MY_TASKS_QUERY_KEY, teamId],
       queryFn: () => taskApi.getMyTasks(teamId),
-      enabled: !!teamId,
+      enabled: !!teamId && enabled,
     });
 
   const create = useMutation({

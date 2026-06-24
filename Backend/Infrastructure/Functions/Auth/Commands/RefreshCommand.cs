@@ -8,7 +8,8 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Functions.Auth;
 
-public sealed record RefreshCommand(string RefreshToken) : IRequest<RefreshResult>;
+public sealed record RefreshCommand(string RefreshToken, string? DeviceInfo = null)
+    : IRequest<RefreshResult>;
 
 public sealed record RefreshResult(string AccessToken, string RefreshToken);
 
@@ -35,10 +36,17 @@ public sealed class RefreshCommandHandler : IRequestHandler<RefreshCommand, Refr
         if (storedToken is null || storedToken.ExpiresAt < DateTime.UtcNow)
             throw new UnauthorizedException("Invalid or expired refresh token");
 
-        var user = _unitOfWork.Users.GetQuery().FirstOrDefault(u => u.Id == storedToken.UserId);
+        // Validate device info if present on both sides
+        if (
+            storedToken.DeviceInfo != null
+            && request.DeviceInfo != null
+            && storedToken.DeviceInfo != request.DeviceInfo
+        )
+            throw new UnauthorizedException("Invalid or expired refresh token");
 
-        if (user is null)
-            throw new UnauthorizedException("User not found");
+        var user =
+            _unitOfWork.Users.GetQuery().FirstOrDefault(u => u.Id == storedToken.UserId)
+            ?? throw new UnauthorizedException("User not found");
 
         // Generate new tokens
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Email, _authSetting);
@@ -52,6 +60,7 @@ public sealed class RefreshCommandHandler : IRequestHandler<RefreshCommand, Refr
             Token = refreshToken,
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddDays(_authSetting.RefreshTokenDays),
+            DeviceInfo = request.DeviceInfo,
         };
 
         // Thêm record mới vào DB

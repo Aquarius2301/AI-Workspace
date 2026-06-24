@@ -8,7 +8,8 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Functions.Auth;
 
-public sealed record LoginCommand(string Email, string Password) : IRequest<LoginResult>;
+public sealed record LoginCommand(string Email, string Password, string? DeviceInfo = null)
+    : IRequest<LoginResult>;
 
 public sealed record LoginResult(string AccessToken, string RefreshToken);
 
@@ -43,6 +44,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
             Token = refreshTokenValue,
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = DateTime.UtcNow.AddDays(_authSetting.RefreshTokenDays),
+            DeviceInfo = request.DeviceInfo,
         };
 
         _unitOfWork.RefreshTokens.Add(refreshToken);

@@ -1,3 +1,4 @@
+using BusinessObject.Entities;
 using BusinessObject.Enums;
 using DataAccess.UnitOfWork;
 using Infrastructure.Common.Models;
@@ -17,7 +18,7 @@ public sealed record GetTeamMembersQuery(
 public sealed record TeamMemberItem(
     Guid UserId,
     string UserName,
-    string? Role,
+    string Role,
     DateTime JoinedAt,
     string Email,
     DateTime? LastActiveAt
@@ -55,6 +56,12 @@ public sealed class GetTeamMembersQueryHandler
         var count = await query.CountAsync(cancellationToken);
 
         var members = await query
+            .OrderBy(x =>
+                x.Role == TeamMemberRole.Admin ? 1
+                : x.Role == TeamMemberRole.Leader ? 2
+                : 3
+            ) // Order by Role (Admin first, then Leader, then Member)
+            .ThenBy(x => x.User.Name) // Then by UserName
             .Select(tm => new TeamMemberItem(
                 tm.UserId,
                 tm.User.Name,

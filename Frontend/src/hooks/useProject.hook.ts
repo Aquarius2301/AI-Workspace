@@ -8,10 +8,11 @@ export const PROJECTS_BY_TEAM_QUERY_KEY = ["project", "team"];
 export const useProject = () => {
   const queryClient = useQueryClient();
 
-  const getDetail = (projectId: string) =>
+  const getDetail = (projectId: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...PROJECT_DETAIL_QUERY_KEY, projectId],
       queryFn: () => projectApi.getDetail(projectId),
+      enabled: !!projectId && enabled,
     });
 
   const getByTeam = (
@@ -24,13 +25,14 @@ export const useProject = () => {
     useQuery({
       queryKey: [...PROJECTS_BY_TEAM_QUERY_KEY, teamId, search, page, pageSize],
       queryFn: () => projectApi.getByTeam(teamId, search, page, pageSize),
-      enabled: enabled,
+      enabled: !!teamId && enabled,
     });
 
-  const getAllByTeam = (teamId: string) =>
+  const getAllByTeam = (teamId: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...PROJECTS_BY_TEAM_QUERY_KEY, teamId, "all"],
       queryFn: () => projectApi.getAllByTeam(teamId),
+      enabled: !!teamId && enabled,
     });
 
   const create = useMutation({
@@ -91,13 +93,18 @@ export const useProject = () => {
     },
   });
 
-  const getMembers = (projectId: string) =>
+  const getMembers = (projectId: string, enabled: boolean = true) =>
     useQuery({
       queryKey: [...PROJECT_DETAIL_QUERY_KEY, projectId, "members"],
       queryFn: () => projectApi.getMembers(projectId),
+      enabled: !!projectId && enabled,
     });
 
-  const getAvailableMembers = (teamId: string, projectId: string) =>
+  const getAvailableMembers = (
+    teamId: string,
+    projectId: string,
+    enabled: boolean = true,
+  ) =>
     useQuery({
       queryKey: [
         ...PROJECT_DETAIL_QUERY_KEY,
@@ -106,6 +113,7 @@ export const useProject = () => {
         "available-members",
       ],
       queryFn: () => projectApi.getAvailableMembers(teamId, projectId),
+      enabled: !!teamId && !!projectId && enabled,
     });
 
   return {
