@@ -29,7 +29,7 @@ public sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectC
             await _unitOfWork
                 .Projects.GetQuery()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -48,7 +48,7 @@ public sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectC
         }
         else
         {
-            throw new ForbiddenException("You do not have permission to update this project");
+            throw new ForbiddenException(ErrorCodes.NoPermissionUpdateProject);
         }
 
         if (request.Name is not null)

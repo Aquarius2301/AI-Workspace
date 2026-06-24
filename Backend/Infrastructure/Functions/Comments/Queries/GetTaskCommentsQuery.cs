@@ -38,7 +38,7 @@ public sealed class GetTaskCommentsQueryHandler
                 .TaskItems.ReadOnly()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
@@ -49,7 +49,7 @@ public sealed class GetTaskCommentsQueryHandler
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // If private project, check project membership unless Admin/Leader
         if (task.Project.Visibility == ProjectVisibility.Private)
@@ -73,7 +73,7 @@ public sealed class GetTaskCommentsQueryHandler
                     );
 
                 if (!isProjectMember)
-                    throw new ForbiddenException("You are not a member of this private project");
+                    throw new ForbiddenException(ErrorCodes.NotPrivateProjectMember);
             }
         }
 

@@ -25,7 +25,7 @@ public sealed class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand
                 .TaskItems.GetQuery()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -47,7 +47,7 @@ public sealed class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand
         }
         else
         {
-            throw new ForbiddenException("You do not have permission to assign this task");
+            throw new ForbiddenException(ErrorCodes.NoPermissionAssignTask);
         }
 
         // Verify the assignee is a member of the project's team
@@ -59,7 +59,7 @@ public sealed class AssignTaskCommandHandler : IRequestHandler<AssignTaskCommand
             );
 
         if (!isMember)
-            throw new BadRequestException("Assigned user is not a member of this team");
+            throw new BadRequestException(ErrorCodes.AssignedUserNotTeamMember);
 
         task.AssignedToId = request.AssignedToId;
         await _unitOfWork.SaveChangesAsync(cancellationToken);

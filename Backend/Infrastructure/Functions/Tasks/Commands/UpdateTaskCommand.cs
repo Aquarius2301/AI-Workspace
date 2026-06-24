@@ -30,7 +30,7 @@ public sealed class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand
                 .TaskItems.GetQuery()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -52,7 +52,7 @@ public sealed class UpdateTaskCommandHandler : IRequestHandler<UpdateTaskCommand
         }
         else
         {
-            throw new ForbiddenException("You do not have permission to update this task");
+            throw new ForbiddenException(ErrorCodes.NoPermissionUpdateTask);
         }
 
         if (request.Title is not null)

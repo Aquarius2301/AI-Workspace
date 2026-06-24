@@ -23,7 +23,7 @@ public sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileC
             await _unitOfWork
                 .Users.GetQuery()
                 .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new NotFoundException(ErrorCodes.UserNotFound);
 
         if (request.Name is not null)
             user.Name = request.Name;

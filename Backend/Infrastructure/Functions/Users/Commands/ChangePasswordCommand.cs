@@ -24,10 +24,10 @@ public sealed class ChangePasswordCommandHandler : IRequestHandler<ChangePasswor
             await _unitOfWork
                 .Users.GetQuery()
                 .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new NotFoundException(ErrorCodes.UserNotFound);
 
         if (!PasswordHelper.Verify(user.PasswordHash, request.OldPassword))
-            throw new BadRequestException("Old password is incorrect");
+            throw new BadRequestException(ErrorCodes.OldPasswordIncorrect);
 
         user.PasswordHash = PasswordHelper.Hash(request.NewPassword);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

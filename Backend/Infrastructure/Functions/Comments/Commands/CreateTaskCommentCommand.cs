@@ -22,14 +22,14 @@ public sealed class CreateTaskCommentCommandHandler : IRequestHandler<CreateTask
     public async Task Handle(CreateTaskCommentCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Content))
-            throw new BadRequestException("Comment content is required");
+            throw new BadRequestException(ErrorCodes.CommentContentRequired);
 
         var task =
             await _unitOfWork
                 .TaskItems.GetQuery()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
@@ -40,7 +40,7 @@ public sealed class CreateTaskCommentCommandHandler : IRequestHandler<CreateTask
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // If private project, check project membership unless Admin/Leader
         if (task.Project.Visibility == ProjectVisibility.Private)
@@ -64,7 +64,7 @@ public sealed class CreateTaskCommentCommandHandler : IRequestHandler<CreateTask
                     );
 
                 if (!isProjectMember)
-                    throw new ForbiddenException("You are not a member of this private project");
+                    throw new ForbiddenException(ErrorCodes.NotPrivateProjectMember);
             }
         }
 

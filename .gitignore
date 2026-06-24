@@ -10,6 +10,7 @@ packages/
 *.nupkg
 **/[Pp]ublish/
 API.txt
+Migrations/
 
 # ASP.NET Core
 appsettings.Development.json

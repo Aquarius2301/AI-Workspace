@@ -24,7 +24,7 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
             .Users.GetQuery()
             .FirstOrDefault(u => u.Email == request.Email);
         if (existingUser is not null)
-            throw new ConflictException("Email already exists");
+            throw new ConflictException(ErrorCodes.EmailAlreadyExists);
 
         var user = new BusinessObject.Entities.User
         {
@@ -43,12 +43,12 @@ public sealed class RegisterCommandHandler : IRequestHandler<RegisterCommand>
     private static void ValidatePassword(string password)
     {
         if (password.Length < 8)
-            throw new BadRequestException("Password must be at least 8 characters long.");
+            throw new BadRequestException(ErrorCodes.PasswordMinLength);
 
         if (!password.Any(char.IsUpper))
-            throw new BadRequestException("Password must contain at least one uppercase letter.");
+            throw new BadRequestException(ErrorCodes.PasswordRequireUpper);
 
         if (!password.Any(c => !char.IsLetterOrDigit(c)))
-            throw new BadRequestException("Password must contain at least one special character.");
+            throw new BadRequestException(ErrorCodes.PasswordRequireSpecial);
     }
 }

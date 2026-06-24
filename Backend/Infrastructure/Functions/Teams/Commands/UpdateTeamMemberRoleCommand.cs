@@ -40,7 +40,7 @@ public sealed class UpdateTeamMemberRoleCommandHandler
                     tm => tm.TeamId == request.TeamId && tm.UserId == request.UserId,
                     cancellationToken
                 )
-            ?? throw new NotFoundException("Member not found in this team");
+            ?? throw new NotFoundException(ErrorCodes.MemberNotFound);
 
         // Parse role
         TeamMemberRole role;
@@ -50,9 +50,7 @@ public sealed class UpdateTeamMemberRoleCommandHandler
         }
         else if (!Enum.TryParse(request.Role, true, out role))
         {
-            throw new BadRequestException(
-                $"Invalid role '{request.Role}'. Valid values: Admin, Leader, Member"
-            );
+            throw new BadRequestException(ErrorCodes.InvalidRoleRequest);
         }
 
         // Ensure at least one admin remains
@@ -66,7 +64,7 @@ public sealed class UpdateTeamMemberRoleCommandHandler
                 );
 
             if (adminCount <= 1)
-                throw new BadRequestException("Team must have at least one admin");
+                throw new BadRequestException(ErrorCodes.TeamMinOneAdmin);
         }
 
         teamMember.Role = role;

@@ -29,7 +29,7 @@ public sealed class CreateDocumentCommandHandler : IRequestHandler<CreateDocumen
             await _unitOfWork
                 .Projects.GetQuery()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check permissions: Admin (any project), Leader (if creatorId matches), or Member with write access
         var teamRole = await _unitOfWork
@@ -54,9 +54,7 @@ public sealed class CreateDocumentCommandHandler : IRequestHandler<CreateDocumen
             // For public projects, any team member can create documents
             if (project.Visibility != ProjectVisibility.Public)
             {
-                throw new ForbiddenException(
-                    "You do not have permission to create documents in this project"
-                );
+                throw new ForbiddenException(ErrorCodes.NoPermissionCreateDocument);
             }
         }
 

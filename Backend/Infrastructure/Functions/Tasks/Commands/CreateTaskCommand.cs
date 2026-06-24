@@ -32,7 +32,7 @@ public sealed class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand
             await _unitOfWork
                 .Projects.GetQuery()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -51,9 +51,7 @@ public sealed class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand
         }
         else
         {
-            throw new ForbiddenException(
-                "You do not have permission to create tasks in this project"
-            );
+            throw new ForbiddenException(ErrorCodes.NoPermissionCreateTask);
         }
 
         // If assignedToId is provided, verify user is a member of the project's team
@@ -67,7 +65,7 @@ public sealed class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand
                 );
 
             if (!isMember)
-                throw new BadRequestException("Assigned user is not a member of this team");
+                throw new BadRequestException(ErrorCodes.AssignedUserNotTeamMember);
         }
 
         var task = new TaskItem

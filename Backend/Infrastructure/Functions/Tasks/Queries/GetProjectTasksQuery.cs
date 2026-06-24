@@ -46,7 +46,7 @@ public sealed class GetProjectTasksQueryHandler
             await _unitOfWork
                 .Projects.ReadOnly()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check user is a team member
         var isTeamMember = await _unitOfWork
@@ -57,7 +57,7 @@ public sealed class GetProjectTasksQueryHandler
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // If private project, check user is project member unless Admin/Leader
         if (project.Visibility == ProjectVisibility.Private)
@@ -82,7 +82,7 @@ public sealed class GetProjectTasksQueryHandler
                     );
 
                 if (!isProjectMember)
-                    throw new ForbiddenException("You are not a member of this private project");
+                    throw new ForbiddenException(ErrorCodes.NotPrivateProjectMember);
             }
         }
 

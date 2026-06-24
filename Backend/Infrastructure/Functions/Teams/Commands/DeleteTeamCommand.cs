@@ -25,7 +25,7 @@ public sealed class DeleteTeamCommandHandler : IRequestHandler<DeleteTeamCommand
             await _unitOfWork
                 .Teams.GetQuery()
                 .FirstOrDefaultAsync(t => t.Id == request.TeamId, cancellationToken)
-            ?? throw new NotFoundException("Team not found");
+            ?? throw new NotFoundException(ErrorCodes.TeamNotFound);
 
         var members = await _unitOfWork
             .TeamMembers.GetQuery()

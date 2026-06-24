@@ -25,18 +25,18 @@ public sealed class UpdateCommentCommandHandler : IRequestHandler<UpdateCommentC
     )
     {
         if (string.IsNullOrWhiteSpace(request.Content))
-            throw new BadRequestException("Comment content is required");
+            throw new BadRequestException(ErrorCodes.CommentContentRequired);
 
         var comment =
             await _unitOfWork
                 .Comments.GetQuery()
                 .FirstOrDefaultAsync(c => c.Id == request.CommentId, cancellationToken)
-            ?? throw new NotFoundException("Comment not found");
+            ?? throw new NotFoundException(ErrorCodes.CommentNotFound);
 
         // Only the creator can update their own comment
         if (comment.CreatorId != request.CurrentUserId)
         {
-            throw new ForbiddenException("You can only update your own comments");
+            throw new ForbiddenException(ErrorCodes.OwnCommentOnly);
         }
 
         comment.Content = request.Content;

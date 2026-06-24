@@ -32,7 +32,7 @@ public sealed class RemoveTeamMemberCommandHandler : IRequestHandler<RemoveTeamM
                     tm => tm.TeamId == request.TeamId && tm.UserId == request.UserId,
                     cancellationToken
                 )
-            ?? throw new NotFoundException("Member not found in this team");
+            ?? throw new NotFoundException(ErrorCodes.MemberNotFound);
 
         // Ensure at least one admin remains
         if (teamMember.Role == TeamMemberRole.Admin)
@@ -45,7 +45,7 @@ public sealed class RemoveTeamMemberCommandHandler : IRequestHandler<RemoveTeamM
                 );
 
             if (adminCount <= 1)
-                throw new BadRequestException("Team must have at least one admin");
+                throw new BadRequestException(ErrorCodes.TeamMinOneAdmin);
         }
 
         // Remove member from all project memberships in this team

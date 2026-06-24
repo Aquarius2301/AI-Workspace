@@ -28,7 +28,7 @@ public sealed class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumen
                 .Documents.GetQuery()
                 .Include(d => d.Project)
                 .FirstOrDefaultAsync(d => d.Id == request.DocumentId, cancellationToken)
-            ?? throw new NotFoundException("Document not found");
+            ?? throw new NotFoundException(ErrorCodes.DocumentNotFound);
 
         // Check permissions: Admin (any project), Leader (if creatorId matches), or Creator
         var teamRole = await _unitOfWork
@@ -45,7 +45,7 @@ public sealed class DeleteDocumentCommandHandler : IRequestHandler<DeleteDocumen
 
         if (!isAdmin && !isLeader && !isCreator)
         {
-            throw new ForbiddenException("You do not have permission to delete this document");
+            throw new ForbiddenException(ErrorCodes.NoPermissionDeleteDocument);
         }
 
         _unitOfWork.Documents.Remove(document);

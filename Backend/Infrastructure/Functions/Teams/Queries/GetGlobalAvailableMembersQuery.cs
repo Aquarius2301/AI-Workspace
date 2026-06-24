@@ -33,7 +33,7 @@ public sealed class GetGlobalAvailableMembersQueryHandler
             );
 
         if (!isAdmin)
-            throw new ForbiddenException("Only admins can view all available members");
+            throw new ForbiddenException(ErrorCodes.AdminOnlyViewMembers);
 
         // Get all users who are not members of any team
         var memberUserIds = await _unitOfWork

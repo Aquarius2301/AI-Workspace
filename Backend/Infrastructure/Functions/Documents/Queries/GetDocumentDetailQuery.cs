@@ -40,7 +40,7 @@ public sealed class GetDocumentDetailQueryHandler
                 .Include(d => d.Project)
                 .Include(d => d.Creator)
                 .FirstOrDefaultAsync(d => d.Id == request.DocumentId, cancellationToken)
-            ?? throw new NotFoundException("Document not found");
+            ?? throw new NotFoundException(ErrorCodes.DocumentNotFound);
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
@@ -51,7 +51,7 @@ public sealed class GetDocumentDetailQueryHandler
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // If private project, check user is project member unless Admin/Leader
         if (document.Project.Visibility == ProjectVisibility.Private)
@@ -79,7 +79,7 @@ public sealed class GetDocumentDetailQueryHandler
                     );
 
                 if (!isProjectMember)
-                    throw new ForbiddenException("You are not a member of this private project");
+                    throw new ForbiddenException(ErrorCodes.NotPrivateProjectMember);
             }
         }
 

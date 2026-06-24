@@ -30,10 +30,10 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
         var user = _unitOfWork.Users.GetQuery().FirstOrDefault(u => u.Email == request.Email);
 
         if (user is null)
-            throw new UnauthorizedException("Invalid email or password");
+            throw new UnauthorizedException(ErrorCodes.InvalidEmailOrPassword);
 
         if (!PasswordHelper.Verify(user.PasswordHash, request.Password))
-            throw new UnauthorizedException("Invalid email or password");
+            throw new UnauthorizedException(ErrorCodes.InvalidEmailOrPassword);
 
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Email, _authSetting);
 

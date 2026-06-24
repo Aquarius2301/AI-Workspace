@@ -24,7 +24,7 @@ public sealed class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand
                 .TaskItems.GetQuery()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -46,7 +46,7 @@ public sealed class DeleteTaskCommandHandler : IRequestHandler<DeleteTaskCommand
         }
         else
         {
-            throw new ForbiddenException("You do not have permission to delete this task");
+            throw new ForbiddenException(ErrorCodes.NoPermissionDeleteTask);
         }
 
         // Remove related comments and attachments

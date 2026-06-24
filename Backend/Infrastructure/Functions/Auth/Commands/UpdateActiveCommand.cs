@@ -22,7 +22,7 @@ public sealed class UpdateActiveCommandHandler : IRequestHandler<UpdateActiveCom
             await _unitOfWork
                 .Users.GetQuery()
                 .FirstOrDefaultAsync(u => u.Id == request.CurrentUserId, cancellationToken)
-            ?? throw new NotFoundException("User not found");
+            ?? throw new NotFoundException(ErrorCodes.UserNotFound);
 
         user.LastActiveAt = DateTime.UtcNow;
 

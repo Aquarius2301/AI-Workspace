@@ -27,7 +27,7 @@ public sealed class RemoveProjectMemberCommandHandler : IRequestHandler<RemovePr
             await _unitOfWork
                 .Projects.GetQuery()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -58,7 +58,7 @@ public sealed class RemoveProjectMemberCommandHandler : IRequestHandler<RemovePr
                     pm => pm.ProjectId == request.ProjectId && pm.UserId == request.UserId,
                     cancellationToken
                 )
-            ?? throw new NotFoundException("Member not found in this project");
+            ?? throw new NotFoundException(ErrorCodes.ProjectMemberNotFound);
 
         _unitOfWork.ProjectMembers.Remove(projectMember);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

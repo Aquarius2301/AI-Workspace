@@ -43,7 +43,7 @@ public sealed class GetTaskDetailQueryHandler
                 .Include(t => t.Project)
                 .Include(t => t.AssignedTo)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
@@ -54,7 +54,7 @@ public sealed class GetTaskDetailQueryHandler
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // If private project, check user is project member unless Admin/Leader
         if (task.Project.Visibility == ProjectVisibility.Private)
@@ -78,7 +78,7 @@ public sealed class GetTaskDetailQueryHandler
                     );
 
                 if (!isProjectMember)
-                    throw new ForbiddenException("You are not a member of this private project");
+                    throw new ForbiddenException(ErrorCodes.NotPrivateProjectMember);
             }
         }
 

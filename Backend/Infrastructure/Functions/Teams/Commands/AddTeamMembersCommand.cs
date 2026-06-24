@@ -34,7 +34,7 @@ public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMember
             .FirstOrDefaultAsync(t => t.Id == request.TeamId, cancellationToken);
 
         if (team is null)
-            throw new NotFoundException("Team not found");
+            throw new NotFoundException(ErrorCodes.TeamNotFound);
 
         foreach (var memberReq in request.Members)
         {
@@ -45,9 +45,7 @@ public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMember
             }
             else if (!Enum.TryParse<TeamMemberRole>(memberReq.Role, true, out role))
             {
-                throw new BadRequestException(
-                    $"Invalid role '{memberReq.Role}'. Valid values: Admin, Leader, Member"
-                );
+                throw new BadRequestException(ErrorCodes.InvalidRoleRequest);
             }
 
             // Check if already a member

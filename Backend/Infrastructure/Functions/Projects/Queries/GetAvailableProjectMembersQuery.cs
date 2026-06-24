@@ -33,7 +33,7 @@ public sealed class GetAvailableProjectMembersQueryHandler
             await _unitOfWork
                 .Projects.ReadOnly()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -52,9 +52,7 @@ public sealed class GetAvailableProjectMembersQueryHandler
         }
         else
         {
-            throw new ForbiddenException(
-                "You do not have permission to view available members for this project"
-            );
+            throw new ForbiddenException(ErrorCodes.NoPermissionViewProjectMembers);
         }
 
         // Get team members who are NOT already in the project

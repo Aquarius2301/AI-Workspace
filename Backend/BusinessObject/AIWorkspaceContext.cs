@@ -35,6 +35,7 @@ public class AIWorkspaceContext : DbContext
             entity.Property(x => x.Email).IsRequired().HasMaxLength(256);
             entity.Property(x => x.AvatarUrl).HasMaxLength(1000);
             entity.Property(x => x.CreatedAt).IsRequired();
+            entity.Property(x => x.Language).IsRequired().HasConversion<string>().HasMaxLength(3);
 
             entity.HasIndex(x => x.Email).IsUnique();
 

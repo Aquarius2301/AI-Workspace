@@ -32,7 +32,7 @@ public sealed class UpdateTeamCommandHandler : IRequestHandler<UpdateTeamCommand
             await _unitOfWork
                 .Teams.GetQuery()
                 .FirstOrDefaultAsync(t => t.Id == request.TeamId, cancellationToken)
-            ?? throw new NotFoundException("Team not found");
+            ?? throw new NotFoundException(ErrorCodes.TeamNotFound);
 
         if (request.Name is not null)
             team.Name = request.Name;

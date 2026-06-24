@@ -27,7 +27,7 @@ public sealed class LeaveTeamCommandHandler : IRequestHandler<LeaveTeamCommand>
             );
 
         if (teamMember is null)
-            throw new BadRequestException("You are not a member of this team");
+            throw new BadRequestException(ErrorCodes.NotTeamMember);
 
         // Ensure at least one admin remains if leaving admin
         if (teamMember.Role == TeamMemberRole.Admin)
@@ -40,9 +40,7 @@ public sealed class LeaveTeamCommandHandler : IRequestHandler<LeaveTeamCommand>
                 );
 
             if (adminCount <= 1)
-                throw new BadRequestException(
-                    "Team must have at least one admin. Transfer admin role before leaving."
-                );
+                throw new BadRequestException(ErrorCodes.TeamMinOneAdminTransferRole);
         }
 
         // Remove user from all project memberships in this team

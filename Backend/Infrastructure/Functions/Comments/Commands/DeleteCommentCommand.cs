@@ -27,7 +27,7 @@ public sealed class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentC
             await _unitOfWork
                 .Comments.GetQuery()
                 .FirstOrDefaultAsync(c => c.Id == request.CommentId, cancellationToken)
-            ?? throw new NotFoundException("Comment not found");
+            ?? throw new NotFoundException(ErrorCodes.CommentNotFound);
 
         // Permission: Admin, Leader (own project), or Comment creator
         if (comment.CreatorId == request.CurrentUserId)
@@ -46,7 +46,7 @@ public sealed class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentC
                     await _unitOfWork
                         .TaskItems.GetQuery()
                         .FirstOrDefaultAsync(t => t.Id == comment.ReferenceId, cancellationToken)
-                    ?? throw new NotFoundException("Referenced task not found");
+                    ?? throw new NotFoundException(ErrorCodes.ReferencedTaskNotFound);
                 projectId = task.ProjectId;
             }
             else // Document
@@ -55,7 +55,7 @@ public sealed class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentC
                     await _unitOfWork
                         .Documents.GetQuery()
                         .FirstOrDefaultAsync(d => d.Id == comment.ReferenceId, cancellationToken)
-                    ?? throw new NotFoundException("Referenced document not found");
+                    ?? throw new NotFoundException(ErrorCodes.ReferencedDocumentNotFound);
                 projectId = document.ProjectId;
             }
 
@@ -63,7 +63,7 @@ public sealed class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentC
                 await _unitOfWork
                     .Projects.GetQuery()
                     .FirstOrDefaultAsync(p => p.Id == projectId, cancellationToken)
-                ?? throw new NotFoundException("Project not found");
+                ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
             var teamRole = await _unitOfWork
                 .TeamMembers.GetQuery()
@@ -77,7 +77,7 @@ public sealed class DeleteCommentCommandHandler : IRequestHandler<DeleteCommentC
 
             if (!isAdmin && !isLeader)
             {
-                throw new ForbiddenException("You do not have permission to delete this comment");
+                throw new ForbiddenException(ErrorCodes.NoPermissionDeleteComment);
             }
         }
 

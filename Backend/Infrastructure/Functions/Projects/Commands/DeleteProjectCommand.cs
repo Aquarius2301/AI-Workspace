@@ -22,36 +22,25 @@ public sealed class DeleteProjectCommandHandler : IRequestHandler<DeleteProjectC
         var project =
             await _unitOfWork
                 .Projects.GetQuery()
+                .Include(p => p.ProjectMembers)
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
-        // Check permissions: Admin (any project) OR Leader (if creatorId matches)
+        // Check permissions: Admin in team OR (Leader/Admin of project creator)
         var teamRole = await _unitOfWork
             .TeamMembers.GetQuery()
             .Where(tm => tm.TeamId == project.TeamId && tm.UserId == request.CurrentUserId)
             .Select(tm => tm.Role)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (teamRole == TeamMemberRole.Admin)
-        {
-            // Admin can delete any project in their team
-        }
-        else if (teamRole == TeamMemberRole.Leader && project.CreatorId == request.CurrentUserId)
-        {
-            // Leader can only delete projects they created
-        }
-        else
-        {
-            throw new ForbiddenException("You do not have permission to delete this project");
-        }
+        if (teamRole != TeamMemberRole.Admin && teamRole != TeamMemberRole.Leader)
+            throw new ForbiddenException(ErrorCodes.NoPermissionDeleteProject);
 
-        // Remove all project members first
-        var projectMembers = await _unitOfWork
-            .ProjectMembers.GetQuery()
-            .Where(pm => pm.ProjectId == request.ProjectId)
-            .ToListAsync(cancellationToken);
+        if (teamRole == TeamMemberRole.Leader && project.CreatorId != request.CurrentUserId)
+            throw new ForbiddenException(ErrorCodes.NoPermissionDeleteProject);
 
-        _unitOfWork.ProjectMembers.RemoveRange(projectMembers);
+        if (project.ProjectMembers.Count > 0)
+            _unitOfWork.ProjectMembers.RemoveRange(project.ProjectMembers);
 
         _unitOfWork.Projects.Remove(project);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

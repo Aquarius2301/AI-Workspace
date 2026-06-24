@@ -25,7 +25,7 @@ public sealed class AddProjectMemberCommandHandler : IRequestHandler<AddProjectM
             await _unitOfWork
                 .Projects.GetQuery()
                 .FirstOrDefaultAsync(p => p.Id == request.ProjectId, cancellationToken)
-            ?? throw new NotFoundException("Project not found");
+            ?? throw new NotFoundException(ErrorCodes.ProjectNotFound);
 
         // Check permissions: Admin (any project) OR Leader (if creatorId matches)
         var teamRole = await _unitOfWork
@@ -44,9 +44,7 @@ public sealed class AddProjectMemberCommandHandler : IRequestHandler<AddProjectM
         }
         else
         {
-            throw new ForbiddenException(
-                "You do not have permission to add members to this project"
-            );
+            throw new ForbiddenException(ErrorCodes.NoPermissionAddProjectMember);
         }
 
         // Verify the target user is a member of the team
@@ -58,7 +56,7 @@ public sealed class AddProjectMemberCommandHandler : IRequestHandler<AddProjectM
             );
 
         if (!isTeamMember)
-            throw new BadRequestException("User is not a member of this team");
+            throw new BadRequestException(ErrorCodes.UserNotTeamMember);
 
         // Check if already a project member
         var isAlreadyMember = await _unitOfWork
@@ -69,7 +67,7 @@ public sealed class AddProjectMemberCommandHandler : IRequestHandler<AddProjectM
             );
 
         if (isAlreadyMember)
-            throw new BadRequestException("User is already a member of this project");
+            throw new BadRequestException(ErrorCodes.UserAlreadyProjectMember);
 
         var projectMember = new ProjectMember
         {

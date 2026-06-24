@@ -35,7 +35,7 @@ public sealed class RefreshCommandHandler : IRequestHandler<RefreshCommand, Refr
             .FirstOrDefault(rt => rt.Token == request.RefreshToken);
 
         if (storedToken is null || storedToken.ExpiresAt < DateTime.UtcNow)
-            throw new UnauthorizedException("Invalid or expired refresh token");
+            throw new UnauthorizedException(ErrorCodes.InvalidRefreshToken);
 
         // Validate device info if present on both sides
         if (
@@ -43,11 +43,11 @@ public sealed class RefreshCommandHandler : IRequestHandler<RefreshCommand, Refr
             && request.DeviceInfo != null
             && storedToken.DeviceInfo != request.DeviceInfo
         )
-            throw new UnauthorizedException("Invalid or expired refresh token");
+            throw new UnauthorizedException(ErrorCodes.InvalidRefreshToken);
 
         var user =
             _unitOfWork.Users.GetQuery().FirstOrDefault(u => u.Id == storedToken.UserId)
-            ?? throw new UnauthorizedException("User not found");
+            ?? throw new UnauthorizedException(ErrorCodes.UserNotFound);
 
         // Generate new tokens
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Email, _authSetting);

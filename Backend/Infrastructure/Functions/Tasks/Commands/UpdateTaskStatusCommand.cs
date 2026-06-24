@@ -25,7 +25,7 @@ public sealed class UpdateTaskStatusCommandHandler : IRequestHandler<UpdateTaskS
                 .TaskItems.GetQuery()
                 .Include(t => t.Project)
                 .FirstOrDefaultAsync(t => t.Id == request.TaskId, cancellationToken)
-            ?? throw new NotFoundException("Task not found");
+            ?? throw new NotFoundException(ErrorCodes.TaskNotFound);
 
         // Check permissions:
         // Admin (any project) OR Leader (if they created the project) OR Assignee (the user assigned to this task)
@@ -42,9 +42,7 @@ public sealed class UpdateTaskStatusCommandHandler : IRequestHandler<UpdateTaskS
 
         if (!isAdmin && !isLeaderOfProject && !isAssignee)
         {
-            throw new ForbiddenException(
-                "You do not have permission to change the status of this task"
-            );
+            throw new ForbiddenException(ErrorCodes.NoPermissionChangeTaskStatus);
         }
 
         task.Status = request.Status;

@@ -1,3 +1,5 @@
+using BusinessObject.Enums;
+
 namespace BusinessObject.Entities;
 
 public class User
@@ -26,6 +28,11 @@ public class User
     /// Gets or sets the optional avatar URL of the user.
     /// </summary>
     public string? AvatarUrl { get; set; }
+
+    /// <summary>
+    /// Gets or sets the language to display
+    /// </summary>
+    public LanguageDisplay Language { get; set; } = LanguageDisplay.Vi;
 
     /// <summary>
     /// Gets or sets the date and time when the user was created.

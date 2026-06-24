@@ -44,7 +44,7 @@ public sealed class GetTeamProjectsQueryHandler
                 .TeamMembers.ReadOnly()
                 .Where(tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId)
                 .FirstOrDefaultAsync(cancellationToken)
-            ?? throw new ForbiddenException("You are not a member of this team");
+            ?? throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // Get projects: public projects + private projects where user is a member;
         // Admins can see all projects in the team

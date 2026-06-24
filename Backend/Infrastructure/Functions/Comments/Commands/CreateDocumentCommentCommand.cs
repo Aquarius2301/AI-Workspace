@@ -29,14 +29,14 @@ public sealed class CreateDocumentCommentCommandHandler
     )
     {
         if (string.IsNullOrWhiteSpace(request.Content))
-            throw new BadRequestException("Comment content is required");
+            throw new BadRequestException(ErrorCodes.CommentContentRequired);
 
         var document =
             await _unitOfWork
                 .Documents.GetQuery()
                 .Include(d => d.Project)
                 .FirstOrDefaultAsync(d => d.Id == request.DocumentId, cancellationToken)
-            ?? throw new NotFoundException("Document not found");
+            ?? throw new NotFoundException(ErrorCodes.DocumentNotFound);
 
         // Check user is a member of the project's team
         var isTeamMember = await _unitOfWork
@@ -47,7 +47,7 @@ public sealed class CreateDocumentCommentCommandHandler
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // If private project, check project membership unless Admin/Leader
         if (document.Project.Visibility == ProjectVisibility.Private)
@@ -75,7 +75,7 @@ public sealed class CreateDocumentCommentCommandHandler
                     );
 
                 if (!isProjectMember)
-                    throw new ForbiddenException("You are not a member of this private project");
+                    throw new ForbiddenException(ErrorCodes.NotPrivateProjectMember);
             }
         }
 

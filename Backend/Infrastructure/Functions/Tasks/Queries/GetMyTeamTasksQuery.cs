@@ -44,7 +44,7 @@ public sealed class GetMyTeamTasksQueryHandler
             );
 
         if (!isTeamMember)
-            throw new ForbiddenException("You are not a member of this team");
+            throw new ForbiddenException(ErrorCodes.NotTeamMember);
 
         // Get all tasks assigned to the current user within projects belonging to this team
         var teamProjectIds = _unitOfWork
