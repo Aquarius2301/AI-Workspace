@@ -55,11 +55,9 @@ public class TeamController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new CreateTeamCommand(userId, request.Name, request.Description)
-        );
+        await _mediator.Send(new CreateTeamCommand(userId, request.Name, request.Description));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     [HttpPut("{id:guid}")]
@@ -67,11 +65,9 @@ public class TeamController : ControllerBase
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new UpdateTeamCommand(userId, id, request.Name, request.Description)
-        );
+        await _mediator.Send(new UpdateTeamCommand(userId, id, request.Name, request.Description));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     [HttpDelete("{id:guid}")]
@@ -118,9 +114,9 @@ public class TeamController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(new AddTeamMembersCommand(userId, id, request.Members));
+        await _mediator.Send(new AddTeamMembersCommand(userId, id, request.Members));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     [HttpPut("{id:guid}/members/{memberId:guid}")]
@@ -132,11 +128,9 @@ public class TeamController : ControllerBase
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new UpdateTeamMemberRoleCommand(userId, id, memberId, request.Role)
-        );
+        await _mediator.Send(new UpdateTeamMemberRoleCommand(userId, id, memberId, request.Role));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     [HttpDelete("{id:guid}/members/{memberId:guid}")]

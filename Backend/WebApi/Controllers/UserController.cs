@@ -35,10 +35,8 @@ public class UserController : ControllerBase
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new UpdateProfileCommand(userId, request.Name, request.AvatarUrl)
-        );
-        return Ok(result);
+        await _mediator.Send(new UpdateProfileCommand(userId, request.Name, request.AvatarUrl));
+        return Ok("Success");
     }
 
     [HttpPatch("{id:guid}/password")]

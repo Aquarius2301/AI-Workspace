@@ -52,11 +52,9 @@ public class CommentController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new CreateTaskCommentCommand(userId, taskId, request.Content)
-        );
+        await _mediator.Send(new CreateTaskCommentCommand(userId, taskId, request.Content));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>
@@ -88,11 +86,9 @@ public class CommentController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new CreateDocumentCommentCommand(userId, documentId, request.Content)
-        );
+        await _mediator.Send(new CreateDocumentCommentCommand(userId, documentId, request.Content));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>
@@ -110,11 +106,9 @@ public class CommentController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
-            new UpdateCommentCommand(userId, commentId, request.Content)
-        );
+        await _mediator.Send(new UpdateCommentCommand(userId, commentId, request.Content));
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>

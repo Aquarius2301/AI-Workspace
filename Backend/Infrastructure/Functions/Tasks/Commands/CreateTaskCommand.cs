@@ -15,12 +15,9 @@ public sealed record CreateTaskCommand(
     Guid? AssignedToId,
     int Priority,
     DateTime? DueDate
-) : IRequest<TaskCreatedResponse>;
+) : IRequest;
 
-public sealed record TaskCreatedResponse(Guid Id);
-
-public sealed class CreateTaskCommandHandler
-    : IRequestHandler<CreateTaskCommand, TaskCreatedResponse>
+public sealed class CreateTaskCommandHandler : IRequestHandler<CreateTaskCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -29,10 +26,7 @@ public sealed class CreateTaskCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TaskCreatedResponse> Handle(
-        CreateTaskCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
         var project =
             await _unitOfWork
@@ -91,7 +85,5 @@ public sealed class CreateTaskCommandHandler
 
         _unitOfWork.TaskItems.Add(task);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new TaskCreatedResponse(task.Id);
     }
 }

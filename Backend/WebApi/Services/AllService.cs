@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+
 namespace WebApi.Services;
 
 public static class AllService
@@ -7,6 +9,7 @@ public static class AllService
         IConfiguration configuration
     )
     {
+        RateLimitService.AddRateLimit(services);
         AuthService.AddJwtAuth(services, configuration);
         DependencyInjectionService.AddDIService(services);
         DbService.AddDatabase(services, configuration);

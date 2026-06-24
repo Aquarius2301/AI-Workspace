@@ -18,11 +18,14 @@ export const userApi = {
     });
   },
 
-  updateProfile: (data: UpdateProfileRequest): Promise<UserItem> => {
+  updateProfile: (data: UpdateProfileRequest): Promise<string> => {
     return axiosClient.put(`${baseUrl}/users`, data);
   },
 
-  changePassword: (id: string, data: ChangePasswordRequest): Promise<void> => {
+  changePassword: (
+    id: string,
+    data: ChangePasswordRequest,
+  ): Promise<string> => {
     return axiosClient.patch(`${baseUrl}/${id}/password`, data);
   },
 };

@@ -1,31 +1,26 @@
-import type {
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  UserResponse,
-} from "@/types";
+import type { LoginRequest, RegisterRequest, UserResponse } from "@/types";
 import axiosClient from "./config.api";
 
 const baseUrl = "/api/auth";
 
 export const authApi = {
-  login: (data: LoginRequest): Promise<AuthResponse> => {
+  login: (data: LoginRequest): Promise<string> => {
     return axiosClient.post(`${baseUrl}/login`, data);
   },
 
-  register: (data: RegisterRequest): Promise<AuthResponse> => {
+  register: (data: RegisterRequest): Promise<string> => {
     return axiosClient.post(`${baseUrl}/register`, data);
   },
 
-  refresh: (): Promise<AuthResponse> => {
+  refresh: (): Promise<string> => {
     return axiosClient.post(`${baseUrl}/refresh`);
   },
 
-  logout: (): Promise<void> => {
+  logout: (): Promise<string> => {
     return axiosClient.post(`${baseUrl}/logout`);
   },
 
-  revokeAllRefresh: (): Promise<void> => {
+  revokeAllRefresh: (): Promise<string> => {
     return axiosClient.post(`${baseUrl}/revoke-all-refresh`);
   },
 
@@ -33,7 +28,7 @@ export const authApi = {
     return axiosClient.get(`${baseUrl}/me`);
   },
 
-  updateActive: (): Promise<void> => {
+  updateActive: (): Promise<string> => {
     return axiosClient.post(`${baseUrl}/me/active`);
   },
 };

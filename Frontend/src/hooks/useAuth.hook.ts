@@ -22,7 +22,9 @@ export const useAuth = () => {
     mutationFn: authApi.logout,
     onSuccess: () => {
       queryClient.clear();
-      localStorage.clear(); //remove all local storage items related to auth
+      // Chỉ xóa các key liên quan đến auth, không xóa toàn bộ localStorage
+      localStorage.removeItem("last-active-timestamp");
+      localStorage.removeItem("axios-client-log");
     },
   });
 

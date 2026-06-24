@@ -6,13 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Functions.Users;
 
-public sealed record UpdateProfileCommand(Guid UserId, string? Name, string? AvatarUrl)
-    : IRequest<UpdateProfileResult>;
+public sealed record UpdateProfileCommand(Guid UserId, string? Name, string? AvatarUrl) : IRequest;
 
-public sealed record UpdateProfileResult(string Name, string AvatarUrl);
-
-public sealed class UpdateProfileCommandHandler
-    : IRequestHandler<UpdateProfileCommand, UpdateProfileResult>
+public sealed class UpdateProfileCommandHandler : IRequestHandler<UpdateProfileCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -21,10 +17,7 @@ public sealed class UpdateProfileCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<UpdateProfileResult> Handle(
-        UpdateProfileCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(UpdateProfileCommand request, CancellationToken cancellationToken)
     {
         var user =
             await _unitOfWork
@@ -39,7 +32,5 @@ public sealed class UpdateProfileCommandHandler
             user.AvatarUrl = request.AvatarUrl;
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new UpdateProfileResult(user.Name, user.AvatarUrl ?? "");
     }
 }

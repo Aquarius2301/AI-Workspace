@@ -13,13 +13,12 @@ public sealed record AddTeamMembersCommand(
     Guid CurrentUserId,
     Guid TeamId,
     List<AddTeamMemberRequest> Members
-) : IRequest<List<TeamMemberItem>>, IRequireTeamRole
+) : IRequest, IRequireTeamRole
 {
     TeamMemberRole[] IRequireTeamRole.AllowedRoles => [TeamMemberRole.Admin];
 }
 
-public sealed class AddTeamMembersCommandHandler
-    : IRequestHandler<AddTeamMembersCommand, List<TeamMemberItem>>
+public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMembersCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -28,10 +27,7 @@ public sealed class AddTeamMembersCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<List<TeamMemberItem>> Handle(
-        AddTeamMembersCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(AddTeamMembersCommand request, CancellationToken cancellationToken)
     {
         var team = await _unitOfWork
             .Teams.GetQuery()
@@ -39,8 +35,6 @@ public sealed class AddTeamMembersCommandHandler
 
         if (team is null)
             throw new NotFoundException("Team not found");
-
-        var result = new List<TeamMemberItem>();
 
         foreach (var memberReq in request.Members)
         {
@@ -84,20 +78,8 @@ public sealed class AddTeamMembersCommandHandler
             };
 
             _unitOfWork.TeamMembers.Add(teamMember);
-            result.Add(
-                new TeamMemberItem(
-                    memberReq.UserId,
-                    user.Name,
-                    role.ToString(),
-                    teamMember.JoinedAt,
-                    user.Email,
-                    user.LastActiveAt
-                )
-            );
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return result;
     }
 }

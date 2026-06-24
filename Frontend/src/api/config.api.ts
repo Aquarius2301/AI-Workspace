@@ -8,15 +8,15 @@ import axios, {
  * Base URL của backend API.
  * Có thể ghi đè bằng biến môi trường VITE_API_BASE_URL.
  */
+// Cảnh báo nếu dùng HTTP trong production (cookie Secure=true sẽ không hoạt động với HTTP)
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:8080";
 
-/**
- * File log giả lập ở phía trình duyệt.
- * Trình duyệt không thể ghi trực tiếp ra file vật lý, nên ta lưu log vào localStorage
- * để có thể xem lại/đồng bộ sau này nếu cần.
- */
-const AXIOS_LOG_STORAGE_KEY = "axios-client-log";
+if (!import.meta.env.DEV && !API_BASE_URL.startsWith("https://")) {
+  console.warn(
+    "[SECURITY] API_BASE_URL is not HTTPS. Cookies with Secure=true will be rejected by the browser.",
+  );
+}
 
 /**
  * Key lưu thời gian active gần nhất.
@@ -46,33 +46,18 @@ interface RefreshSubscriber {
 let refreshSubscribers: RefreshSubscriber[] = [];
 
 /**
- * Thêm một dòng log vào "file log" cục bộ.
+ * Log request ra console (chỉ ở dev mode, KHÔNG log request body để tránh leak password).
  */
-function appendToLogFile(message: string): void {
-  try {
-    const currentLogs = localStorage.getItem(AXIOS_LOG_STORAGE_KEY) ?? "";
-    const nextLogs = currentLogs ? `${currentLogs}\n${message}` : message;
-    localStorage.setItem(AXIOS_LOG_STORAGE_KEY, nextLogs);
-  } catch {
-    // Nếu localStorage không khả dụng thì bỏ qua, console log vẫn hoạt động.
+function writeRequestLog(url: string): void {
+  if (import.meta.env.DEV) {
+    console.log(`[API] Request: ${url}`);
   }
 }
 
-/**
- * Log request/response ra console và lưu vào log cục bộ.
- */
-function writeRequestLog(url: string, body: unknown): void {
-  console.log(`Request: ${url}`);
-  appendToLogFile(
-    `Request ${url}\nBody:\n${JSON.stringify(body ?? {}, null, 2)}\n--------------------------`,
-  );
-}
-
-function writeResponseLog(url: string, status: number, body: unknown): void {
-  console.log(`Response: ${status}`);
-  appendToLogFile(
-    `Response ${url}\nStatus: ${status}\nBody:\n${JSON.stringify(body ?? {}, null, 2)}\n--------------------------`,
-  );
+function writeResponseLog(url: string, status: number): void {
+  if (import.meta.env.DEV) {
+    console.log(`[API] Response: ${url} → ${status}`);
+  }
 }
 
 /**
@@ -151,7 +136,7 @@ const axiosClient: AxiosInstance = axios.create({
 axiosClient.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const url = `${config.url ?? ""}`;
-    writeRequestLog(url, config.data);
+    writeRequestLog(url);
 
     // Chỉ áp dụng cho tất cả api ngoài login
     if (!url.includes("/api/auth/login") && shouldUpdateActive()) {
@@ -177,7 +162,7 @@ axiosClient.interceptors.request.use(
 axiosClient.interceptors.response.use(
   (response) => {
     const url = `${response.config.baseURL ?? ""}${response.config.url ?? ""}`;
-    writeResponseLog(url, response.status, response.data);
+    writeResponseLog(url, response.status);
     return response.data;
   },
   async (error: AxiosError) => {
@@ -187,11 +172,10 @@ axiosClient.interceptors.response.use(
     const status = error.response?.status;
     const url = `${originalRequest?.baseURL ?? ""}${originalRequest?.url ?? ""}`;
 
-    // Log lỗi response ra console và file log cục bộ.
-    console.log(`Response: ${status ?? "UNKNOWN"}`);
-    appendToLogFile(
-      `Response ${url}\nStatus: ${status ?? "UNKNOWN"}\nBody:\n${JSON.stringify(error.response?.data ?? {}, null, 2)}\n--------------------------`,
-    );
+    // Log lỗi response ra console (chỉ dev mode, không log body)
+    if (import.meta.env.DEV) {
+      console.log(`[API] Response Error: ${url} → ${status ?? "UNKNOWN"}`);
+    }
 
     // Nếu không phải 401 hoặc là endpoint auth thì trả lỗi luôn.
     if (

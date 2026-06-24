@@ -34,15 +34,15 @@ export const teamApi = {
     return axiosClient.get(`${baseUrl}/${id}`);
   },
 
-  create: (data: CreateTeamRequest): Promise<TeamDetail> => {
+  create: (data: CreateTeamRequest): Promise<string> => {
     return axiosClient.post(`${baseUrl}`, data);
   },
 
-  update: (id: string, data: UpdateTeamRequest): Promise<TeamDetail> => {
+  update: (id: string, data: UpdateTeamRequest): Promise<string> => {
     return axiosClient.put(`${baseUrl}/${id}`, data);
   },
 
-  delete: (id: string): Promise<void> => {
+  delete: (id: string): Promise<string> => {
     return axiosClient.delete(`${baseUrl}/${id}`);
   },
 
@@ -78,7 +78,7 @@ export const teamApi = {
     return axiosClient.put(`${baseUrl}/${id}/members/${memberId}`, data);
   },
 
-  removeMember: (id: string, memberId: string): Promise<void> => {
+  removeMember: (id: string, memberId: string): Promise<string> => {
     return axiosClient.delete(`${baseUrl}/${id}/members/${memberId}`);
   },
 
@@ -101,7 +101,7 @@ export const teamApi = {
     });
   },
 
-  leave: (id: string): Promise<void> => {
+  leave: (id: string): Promise<string> => {
     return axiosClient.post(`${baseUrl}/${id}/leave`);
   },
 };

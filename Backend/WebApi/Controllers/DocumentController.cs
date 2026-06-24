@@ -74,11 +74,11 @@ public class DocumentController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
+        await _mediator.Send(
             new CreateDocumentCommand(userId, projectId, request.Title, request.Content)
         );
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>
@@ -93,11 +93,11 @@ public class DocumentController : ControllerBase
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
+        await _mediator.Send(
             new UpdateDocumentCommand(userId, documentId, request.Title, request.Content)
         );
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>

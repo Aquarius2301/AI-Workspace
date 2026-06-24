@@ -12,17 +12,14 @@ public sealed record CreateProjectCommand(
     string Name,
     string? Description,
     ProjectVisibility Visibility
-) : IRequest<ProjectResponse>, IRequireTeamRole
+) : IRequest, IRequireTeamRole
 {
     TeamMemberRole[] IRequireTeamRole.AllowedRoles => [TeamMemberRole.Admin, TeamMemberRole.Leader];
     Guid IRequireTeamRole.TeamId => TeamId;
     Guid IRequireTeamRole.CurrentUserId => CurrentUserId;
 }
 
-public sealed record ProjectResponse(Guid Id, string Name, string? Description, string Visibility);
-
-public sealed class CreateProjectCommandHandler
-    : IRequestHandler<CreateProjectCommand, ProjectResponse>
+public sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -31,10 +28,7 @@ public sealed class CreateProjectCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ProjectResponse> Handle(
-        CreateProjectCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(CreateProjectCommand request, CancellationToken cancellationToken)
     {
         var project = new Project
         {
@@ -62,12 +56,5 @@ public sealed class CreateProjectCommandHandler
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new ProjectResponse(
-            project.Id,
-            project.Name,
-            project.Description,
-            project.Visibility.ToString()
-        );
     }
 }

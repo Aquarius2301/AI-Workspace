@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using BusinessObject.Entities;
 using DataAccess.UnitOfWork;
 using Infrastructure.Exceptions;
@@ -36,7 +37,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
 
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Email, _authSetting);
 
-        var refreshTokenValue = Guid.NewGuid().ToString();
+        var refreshTokenValue = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
         var refreshToken = new RefreshToken
         {
             Id = Guid.NewGuid(),

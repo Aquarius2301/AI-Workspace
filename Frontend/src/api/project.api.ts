@@ -32,29 +32,23 @@ export const projectApi = {
     return axiosClient.get(`${baseUrl}/team/${teamId}/all`);
   },
 
-  create: (
-    teamId: string,
-    data: CreateProjectRequest,
-  ): Promise<TeamProjectItem> => {
+  create: (teamId: string, data: CreateProjectRequest): Promise<string> => {
     return axiosClient.post(`${baseUrl}/team/${teamId}`, data);
   },
 
-  update: (
-    projectId: string,
-    data: UpdateProjectRequest,
-  ): Promise<TeamProjectItem> => {
+  update: (projectId: string, data: UpdateProjectRequest): Promise<string> => {
     return axiosClient.put(`${baseUrl}/${projectId}`, data);
   },
 
-  delete: (projectId: string): Promise<void> => {
+  delete: (projectId: string): Promise<string> => {
     return axiosClient.delete(`${baseUrl}/${projectId}`);
   },
 
-  addMember: (projectId: string, data: AddMemberRequest): Promise<void> => {
+  addMember: (projectId: string, data: AddMemberRequest): Promise<string> => {
     return axiosClient.post(`${baseUrl}/${projectId}/member`, data);
   },
 
-  removeMember: (projectId: string, userId: string): Promise<void> => {
+  removeMember: (projectId: string, userId: string): Promise<string> => {
     return axiosClient.delete(`${baseUrl}/${projectId}/member/${userId}`);
   },
 

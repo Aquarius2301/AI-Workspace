@@ -8,12 +8,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.Functions.Comments.Commands;
 
 public sealed record CreateTaskCommentCommand(Guid CurrentUserId, Guid TaskId, string Content)
-    : IRequest<CommentCreatedResponse>;
+    : IRequest;
 
-public sealed record CommentCreatedResponse(Guid Id);
-
-public sealed class CreateTaskCommentCommandHandler
-    : IRequestHandler<CreateTaskCommentCommand, CommentCreatedResponse>
+public sealed class CreateTaskCommentCommandHandler : IRequestHandler<CreateTaskCommentCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -22,10 +19,7 @@ public sealed class CreateTaskCommentCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<CommentCreatedResponse> Handle(
-        CreateTaskCommentCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(CreateTaskCommentCommand request, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(request.Content))
             throw new BadRequestException("Comment content is required");
@@ -86,7 +80,5 @@ public sealed class CreateTaskCommentCommandHandler
 
         _unitOfWork.Comments.Add(comment);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new CommentCreatedResponse(comment.Id);
     }
 }

@@ -11,10 +11,10 @@ public sealed record CreateDocumentCommentCommand(
     Guid CurrentUserId,
     Guid DocumentId,
     string Content
-) : IRequest<CommentCreatedResponse>;
+) : IRequest;
 
 public sealed class CreateDocumentCommentCommandHandler
-    : IRequestHandler<CreateDocumentCommentCommand, CommentCreatedResponse>
+    : IRequestHandler<CreateDocumentCommentCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -23,7 +23,7 @@ public sealed class CreateDocumentCommentCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<CommentCreatedResponse> Handle(
+    public async Task Handle(
         CreateDocumentCommentCommand request,
         CancellationToken cancellationToken
     )
@@ -91,7 +91,5 @@ public sealed class CreateDocumentCommentCommandHandler
 
         _unitOfWork.Comments.Add(comment);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new CommentCreatedResponse(comment.Id);
     }
 }

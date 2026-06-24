@@ -4,6 +4,7 @@ using Infrastructure.Settings;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using WebApi.Helpers;
 
@@ -23,12 +24,13 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("login")]
+    [EnableRateLimiting("LoginPolicy")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Password))
             throw new BadRequestException("EmailPasswordRequired");
 
-        var deviceInfo = HttpContext.Request.Headers["User-Agent"].ToString();
+        var deviceInfo = HttpContext.Request.Headers.UserAgent.ToString();
 
         var result = await _mediator.Send(
             new LoginCommand(request.Email, request.Password, deviceInfo)
@@ -38,13 +40,13 @@ public class AuthController : ControllerBase
             HttpContext.Response,
             "access_token",
             result.AccessToken,
-            _authSetting.AccessTokenMinutes / 1440.0 // Convert minutes to days
+            TimeSpan.FromMinutes(_authSetting.AccessTokenMinutes).TotalDays
         );
         CookieHelper.AddCookie(
             HttpContext.Response,
             "refresh_token",
             result.RefreshToken,
-            _authSetting.RefreshTokenDays
+            TimeSpan.FromDays(_authSetting.RefreshTokenDays).TotalDays
         );
 
         return Ok("Success");
@@ -60,19 +62,9 @@ public class AuthController : ControllerBase
         if (string.IsNullOrWhiteSpace(request.Password))
             throw new BadRequestException("Password is required");
 
-        var result = await _mediator.Send(
-            new RegisterCommand(request.Name, request.Email, request.Password)
-        );
+        await _mediator.Send(new RegisterCommand(request.Name, request.Email, request.Password));
 
-        return Ok(
-            new
-            {
-                result.Name,
-                result.Email,
-                result.AvatarUrl,
-                result.CreatedAt,
-            }
-        );
+        return Ok("Success");
     }
 
     [HttpPost("refresh")]
@@ -91,13 +83,13 @@ public class AuthController : ControllerBase
             HttpContext.Response,
             "access_token",
             result.AccessToken,
-            _authSetting.AccessTokenMinutes / 1440.0 // Convert minutes to days
+            TimeSpan.FromMinutes(_authSetting.AccessTokenMinutes).TotalDays
         );
         CookieHelper.AddCookie(
             HttpContext.Response,
             "refresh_token",
             result.RefreshToken,
-            _authSetting.RefreshTokenDays
+            TimeSpan.FromDays(_authSetting.RefreshTokenDays).TotalDays
         );
 
         return Ok("Success");

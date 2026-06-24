@@ -12,12 +12,9 @@ public sealed record CreateDocumentCommand(
     Guid ProjectId,
     string Title,
     string? Content
-) : IRequest<DocumentCreatedResponse>;
+) : IRequest;
 
-public sealed record DocumentCreatedResponse(Guid Id);
-
-public sealed class CreateDocumentCommandHandler
-    : IRequestHandler<CreateDocumentCommand, DocumentCreatedResponse>
+public sealed class CreateDocumentCommandHandler : IRequestHandler<CreateDocumentCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -26,10 +23,7 @@ public sealed class CreateDocumentCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<DocumentCreatedResponse> Handle(
-        CreateDocumentCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(CreateDocumentCommand request, CancellationToken cancellationToken)
     {
         var project =
             await _unitOfWork
@@ -78,7 +72,5 @@ public sealed class CreateDocumentCommandHandler
 
         _unitOfWork.Documents.Add(document);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new DocumentCreatedResponse(document.Id);
     }
 }

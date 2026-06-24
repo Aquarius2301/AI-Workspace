@@ -103,7 +103,7 @@ public class TaskController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        var result = await _mediator.Send(
+        await _mediator.Send(
             new CreateTaskCommand(
                 userId,
                 projectId,
@@ -115,7 +115,7 @@ public class TaskController : ControllerBase
             )
         );
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>

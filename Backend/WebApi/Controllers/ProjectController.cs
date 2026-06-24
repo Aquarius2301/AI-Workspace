@@ -91,11 +91,11 @@ public class ProjectController : ControllerBase
                 ? ProjectVisibility.Public
                 : ProjectVisibility.Private;
 
-        var result = await _mediator.Send(
+        await _mediator.Send(
             new CreateProjectCommand(userId, teamId, request.Name, request.Description, visibility)
         );
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>
@@ -113,7 +113,7 @@ public class ProjectController : ControllerBase
             ? (request.IsPublic.Value ? ProjectVisibility.Public : ProjectVisibility.Private)
             : null;
 
-        var result = await _mediator.Send(
+        await _mediator.Send(
             new UpdateProjectCommand(
                 userId,
                 projectId,
@@ -123,7 +123,7 @@ public class ProjectController : ControllerBase
             )
         );
 
-        return Ok(result);
+        return Ok("Success");
     }
 
     /// <summary>

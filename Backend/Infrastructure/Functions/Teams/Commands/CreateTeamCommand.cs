@@ -6,9 +6,9 @@ using MediatR;
 namespace Infrastructure.Functions.Teams;
 
 public sealed record CreateTeamCommand(Guid CurrentUserId, string Name, string? Description)
-    : IRequest<TeamDetail>;
+    : IRequest;
 
-public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, TeamDetail>
+public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -17,10 +17,7 @@ public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TeamDetail> Handle(
-        CreateTeamCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(CreateTeamCommand request, CancellationToken cancellationToken)
     {
         var team = new Team
         {
@@ -41,7 +38,5 @@ public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand
         _unitOfWork.Teams.Add(team);
         _unitOfWork.TeamMembers.Add(teamMember);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new TeamDetail(team.Id, team.Name, team.Description);
     }
 }

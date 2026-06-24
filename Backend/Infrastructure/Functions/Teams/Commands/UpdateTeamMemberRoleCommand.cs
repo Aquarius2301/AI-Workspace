@@ -12,13 +12,13 @@ public sealed record UpdateTeamMemberRoleCommand(
     Guid TeamId,
     Guid UserId,
     string? Role
-) : IRequest<TeamMemberItem>, IRequireTeamRole
+) : IRequest, IRequireTeamRole
 {
     TeamMemberRole[] IRequireTeamRole.AllowedRoles => [TeamMemberRole.Admin];
 }
 
 public sealed class UpdateTeamMemberRoleCommandHandler
-    : IRequestHandler<UpdateTeamMemberRoleCommand, TeamMemberItem>
+    : IRequestHandler<UpdateTeamMemberRoleCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -27,7 +27,7 @@ public sealed class UpdateTeamMemberRoleCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<TeamMemberItem> Handle(
+    public async Task Handle(
         UpdateTeamMemberRoleCommand request,
         CancellationToken cancellationToken
     )
@@ -71,14 +71,5 @@ public sealed class UpdateTeamMemberRoleCommandHandler
 
         teamMember.Role = role;
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new TeamMemberItem(
-            teamMember.UserId,
-            teamMember.User.Name,
-            role.ToString(),
-            teamMember.JoinedAt,
-            teamMember.User.Email,
-            teamMember.User.LastActiveAt
-        );
     }
 }

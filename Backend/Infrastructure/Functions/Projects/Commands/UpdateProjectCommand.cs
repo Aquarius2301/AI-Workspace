@@ -12,10 +12,9 @@ public sealed record UpdateProjectCommand(
     string? Name,
     string? Description,
     ProjectVisibility? Visibility
-) : IRequest<ProjectResponse>;
+) : IRequest;
 
-public sealed class UpdateProjectCommandHandler
-    : IRequestHandler<UpdateProjectCommand, ProjectResponse>
+public sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -24,10 +23,7 @@ public sealed class UpdateProjectCommandHandler
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<ProjectResponse> Handle(
-        UpdateProjectCommand request,
-        CancellationToken cancellationToken
-    )
+    public async Task Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
     {
         var project =
             await _unitOfWork
@@ -110,12 +106,5 @@ public sealed class UpdateProjectCommandHandler
         }
 
         await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        return new ProjectResponse(
-            project.Id,
-            project.Name,
-            project.Description!,
-            project.Visibility.ToString()
-        );
     }
 }

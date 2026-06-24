@@ -1,3 +1,5 @@
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 using WebApi.Helpers;
 using WebApi.Middlewares;
 using WebApi.Seeds;
@@ -19,6 +21,8 @@ var app = builder.Build();
 
 // Initialize ClaimHelper with IHttpContextAccessor after the app is built
 ClaimHelper.Configure(app.Services.GetRequiredService<IHttpContextAccessor>());
+
+app.UseRateLimiter();
 
 app.UseMiddleware<RequestLoggingMiddleware>();
 app.UseMiddleware<ExceptionMiddleware>();
