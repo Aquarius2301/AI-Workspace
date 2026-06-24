@@ -5,3 +5,4 @@ export * from "./types";
 export * from "./SearchPagination";
 export * from "./Table";
 export * from "./RoleSelect";
+export * from "./NotFound";

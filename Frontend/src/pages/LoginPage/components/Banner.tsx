@@ -1,8 +1,10 @@
 import { Typography } from "antd";
+import { useTranslation } from "react-i18next";
 
 const { Title, Paragraph } = Typography;
 
 export default function Banner() {
+  const { t } = useTranslation();
   return (
     <div className="banner-container">
       <div className="banner-icons">
@@ -14,9 +16,9 @@ export default function Banner() {
         AI Workspace
       </Title>
       <Paragraph className="banner-slogan">
-        Nơi trí tuệ nhân tạo và sáng tạo hội tụ
+        {t("login.bannerSlogan1")}
         <br />
-        Khám phá sức mạnh của AI trong công việc của bạn
+        {t("login.bannerSlogan2")}
       </Paragraph>
     </div>
   );

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   SearchPagination,
   type CustomColumnsType,
@@ -11,6 +12,7 @@ import { Badge, Button, Space, Tooltip } from "antd";
 import Text from "antd/es/typography/Text";
 import { useMemo, useState } from "react";
 import { AddMemberModal, EditMemberModal } from "../modals";
+import i18n from "@/i18n";
 
 interface MemberListProps {
   hasHadData: boolean;
@@ -37,6 +39,7 @@ export function MemberList({
   teamId,
   userId,
 }: MemberListProps) {
+  const { t } = useTranslation();
   const [modalState, setModalState] = useState<ModalState>(null);
 
   const [selectedMember, setSelectedMember] = useState<TeamMemberItem | null>(
@@ -46,7 +49,7 @@ export function MemberList({
   const memberColumns = useMemo<CustomColumnsType<TeamMemberItem>>(
     () => [
       {
-        title: "Tên người dùng",
+        title: t("team.memberName"),
         dataIndex: "userName",
         key: "userName",
         render: (userName: string, record: TeamMemberItem) => {
@@ -64,10 +67,12 @@ export function MemberList({
             <Space>
               <Text strong>
                 {userName}{" "}
-                {userId === record.userId && <Text strong>(Bạn)</Text>}
+                {userId === record.userId && (
+                  <Text strong>{t("team.you")}</Text>
+                )}
               </Text>
               {isActive && (
-                <Tooltip title="Đang hoạt động">
+                <Tooltip title={t("team.active")}>
                   <Badge status="processing" />
                 </Tooltip>
               )}
@@ -76,27 +81,29 @@ export function MemberList({
         },
       },
       {
-        title: "Email",
+        title: t("team.email"),
         dataIndex: "email",
         key: "email",
         render: (email: string) => email || <Text type="secondary">—</Text>,
       },
 
       {
-        title: "Vai trò",
+        title: t("team.role"),
         dataIndex: "role",
         key: "role",
         render: (role: string) => role || <Text type="secondary">—</Text>,
       },
       {
-        title: "Ngày tham gia",
+        title: t("team.joinDate"),
         dataIndex: "joinedAt",
         key: "joinedAt",
         render: (joinedAt: string) =>
-          new Date(joinedAt).toLocaleDateString("vi-VN"),
+          new Date(joinedAt).toLocaleDateString(
+            i18n.language === "vi" ? "vi-VN" : "en-US",
+          ),
       },
       {
-        title: "Hành động",
+        title: t("team.actions"),
         noShowMobileTitle: true,
         render: (_: any, record: TeamMemberItem) =>
           (role == "Admin" || role == "Leader") &&
@@ -107,25 +114,25 @@ export function MemberList({
                 setModalState("editMember");
               }}
             >
-              Chỉnh sửa
+              {t("team.editMember")}
             </Button>
           ),
       },
     ],
-    [userId],
+    [userId, t],
   );
 
   return (
     <Space vertical style={{ width: "100%" }} size={12}>
       {(role == "Admin" || role == "Leader") && (
         <Button type="primary" onClick={() => setModalState("addMember")}>
-          Thêm thành viên
+          {t("team.addMemberButton")}
         </Button>
       )}
       <SearchPagination<TeamMemberItem>
         search={
           hasHadData
-            ? { ...searchProps, placeholder: "Tên người dùng, email..." }
+            ? { ...searchProps, placeholder: t("team.searchMembers") }
             : undefined
         }
         role={hasHadData ? roleProps : undefined}
@@ -136,7 +143,7 @@ export function MemberList({
           rowKey: "userId",
           loading: isLoading,
           locale: {
-            emptyText: "Không có thành viên nào",
+            emptyText: t("team.noMembers"),
           },
         }}
       />

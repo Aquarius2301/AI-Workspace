@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Typography,
@@ -19,18 +20,19 @@ interface ProjectListProps {
 }
 
 export function ProjectList({ projects, isLoading }: ProjectListProps) {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
 
   return (
     <Card
       title={
         <Text strong style={{ fontSize: 16, color: token.colorTextBase }}>
-          Danh sách dự án
+          {t("home.projectList")}
         </Text>
       }
       extra={
         <Button type="link" style={{ padding: 0 }}>
-          Xem thêm <RightOutlined style={{ fontSize: 12 }} />
+          {t("home.viewMore")} <RightOutlined style={{ fontSize: 12 }} />
         </Button>
       }
       style={{
@@ -47,7 +49,7 @@ export function ProjectList({ projects, isLoading }: ProjectListProps) {
       ) : projects.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description="Chưa có dự án nào"
+          description={t("home.noProjects")}
           style={{ margin: "32px 0" }}
         />
       ) : (
@@ -115,7 +117,9 @@ export function ProjectList({ projects, isLoading }: ProjectListProps) {
                   color={project.visibility === "Public" ? "blue" : "default"}
                   style={{ borderRadius: 12, flexShrink: 0, fontSize: 11 }}
                 >
-                  {project.visibility === "Public" ? "Công khai" : "Riêng tư"}
+                  {project.visibility === "Public"
+                    ? t("home.public")
+                    : t("home.private")}
                 </Tag>
               </div>
             </List.Item>

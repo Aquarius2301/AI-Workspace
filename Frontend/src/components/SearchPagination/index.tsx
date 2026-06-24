@@ -2,6 +2,7 @@ import type { PageSize, TeamRole } from "@/types";
 import { Col, Input, Row, Space, type TableProps } from "antd";
 import { Table } from "../Table";
 import { RoleSelect } from "../RoleSelect";
+import { useTranslation } from "react-i18next";
 
 export interface RoleProps {
   role: TeamRole | undefined;
@@ -35,6 +36,7 @@ export function SearchPagination<T>({
   pagination,
   tableProps,
 }: SearchPaginationProps<T>) {
+  const { t } = useTranslation();
   return (
     <Space
       vertical
@@ -60,7 +62,7 @@ export function SearchPagination<T>({
             <RoleSelect
               value={role.role}
               onChange={role.onRoleChange}
-              placeholder="Chọn vai trò..."
+              placeholder={t("searchPagination.rolePlaceholder")}
             />
           </Col>
         )}
@@ -76,7 +78,11 @@ export function SearchPagination<T>({
                 pageSize: pagination.pageSize,
                 total: pagination.total,
                 hideOnSinglePage: true,
-                sizeChangerRender: ({ size }) => <span>{size} / trang</span>,
+                sizeChangerRender: ({ size }) => (
+                  <span>
+                    {size} / {t("searchPagination.page")}
+                  </span>
+                ),
                 onChange: (page, pageSize) => {
                   if (page !== pagination.page) {
                     pagination.onPageChange(page);

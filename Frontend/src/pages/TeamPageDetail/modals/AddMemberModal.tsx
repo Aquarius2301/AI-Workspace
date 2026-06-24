@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { TEAM_AVAILABLE_MEMBERS_QUERY_KEY, useSearch, useTeam } from "@/hooks";
 import { Modal, App, Button, Select, Tag } from "antd";
 import type { AvailableTeamMemberItem, TeamRole } from "@/types";
@@ -15,12 +16,6 @@ interface SelectedMember extends AvailableTeamMemberItem {
   role: TeamRole;
 }
 
-const ROLE_OPTIONS: { value: TeamRole; label: string }[] = [
-  { value: "Admin", label: "Admin" },
-  { value: "Leader", label: "Leader" },
-  { value: "Member", label: "Member" },
-];
-
 const DEFAULT_ROLE: TeamRole = "Member";
 
 export function AddMemberModal({
@@ -28,14 +23,21 @@ export function AddMemberModal({
   isOpen,
   onClose,
 }: AddMemberModalProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { getAvailableMembersByTeam, addMembers } = useTeam();
 
+  const roleOptions = useMemo(
+    () => [
+      { value: "Admin" as const, label: t("roleSelect.admin") },
+      { value: "Leader" as const, label: t("roleSelect.leader") },
+      { value: "Member" as const, label: t("roleSelect.member") },
+    ],
+    [t],
+  );
+
   const { paginationProps, searchProps, queryParams } = useSearch({});
 
-  // const [searchText, setSearchText] = useState("");
-  // const [page, setPage] = useState(1);
-  // const [pageSize, setPageSize] = useState(5);
   const [selectedMembers, setSelectedMembers] = useState<SelectedMember[]>([]);
 
   const { data: availableMembers = [], isLoading: isAvailableMembersLoading } =
@@ -49,13 +51,6 @@ export function AddMemberModal({
 
   const { message } = App.useApp();
 
-  // Client-side pagination over the API result
-  // const paginatedMembers = useMemo(() => {
-  //   const start = (page - 1) * pageSize;
-  //   return availableMembers.slice(start, start + pageSize);
-  // }, [availableMembers, page, pageSize]);
-
-  // Set of selected userIds for quick lookup
   const selectedUserIds = useMemo(
     () => new Set(selectedMembers.map((m) => m.userId)),
     [selectedMembers],
@@ -99,23 +94,22 @@ export function AddMemberModal({
           })),
         },
       });
-      message.success("Thành viên đã được thêm vào nhóm thành công!");
+      message.success(t("team.addMemberSuccess"));
       handleClose();
     } catch (error) {
       console.error("Failed to add members:", error);
-      message.error("Đã xảy ra lỗi khi thêm thành viên. Vui lòng thử lại.");
+      message.error(t("team.addMemberError"));
     }
   };
 
-  // Columns for Table 1 – Available members
   const availableColumns = [
     {
-      title: "Thành viên",
+      title: t("team.memberName"),
       dataIndex: "userName",
       key: "userName",
     },
     {
-      title: "Email",
+      title: t("team.email"),
       dataIndex: "email",
       key: "email",
     },
@@ -142,20 +136,19 @@ export function AddMemberModal({
     },
   ];
 
-  // Columns for Table 2 – Selected members with role assignment
   const selectedColumns = [
     {
-      title: "Thành viên",
+      title: t("team.memberName"),
       dataIndex: "userName",
       key: "userName",
     },
     {
-      title: "Email",
+      title: t("team.email"),
       dataIndex: "email",
       key: "email",
     },
     {
-      title: "Vai trò",
+      title: t("team.role"),
       key: "role",
       width: 130,
       render: (_: unknown, record: SelectedMember) => (
@@ -164,7 +157,7 @@ export function AddMemberModal({
           onChange={(value: TeamRole) => handleRoleChange(record.userId, value)}
           size="small"
           style={{ width: 110 }}
-          options={ROLE_OPTIONS}
+          options={roleOptions}
         />
       ),
     },
@@ -179,7 +172,7 @@ export function AddMemberModal({
           size="small"
           onClick={() => handleRemoveMember(record.userId)}
         >
-          Xóa
+          {t("team.delete")}
         </Button>
       ),
     },
@@ -187,7 +180,7 @@ export function AddMemberModal({
 
   return (
     <Modal
-      title="Thêm thành viên vào nhóm"
+      title={t("team.addMemberTitle")}
       open={isOpen}
       onOk={handleAddMembers}
       onCancel={handleClose}
@@ -206,7 +199,7 @@ export function AddMemberModal({
           onClick={handleClose}
           disabled={addMembers.isPending}
         >
-          Hủy
+          {t("team.addMemberCancel")}
         </Button>,
         <Button
           key="submit"
@@ -215,16 +208,15 @@ export function AddMemberModal({
           disabled={selectedMembers.length === 0 || addMembers.isPending}
           loading={addMembers.isPending}
         >
-          Thêm thành viên
+          {t("team.addMemberConfirm")}
         </Button>,
       ]}
     >
-      {/* ─── Table 1: Available Members ─── */}
       <div style={{ marginBottom: 16 }}>
         <SearchPagination
           search={{
             ...searchProps,
-            placeholder: "Tìm kiếm thành viên theo tên hoặc email",
+            placeholder: t("team.addMemberSearch"),
           }}
           pagination={{ ...paginationProps, total: availableMembers.length }}
           tableProps={{
@@ -233,16 +225,15 @@ export function AddMemberModal({
             loading: isAvailableMembersLoading,
             rowKey: "userId",
             size: "small",
-            locale: { emptyText: "Không có thành viên nào" },
+            locale: { emptyText: t("team.noMembers") },
           }}
         ></SearchPagination>
       </div>
 
-      {/* ─── Table 2: Selected Members ─── */}
       {selectedMembers.length > 0 && (
         <div style={{ marginTop: 24 }}>
           <h4 style={{ marginBottom: 8 }}>
-            Thành viên được chọn ({selectedMembers.length})
+            {t("team.selectedMembers", { count: selectedMembers.length })}
           </h4>
           <Table
             dataSource={selectedMembers}
@@ -250,7 +241,7 @@ export function AddMemberModal({
             pagination={false}
             rowKey="userId"
             size="small"
-            locale={{ emptyText: "Chưa chọn thành viên nào" }}
+            locale={{ emptyText: t("team.noSelectedMembers") }}
           />
         </div>
       )}

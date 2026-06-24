@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   MeQueryKey,
   useGetCacheData,
@@ -7,9 +8,9 @@ import {
 } from "@/hooks";
 import MainLayout from "@/layouts";
 import type {
+  AuthResponse,
   MyTaskItemResponse,
   TeamProjectItem,
-  UserResponse,
 } from "@/types";
 import { Col, Row, Space } from "antd";
 import {
@@ -20,8 +21,10 @@ import {
 } from "./components";
 
 export default function HomePage() {
+  const { t } = useTranslation();
+
   // Get user info from cache (already fetched by ProtectedRoute)
-  const user = useGetCacheData<UserResponse>(MeQueryKey);
+  const user = useGetCacheData<AuthResponse>(MeQueryKey);
 
   // Fetch teams to get the first team's ID
   const teamsQuery = useTeam().getList({
@@ -44,7 +47,7 @@ export default function HomePage() {
   const projects = (projectsQuery.data?.items as TeamProjectItem[]) ?? [];
 
   return (
-    <MainLayout breadcrumbItems={[{ title: "Tổng quan" }]}>
+    <MainLayout breadcrumbItems={[{ title: t("sidebar.overview") }]}>
       <Space
         vertical
         size={24}

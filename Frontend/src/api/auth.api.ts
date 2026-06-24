@@ -1,4 +1,4 @@
-import type { LoginRequest, RegisterRequest, UserResponse } from "@/types";
+import type { AuthResponse, LoginRequest, RegisterRequest } from "@/types";
 import axiosClient from "./config.api";
 
 const baseUrl = "/api/auth";
@@ -24,7 +24,7 @@ export const authApi = {
     return axiosClient.post(`${baseUrl}/revoke-all-refresh`);
   },
 
-  me: (): Promise<UserResponse> => {
+  me: (): Promise<AuthResponse> => {
     return axiosClient.get(`${baseUrl}/me`);
   },
 

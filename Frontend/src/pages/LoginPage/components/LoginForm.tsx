@@ -7,11 +7,13 @@ import {
 } from "@ant-design/icons";
 import { useAuth, useTheme } from "@/hooks";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import type { LoginRequest } from "@/types";
 
 const { Title, Text } = Typography;
 
 export default function LoginForm() {
+  const { t } = useTranslation();
   const { theme, toggleTheme } = useTheme();
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -21,12 +23,11 @@ export default function LoginForm() {
   const handleLogin = async (values: LoginRequest) => {
     try {
       await login.mutateAsync(values);
-      message.success("Đăng nhập thành công!");
+      message.success(t("login.loginSuccess"));
       navigate("/");
     } catch (error: any) {
       const errorMessage =
-        error?.response?.data?.message ||
-        "Đăng nhập thất bại. Vui lòng thử lại!";
+        error?.response?.data?.message || t("login.loginFailed");
       message.error(errorMessage);
     }
   };
@@ -58,17 +59,13 @@ export default function LoginForm() {
         <Title level={2} className="login-mobile-title">
           AI Workspace
         </Title>
-        <Text className="login-mobile-slogan">
-          Nơi trí tuệ nhân tạo và sáng tạo hội tụ
-        </Text>
+        <Text className="login-mobile-slogan">{t("login.bannerSlogan1")}</Text>
       </div>
 
       <Title level={3} className="login-title">
-        Đăng nhập
+        {t("login.title")}
       </Title>
-      <Text className="login-subtitle">
-        Chào mừng bạn trở lại! Vui lòng đăng nhập để tiếp tục.
-      </Text>
+      <Text className="login-subtitle">{t("login.subtitle")}</Text>
 
       <Form
         form={form}
@@ -80,27 +77,27 @@ export default function LoginForm() {
       >
         <Form.Item
           name="email"
-          label="Email"
+          label={t("login.emailLabel")}
           rules={[
-            { required: true, message: "Vui lòng nhập email!" },
-            { type: "email", message: "Email không hợp lệ!" },
+            { required: true, message: t("login.emailRequired") },
+            { type: "email", message: t("login.emailInvalid") },
           ]}
         >
           <Input
             prefix={<MailOutlined />}
-            placeholder="Nhập email của bạn"
+            placeholder={t("login.emailPlaceholder")}
             size="large"
           />
         </Form.Item>
 
         <Form.Item
           name="password"
-          label="Mật khẩu"
-          rules={[{ required: true, message: "Vui lòng nhập mật khẩu!" }]}
+          label={t("login.passwordLabel")}
+          rules={[{ required: true, message: t("login.passwordRequired") }]}
         >
           <Input.Password
             prefix={<LockOutlined />}
-            placeholder="Nhập mật khẩu"
+            placeholder={t("login.passwordPlaceholder")}
             size="large"
           />
         </Form.Item>
@@ -114,16 +111,16 @@ export default function LoginForm() {
             loading={login.isPending}
             className="login-button"
           >
-            Đăng nhập
+            {t("login.loginButton")}
           </Button>
         </Form.Item>
       </Form>
 
       <div className="login-footer">
         <Text className="login-footer-text">
-          Chưa có tài khoản?{" "}
+          {t("login.noAccount")}{" "}
           <Button type="link" className="register-link">
-            Tạo tài khoản
+            {t("login.createAccount")}
           </Button>
         </Text>
       </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useProject } from "@/hooks";
 import { Modal, App, Form, Input, Select } from "antd";
 import Text from "antd/es/typography/Text";
@@ -13,6 +14,7 @@ export function CreateProjectModal({
   isOpen,
   onClose,
 }: CreateProjectModalProps) {
+  const { t } = useTranslation();
   const { create } = useProject();
   const [form] = Form.useForm();
 
@@ -39,21 +41,21 @@ export function CreateProjectModal({
         },
       });
       handleClose();
-      message.success("Dự án đã được tạo thành công!");
+      message.success(t("project.createSuccess"));
     } catch (error) {
       console.error("Failed to create project:", error);
-      message.error("Đã xảy ra lỗi khi tạo dự án. Vui lòng thử lại.");
+      message.error(t("project.createError"));
     }
   };
 
   return (
     <Modal
-      title="Tạo dự án mới"
+      title={t("project.createTitle")}
       open={isOpen}
       onOk={handleCreate}
       onCancel={handleClose}
-      okText="Tạo dự án"
-      cancelText="Hủy"
+      okText={t("project.createButton")}
+      cancelText={t("team.cancel")}
       confirmLoading={create.isPending}
     >
       <Form
@@ -63,42 +65,42 @@ export function CreateProjectModal({
         disabled={create.isPending}
       >
         <Form.Item
-          label="Tên dự án"
+          label={t("project.createNameLabel")}
           name="name"
-          rules={[{ required: true, message: "Vui lòng nhập tên dự án!" }]}
+          rules={[{ required: true, message: t("project.createNameRequired") }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Mô tả dự án" name="description">
+        <Form.Item
+          label={t("project.createDescriptionLabel")}
+          name="description"
+        >
           <Input.TextArea
             rows={4}
-            placeholder="Nhập mô tả cho dự án (tùy chọn)"
+            placeholder={t("project.createDescriptionPlaceholder")}
           />
         </Form.Item>
         <Form.Item
-          label="Dự án công khai / riêng tư"
+          label={t("project.createVisibilityLabel")}
           name="visibility"
-          rules={[{ required: true, message: "Vui lòng chọn tính riêng tư!" }]}
+          rules={[
+            { required: true, message: t("project.createVisibilityRequired") },
+          ]}
           initialValue={{
             visibility: "Public",
           }}
         >
           <Select
             options={[
-              { value: "Public", label: "Công khai" },
-              { value: "Private", label: "Riêng tư" },
+              { value: "Public", label: t("project.publicOption") },
+              { value: "Private", label: t("project.privateOption") },
             ]}
             defaultValue="Public"
           />
         </Form.Item>
-        <Text type="secondary">
-          "Công khai": mọi người trong nhóm có thể nhìn thấy tên dự án.
-        </Text>
+        <Text type="secondary">{t("project.publicDesc")}</Text>
         <br />
-        <Text type="secondary">
-          "Riêng tư": chỉ có Admin, Leader tạo dự án và những thành viên được
-          mời vào project có thể thấy dự án.
-        </Text>
+        <Text type="secondary">{t("project.privateDesc")}</Text>
       </Form>
     </Modal>
   );

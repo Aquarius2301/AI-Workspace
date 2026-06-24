@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import React from "react";
 import { Modal, Button, message, Space } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -26,6 +27,7 @@ export function EditMemberModal({
   email,
   currentRole,
 }: EditMemberModalProps) {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { updateMemberRole, removeMember } = useTeam();
 
@@ -57,11 +59,11 @@ export function EditMemberModal({
         id: teamId,
         memberId: memberId,
       });
-      message.success("Thành viên đã được xóa khỏi nhóm thành công!");
+      message.success(t("team.removeMemberSuccess"));
       onClose();
       invalidateMembers();
     } catch (error) {
-      message.error("Đã xảy ra lỗi khi xóa thành viên. Vui lòng thử lại.");
+      message.error(t("team.removeMemberError"));
       console.error("Failed to remove member:", error);
     } finally {
       setIsRemoving(false);
@@ -70,20 +72,19 @@ export function EditMemberModal({
 
   const showConfirmDelete = () => {
     modal.confirm({
-      title: "Xác nhận xóa thành viên?",
+      title: t("team.confirmDeleteMember"),
       icon: <ExclamationCircleFilled style={{ color: "#ff4d4f" }} />,
       content: (
         <Space vertical size={8}>
           <Text>
-            Bạn có chắc chắn muốn xóa thành viên {userName} ({email}) ra khỏi
-            nhóm. này không?
+            {t("team.confirmDeleteMemberContent", { userName, email })}
           </Text>
-          <Text type="danger">Hành động này không thể hoàn tác.</Text>
+          <Text type="danger">{t("team.confirmDeleteMemberWarning")}</Text>
         </Space>
       ),
-      okText: "Xóa ngay",
+      okText: t("team.confirmDeleteOk"),
       okType: "danger",
-      cancelText: "Hủy",
+      cancelText: t("team.cancel"),
       centered: true,
       onOk() {
         executeRemoveMember();
@@ -101,11 +102,11 @@ export function EditMemberModal({
         memberId: memberId,
         data: { role },
       });
-      message.success("Vai trò thành viên đã được cập nhật thành công!");
+      message.success(t("team.updateRoleSuccess"));
       onClose();
       invalidateMembers();
     } catch (error) {
-      message.error("Đã xảy ra lỗi khi cập nhật vai trò. Vui lòng thử lại.");
+      message.error(t("team.updateRoleError"));
       console.error("Failed to update member role:", error);
     } finally {
       setIsUpdatingRole(false);
@@ -117,7 +118,7 @@ export function EditMemberModal({
       {contextHolder}
 
       <Modal
-        title="Chỉnh sửa thành viên"
+        title={t("team.editMemberTitle")}
         open={isOpen}
         onCancel={onClose}
         width={400}
@@ -131,7 +132,9 @@ export function EditMemberModal({
             onClick={showConfirmDelete}
             disabled={isRemoving || isUpdatingRole}
           >
-            {isRemoving ? "Đang xóa..." : "Xóa thành viên"}
+            {isRemoving
+              ? t("team.removeMemberDeleting")
+              : t("team.removeMemberButton")}
           </Button>,
           <Button
             key="update"
@@ -139,7 +142,9 @@ export function EditMemberModal({
             onClick={handleUpdateRole}
             disabled={isUpdatingRole || isRemoving || role === currentRole}
           >
-            {isUpdatingRole ? "Đang cập nhật..." : "Cập nhật vai trò"}
+            {isUpdatingRole
+              ? t("team.updateRoleUpdating")
+              : t("team.updateRoleButton")}
           </Button>,
         ]}
       >
@@ -149,20 +154,21 @@ export function EditMemberModal({
           style={{ width: "100%", paddingTop: 8, paddingBottom: 8 }}
         >
           <div>
-            <Text strong>Thành viên:</Text> <Text>{userName}</Text>
+            <Text strong>{t("team.memberNameLabel")}</Text>{" "}
+            <Text>{userName}</Text>
           </div>
           <div>
-            <Text strong>Email:</Text> <Text>{email}</Text>
+            <Text strong>{t("team.emailLabelColon")}</Text> <Text>{email}</Text>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <Text strong style={{ minWidth: 60 }}>
-              Vai trò:
+              {t("team.roleLabel")}
             </Text>
             <div style={{ flex: 1 }}>
               <RoleSelect
                 value={role}
                 onChange={(role) => handleRoleChange(role as TeamRole)}
-                placeholder="Chọn vai trò"
+                placeholder={t("team.assignRolePlaceholder")}
                 showAll={false}
               />
             </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { useTeam } from "@/hooks";
 import { Modal, App, Form, Input } from "antd";
@@ -17,6 +18,7 @@ export function EditTeamModal({
   isOpen,
   onClose,
 }: EditTeamModalProps) {
+  const { t } = useTranslation();
   const { update } = useTeam();
   const [form] = Form.useForm();
   const [hasChanges, setHasChanges] = useState(false);
@@ -49,10 +51,10 @@ export function EditTeamModal({
         data: updateValues,
       });
       handleClose();
-      message.success("Nhóm đã được sửa thành công!");
+      message.success(t("team.editSuccess"));
     } catch (error) {
       console.error("Failed to update team:", error);
-      message.error("Đã xảy ra lỗi khi sửa nhóm. Vui lòng thử lại.");
+      message.error(t("team.editError"));
     }
   };
 
@@ -65,12 +67,12 @@ export function EditTeamModal({
 
   return (
     <Modal
-      title="Chỉnh sửa nhóm"
+      title={t("team.editTeamTitle")}
       open={isOpen}
       onOk={handleUpdate}
       onCancel={handleClose}
-      okText="Chỉnh sửa"
-      cancelText="Hủy"
+      okText={t("team.editButton")}
+      cancelText={t("team.cancel")}
       confirmLoading={update.isPending}
       okButtonProps={{ disabled: !hasChanges }}
     >
@@ -85,16 +87,16 @@ export function EditTeamModal({
         onValuesChange={handleValuesChange}
       >
         <Form.Item
-          label="Tên nhóm"
+          label={t("team.editTeamNameLabel")}
           name="name"
-          rules={[{ required: true, message: "Vui lòng nhập tên nhóm!" }]}
+          rules={[{ required: true, message: t("team.editTeamNameRequired") }]}
         >
           <Input />
         </Form.Item>
-        <Form.Item label="Mô tả" name="description">
+        <Form.Item label={t("team.descriptionLabel")} name="description">
           <Input.TextArea
             rows={4}
-            placeholder="Nhập mô tả cho nhóm (tùy chọn)"
+            placeholder={t("team.descriptionPlaceholder")}
           />
         </Form.Item>
       </Form>

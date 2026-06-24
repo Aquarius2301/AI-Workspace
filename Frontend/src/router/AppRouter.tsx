@@ -9,17 +9,25 @@ import {
   Navigate,
   Outlet,
 } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import i18n from "@/i18n";
 
 export function ProtectedRoute() {
+  const { t } = useTranslation();
   const { me } = useAuth();
 
   const { data: user, isLoading, isError } = me;
 
   if (isLoading) {
-    return <FullscreenLoading description="Đang xác thực" />;
+    return <FullscreenLoading description={t("loading.authenticating")} />;
   }
 
   if (!isError && user) {
+    const userLang = user.language || "en";
+    if (localStorage.i18nextLng !== userLang) {
+      localStorage.i18nextLng = userLang;
+      i18n.changeLanguage(userLang);
+    }
     return <Outlet />;
   }
 

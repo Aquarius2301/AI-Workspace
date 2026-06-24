@@ -1,6 +1,7 @@
 import { Grid, Table as AntdTable } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import { useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const { useBreakpoint } = Grid;
 
@@ -9,13 +10,14 @@ export type CustomColumnsType<T> = ColumnsType<T> & {
 };
 
 export function Table<T>(props: TableProps<T>) {
+  const { t } = useTranslation();
   const screens = useBreakpoint();
 
   const isMobile = !screens.md;
   const mobileColumns = useMemo<ColumnsType<T>>(() => {
     return [
       {
-        title: "Thông tin chi tiết",
+        title: t("table.mobileDetailTitle"),
         key: "mobile-summary",
         render: (_, record: T, index: number) => (
           <div

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { useTeam } from "@/hooks";
 import { Modal, Space, App } from "antd";
 import Input from "antd/es/input/Input";
@@ -18,6 +19,7 @@ export function DeleteTeamModal({
   isOpen,
   onClose,
 }: DeleteTeamModalProps) {
+  const { t } = useTranslation();
   const { deleteTeam } = useTeam();
   const [confirmName, setConfirmName] = useState("");
   const navigate = useNavigate();
@@ -42,62 +44,53 @@ export function DeleteTeamModal({
     try {
       await deleteTeam.mutateAsync(teamId);
       handleClose();
-      message.success("Nhóm đã được xóa thành công!");
+      message.success(t("team.deleteSuccess"));
       navigate("/teams");
     } catch (error) {
       console.error("Failed to delete team:", error);
-      message.error("Đã xảy ra lỗi khi xóa nhóm. Vui lòng thử lại.");
+      message.error(t("team.deleteError"));
     }
   };
 
   return (
     <>
       <Modal
-        title="Xóa nhóm"
+        title={t("team.deleteConfirmTitle")}
         open={isOpen}
         onOk={() => {
           setIsConfirmModalOpen(true);
           handleClose();
         }}
         onCancel={handleClose}
-        okText="Xóa nhóm"
-        cancelText="Hủy"
+        okText={t("team.deleteTeamButton")}
+        cancelText={t("team.cancel")}
         okButtonProps={{ danger: true }}
       >
         <Space direction="vertical" size={12} style={{ width: "100%" }}>
-          <Text>Bạn có chắc chắn muốn xóa nhóm này không?</Text>
-          <Text type="danger">
-            Tất cả mọi dự án, nhiệm vụ, và thành viên trong nhóm sẽ bị xóa vĩnh
-            viễn và không thể khôi phục. Hãy chắc chắn rằng bạn muốn thực hiện
-            hành động này.
-          </Text>
+          <Text>{t("team.deleteConfirmMessage")}</Text>
+          <Text type="danger">{t("team.deleteConfirmWarning")}</Text>
         </Space>
       </Modal>
 
       <Modal
-        title="Xóa nhóm"
+        title={t("team.deleteConfirmTitle")}
         open={isConfirmModalOpen}
         onCancel={() => setIsConfirmModalOpen(false)}
         onOk={handleDelete}
-        okText="Xóa nhóm"
-        cancelText="Hủy"
+        okText={t("team.deleteTeamButton")}
+        cancelText={t("team.cancel")}
         okButtonProps={{ danger: true, disabled: !isConfirmMatch }}
         confirmLoading={deleteTeam.isPending}
       >
         <div style={{ marginBottom: 16 }}>
-          <Text strong>
-            Nhập <Text code>{teamName}</Text> để xác nhận xóa nhóm:
-          </Text>
+          <Text strong>{t("team.deleteConfirmInput", { teamName })}</Text>
         </div>
         <Input
           style={{ marginBottom: 16 }}
           value={confirmName}
           onChange={(e) => setConfirmName(e.target.value)}
         />
-        <Text type="danger">
-          Sau khi ấn "Xóa nhóm", tất cả mọi dự án, nhiệm vụ, và thành viên trong
-          nhóm sẽ bị xóa vĩnh viễn và không thể khôi phục.
-        </Text>
+        <Text type="danger">{t("team.deleteConfirmDanger")}</Text>
       </Modal>
     </>
   );

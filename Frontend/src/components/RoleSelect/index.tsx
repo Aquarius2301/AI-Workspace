@@ -1,5 +1,6 @@
 import { Select } from "antd";
 import type { TeamRole } from "@/types";
+import { useTranslation } from "react-i18next";
 
 export interface RoleSelectProps {
   value?: TeamRole | "All";
@@ -12,24 +13,25 @@ export interface RoleSelectProps {
 export function RoleSelect({
   value,
   onChange,
-  placeholder = "Chọn vai trò...",
+  placeholder,
   showAll = true,
   style,
 }: RoleSelectProps) {
+  const { t } = useTranslation();
   const options: { value: TeamRole | "All"; label: string }[] = [
-    { value: "Admin", label: "Admin" },
-    { value: "Leader", label: "Leader" },
-    { value: "Member", label: "Member" },
+    { value: "Admin", label: t("roleSelect.admin") },
+    { value: "Leader", label: t("roleSelect.leader") },
+    { value: "Member", label: t("roleSelect.member") },
   ];
 
   if (showAll) {
-    options.unshift({ value: "All", label: "Tất cả" });
+    options.unshift({ value: "All", label: t("roleSelect.all") });
   }
 
   return (
     <Select<TeamRole | "All">
       style={style}
-      placeholder={placeholder}
+      placeholder={placeholder || t("roleSelect.placeholder")}
       options={options}
       value={value}
       onChange={(e) => onChange?.(e === "All" ? undefined : e)}

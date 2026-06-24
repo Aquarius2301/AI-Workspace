@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSearch, useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
 import { Button, Card, Space } from "antd";
@@ -9,6 +10,7 @@ import type { TeamItem } from "@/types";
 import { SearchPagination, type CustomColumnsType } from "@/components";
 
 export default function TeamPage() {
+  const { t } = useTranslation();
   const { searchProps, paginationProps, queryParams } = useSearch({});
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,12 +35,12 @@ export default function TeamPage() {
   const columns = useMemo<CustomColumnsType<TeamItem>>(
     () => [
       {
-        title: "Tên nhóm",
+        title: t("team.name"),
         dataIndex: "name",
         key: "name",
       },
       {
-        title: "Mô tả",
+        title: t("team.description"),
         dataIndex: "description",
         key: "description",
         render: (description: string) => (
@@ -51,23 +53,23 @@ export default function TeamPage() {
         ),
       },
       {
-        title: "Hành động",
+        title: t("team.actions"),
         noShowMobileTitle: true,
         render: (_, record) => (
           <Button
             style={{ width: "100%" }}
             onClick={() => navigate(`/teams/${record.id}`)}
           >
-            View
+            {t("team.view")}
           </Button>
         ),
       },
     ],
-    [navigate],
+    [navigate, t],
   );
 
   return (
-    <MainLayout breadcrumbItems={[{ title: "Nhóm của tôi" }]}>
+    <MainLayout breadcrumbItems={[{ title: t("team.myTeams") }]}>
       <Space vertical size={24} style={{ width: "100%" }}>
         <Card>
           <Button
@@ -75,12 +77,12 @@ export default function TeamPage() {
             onClick={() => setIsModalOpen(true)}
             style={{ marginBottom: "16px" }}
           >
-            Tạo nhóm mới
+            {t("team.createNew")}
           </Button>
           <SearchPagination
             search={
               hasHadData
-                ? { ...searchProps, placeholder: "Tên nhóm..." }
+                ? { ...searchProps, placeholder: t("team.searchPlaceholder") }
                 : undefined
             }
             pagination={{
@@ -93,7 +95,7 @@ export default function TeamPage() {
               rowKey: "id",
               columns: columns,
               locale: {
-                emptyText: "Chưa có nhóm nào",
+                emptyText: t("team.noTeams"),
               },
             }}
           />

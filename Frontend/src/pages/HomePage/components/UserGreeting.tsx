@@ -1,5 +1,6 @@
 import { Card, Avatar, Typography, Space, theme } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
 
 const { Text, Title } = Typography;
 
@@ -10,6 +11,7 @@ interface UserGreetingProps {
 }
 
 export function UserGreeting({ name, email, avatar }: UserGreetingProps) {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
 
   return (
@@ -51,7 +53,7 @@ export function UserGreeting({ name, email, avatar }: UserGreetingProps) {
               fontWeight: 700,
             }}
           >
-            Xin chào, {name || "Người dùng"}! 👋
+            {t("home.greeting")}, {name || t("home.userFallback")}! 👋
           </Title>
           <Text
             type="secondary"
@@ -61,7 +63,7 @@ export function UserGreeting({ name, email, avatar }: UserGreetingProps) {
               marginTop: 4,
             }}
           >
-            {email || "Chưa có email"}
+            {email || t("home.noEmail")}
           </Text>
           <Text
             style={{
@@ -71,7 +73,7 @@ export function UserGreeting({ name, email, avatar }: UserGreetingProps) {
               marginTop: 2,
             }}
           >
-            Chào mừng bạn quay trở lại với không gian làm việc
+            {t("home.welcomeBack")}
           </Text>
         </div>
       </Space>

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import type { TeamProjectItem, TeamRole } from "@/types";
 import { Button, Space, Tag } from "antd";
 import Text from "antd/es/typography/Text";
@@ -30,16 +31,17 @@ export function ProjectList({
   teamId,
   role,
 }: ProjectListProps) {
+  const { t } = useTranslation();
   const projectColumns = useMemo<CustomColumnsType<TeamProjectItem>>(
     () => [
       {
-        title: "Tên dự án",
+        title: t("project.listTitle"),
         dataIndex: "name",
         key: "name",
         render: (name: string) => <Text strong>{name}</Text>,
       },
       {
-        title: "Mô tả",
+        title: t("project.listDescription"),
         dataIndex: "description",
         key: "description",
         render: (description: string) => (
@@ -52,27 +54,27 @@ export function ProjectList({
         ),
       },
       {
-        title: "Hiển thị",
+        title: t("project.listVisibility"),
         dataIndex: "visibility",
         key: "visibility",
         render: (visibility: string) => (
           <Tag color={visibility === "Public" ? "blue" : "default"}>
-            {visibility === "Public" ? "Công khai" : "Riêng tư"}
+            {visibility === "Public" ? t("home.public") : t("home.private")}
           </Tag>
         ),
       },
       {
-        title: "Hành động",
+        title: t("project.listActions"),
         noShowMobileTitle: true,
         render: (_, record) =>
           record.canView && (
             <Button style={{ width: "100%" }} onClick={() => {}}>
-              View
+              {t("team.view")}
             </Button>
           ),
       },
     ],
-    [],
+    [t],
   );
 
   const [createProjectModal, setCreateProjectModal] = useState(false);
@@ -81,13 +83,13 @@ export function ProjectList({
     <Space vertical style={{ width: "100%" }} size={12}>
       {(role == "Admin" || role == "Leader") && (
         <Button type="primary" onClick={() => setCreateProjectModal(true)}>
-          Tạo dự án mới
+          {t("project.createProjectButton")}
         </Button>
       )}
       <SearchPagination<TeamProjectItem>
         search={
           hasHadData
-            ? { ...searchProps, placeholder: "Tên dự án..." }
+            ? { ...searchProps, placeholder: t("project.searchPlaceholder") }
             : undefined
         }
         pagination={{ ...paginationProps }}
@@ -97,7 +99,7 @@ export function ProjectList({
           rowKey: "id",
           loading: isLoading,
           locale: {
-            emptyText: "Chưa có dự án nào",
+            emptyText: t("project.listEmpty"),
           },
         }}
       />

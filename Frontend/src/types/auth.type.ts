@@ -9,15 +9,18 @@ export interface RegisterRequest {
   password: string;
 }
 
-export interface AuthResponse {
-  name: string;
-  email: string;
-  avatarUrl: string;
-  createdAt: string;
-}
+// export interface AuthResponse {
+//   name: string;
+//   email: string;
+//   avatarUrl: string;
+//   createdAt: string;
+// }
 
-export interface UserResponse {
+export type LanguageDisplay = "Vi" | "En";
+
+export interface AuthResponse {
   avatar: string;
   name: string;
   email: string;
+  language: LanguageDisplay;
 }

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Typography,
@@ -27,6 +28,7 @@ export function TaskStatusOverview({
   tasks,
   isLoading,
 }: TaskStatusOverviewProps) {
+  const { t } = useTranslation();
   // export default function TaskStatusOverview({) => {
   const { token } = theme.useToken();
 
@@ -36,7 +38,7 @@ export function TaskStatusOverview({
 
   const statusCards = [
     {
-      label: "Chưa làm",
+      label: t("home.openTasks"),
       count: openTasks.length,
       color: "#FF4D4F",
       bgColor: "#FFF1F0",
@@ -45,14 +47,14 @@ export function TaskStatusOverview({
       ),
     },
     {
-      label: "Đang làm",
+      label: t("home.inProgressTasks"),
       count: inProgressTasks.length,
       color: "#FAAD14",
       bgColor: "#FFFBE6",
       icon: <LoadingOutlined style={{ fontSize: 28, color: "#FAAD14" }} />,
     },
     {
-      label: "Đã làm",
+      label: t("home.doneTasks"),
       count: doneTasks.length,
       color: "#52C41A",
       bgColor: "#F6FFED",
@@ -64,12 +66,12 @@ export function TaskStatusOverview({
     <Card
       title={
         <Text strong style={{ fontSize: 16, color: token.colorTextBase }}>
-          Trạng thái công việc
+          {t("home.taskStatus")}
         </Text>
       }
       extra={
         <Button type="link" style={{ padding: 0 }}>
-          Xem thêm <RightOutlined style={{ fontSize: 12 }} />
+          {t("home.viewMore")} <RightOutlined style={{ fontSize: 12 }} />
         </Button>
       }
       style={{

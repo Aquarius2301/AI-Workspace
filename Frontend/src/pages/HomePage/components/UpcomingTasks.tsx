@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Card,
   Typography,
@@ -37,35 +38,6 @@ const getStatusColor = (status: TaskStatus) => {
   }
 };
 
-const getStatusLabel = (status: string) => {
-  switch (status) {
-    case "Open":
-      return "Chưa làm";
-    case "InProgress":
-      return "Đang làm";
-    case "Done":
-      return "Đã làm";
-    case "Blocked":
-      return "Bị chặn";
-    default:
-      return status;
-  }
-};
-
-const formatDate = (dateStr?: string) => {
-  if (!dateStr) return "Không có hạn";
-  try {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString("vi-VN", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  } catch {
-    return dateStr;
-  }
-};
-
 const getDaysUntilDue = (dueDate?: string): number | null => {
   if (!dueDate) return null;
   const due = new Date(dueDate);
@@ -75,7 +47,40 @@ const getDaysUntilDue = (dueDate?: string): number | null => {
 };
 
 export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
+  const { t, i18n } = useTranslation();
   const { token } = theme.useToken();
+
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "Open":
+        return t("taskStatus.open");
+      case "InProgress":
+        return t("taskStatus.inProgress");
+      case "Done":
+        return t("taskStatus.done");
+      case "Blocked":
+        return t("taskStatus.blocked");
+      default:
+        return status;
+    }
+  };
+
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return t("home.noDueDate");
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString(
+        i18n.language === "vi" ? "vi-VN" : "en-US",
+        {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        },
+      );
+    } catch {
+      return dateStr;
+    }
+  };
 
   // Filter out Done tasks, sort by dueDate (earliest first), take top 10
   const sortedTasks = [...tasks]
@@ -92,12 +97,12 @@ export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
     <Card
       title={
         <Text strong style={{ fontSize: 16, color: token.colorTextBase }}>
-          Công việc sắp đến hạn
+          {t("home.upcomingTasks")}
         </Text>
       }
       extra={
         <Button type="link" style={{ padding: 0 }}>
-          Xem thêm <RightOutlined style={{ fontSize: 12 }} />
+          {t("home.viewMore")} <RightOutlined style={{ fontSize: 12 }} />
         </Button>
       }
       style={{
@@ -114,7 +119,7 @@ export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
       ) : sortedTasks.length === 0 ? (
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description="Không có công việc nào cần làm"
+          description={t("home.noTasks")}
           style={{ margin: "32px 0" }}
         />
       ) : (
@@ -205,7 +210,8 @@ export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
                                 fontWeight: 600,
                               }}
                             >
-                              (Quá hạn {Math.abs(daysLeft)} ngày)
+                              ({t("home.overdue")} {Math.abs(daysLeft)}{" "}
+                              {t("home.days")})
                             </Text>
                           )}
                           {isUrgent && !isOverdue && (
@@ -216,7 +222,8 @@ export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
                                 fontWeight: 600,
                               }}
                             >
-                              (Còn {daysLeft} ngày)
+                              ({t("home.remaining")} {daysLeft} {t("home.days")}
+                              )
                             </Text>
                           )}
                         </span>
@@ -224,7 +231,7 @@ export function UpcomingTasks({ tasks, isLoading }: UpcomingTasksProps) {
                       {!task.dueDate && (
                         <Text type="secondary" style={{ fontSize: 12 }}>
                           <ClockCircleOutlined style={{ marginRight: 4 }} />
-                          Không có hạn
+                          {t("home.noDueDate")}
                         </Text>
                       )}
                     </div>

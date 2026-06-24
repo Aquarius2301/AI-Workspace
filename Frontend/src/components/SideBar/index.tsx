@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Layout,
   Menu,
@@ -18,7 +19,7 @@ import {
   BulbOutlined,
   TeamOutlined,
 } from "@ant-design/icons";
-import type { UserResponse } from "@/types";
+import type { AuthResponse } from "@/types";
 import { MeQueryKey, useAuth, useGetCacheData } from "@/hooks";
 
 const { Sider } = Layout;
@@ -31,48 +32,48 @@ const { Text, Title } = Typography;
 // }
 
 export function SidebarNav() {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
 
-  const me = useGetCacheData<UserResponse>(MeQueryKey);
+  const me = useGetCacheData<AuthResponse>(MeQueryKey);
 
   const { logout } = useAuth();
 
   const onLogout = () => {
     Modal.confirm({
-      title: "Xác nhận đăng xuất",
-      content: "Bạn có chắc chắn muốn đăng xuất khỏi hệ thống không?",
-      okText: "Đăng xuất",
-      cancelText: "Hủy",
+      title: t("sidebar.logoutTitle"),
+      content: t("sidebar.logoutContent"),
+      okText: t("sidebar.logoutOk"),
+      cancelText: t("sidebar.cancel"),
       onOk: () => {
-        logout.mutate(); // Gọi API logout để xóa token và thông tin người dùng
+        logout.mutate();
         navigate("/login");
       },
     });
   };
-  // Danh sách các Item Menu điều hướng
   const menuItems = [
     {
       key: "/",
       icon: <AppstoreOutlined style={{ fontSize: "18px" }} />,
-      label: "Tổng quan",
+      label: t("sidebar.overview"),
     },
     {
       key: "/teams",
       icon: <TeamOutlined style={{ fontSize: "18px" }} />,
-      label: "Nhóm của tôi",
+      label: t("sidebar.myTeams"),
     },
     {
       key: "/projects",
       icon: <FolderOpenOutlined style={{ fontSize: "18px" }} />,
-      label: "Dự án của tôi",
+      label: t("sidebar.myProjects"),
     },
     {
       key: "/settings",
       icon: <SettingOutlined style={{ fontSize: "18px" }} />,
-      label: "Cài đặt hệ thống",
+      label: t("sidebar.settings"),
     },
   ];
 

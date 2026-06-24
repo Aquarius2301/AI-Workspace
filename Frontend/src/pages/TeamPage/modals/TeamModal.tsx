@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Modal, Form, Input, App } from "antd";
 import { useTeam } from "@/hooks/useTeam.hook";
 import Text from "antd/es/typography/Text";
@@ -9,6 +10,7 @@ interface TeamModalProps {
 }
 
 export function TeamModal({ isOpen, onClose }: TeamModalProps) {
+  const { t } = useTranslation();
   const [form] = Form.useForm();
   const { create } = useTeam();
   const [submitting, setSubmitting] = React.useState(false);
@@ -20,11 +22,10 @@ export function TeamModal({ isOpen, onClose }: TeamModalProps) {
     try {
       await create.mutateAsync(values);
       onClose(); // Close modal on success
-      message.success("Nhóm đã được tạo thành công!");
+      message.success(t("team.createSuccess"));
     } catch (error) {
       console.error("Failed to create team:", error);
-      message.error("Đã xảy ra lỗi khi tạo nhóm. Vui lòng thử lại.");
-      // Handle error (e.g., show notification)
+      message.error(t("team.createError"));
     } finally {
       setSubmitting(false);
     }
@@ -32,13 +33,13 @@ export function TeamModal({ isOpen, onClose }: TeamModalProps) {
 
   return (
     <Modal
-      title="Tạo nhóm"
+      title={t("team.createTitle")}
       open={isOpen}
       onOk={() => form.submit()}
       onCancel={onClose}
       confirmLoading={submitting}
-      okText="Tạo"
-      cancelText="Hủy"
+      okText={t("team.createOk")}
+      cancelText={t("team.cancel")}
       closeIcon={null}
     >
       <Form
@@ -50,19 +51,19 @@ export function TeamModal({ isOpen, onClose }: TeamModalProps) {
         style={{ width: "100%" }}
       >
         <Form.Item
-          label="Tên nhóm"
+          label={t("team.nameLabel")}
           name="name"
-          rules={[{ required: true, message: "Vui lòng nhập tên nhóm" }]}
+          rules={[{ required: true, message: t("team.nameRequired") }]}
         >
-          <Input placeholder="Nhập tên nhóm" />
+          <Input placeholder={t("team.namePlaceholder")} />
         </Form.Item>
-        <Form.Item label="Mô tả" name="description">
-          <Input.TextArea placeholder="Nhập mô tả nhóm (tùy chọn)" rows={4} />
+        <Form.Item label={t("team.descriptionLabel")} name="description">
+          <Input.TextArea
+            placeholder={t("team.descriptionPlaceholder")}
+            rows={4}
+          />
         </Form.Item>
-        <Text type="secondary">
-          Bạn sẽ là Admin của nhóm này. Bạn có thể mời thêm thành viên sau khi
-          tạo nhóm.
-        </Text>
+        <Text type="secondary">{t("team.adminNote")}</Text>
       </Form>
     </Modal>
   );

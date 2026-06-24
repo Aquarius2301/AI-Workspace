@@ -1,22 +1,26 @@
-import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, Typography, Space, Skeleton, Card } from "antd";
 import {
   FolderOutlined,
   UserOutlined,
   SettingOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useProject, useSearch, useTeam } from "@/hooks";
 import MainLayout from "@/layouts";
 import { ProjectList, MemberList, SettingList } from "./components";
 import { useState } from "react";
+import { NotFound } from "@/components";
 
 const { Text, Title } = Typography;
 
 export default function TeamPageDetail() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const teamId = id!;
+  const navigate = useNavigate();
 
-  // State kiểm soát Tab hiện tại để phục vụ Lazy Loading API
   const [activeTab, setActiveTab] = useState("projects");
 
   // ================= 1. CORE API (Luôn chạy khi vào trang) =================
@@ -61,10 +65,9 @@ export default function TeamPageDetail() {
     !!teamDetail?.id && activeTab === "members",
   );
 
-  // ================= 4. BREADCRUMBS & NAVIGATION =================
   const breadcrumbItems = [
-    { title: "Nhóm của tôi", href: "/teams" },
-    { title: teamDetail?.name || "Chi tiết nhóm" },
+    { title: t("team.myTeams"), href: "/teams" },
+    { title: teamDetail?.name || t("team.detailTitle") },
   ];
 
   // ================= 5. ĐỊNH NGHĨA DANH SÁCH TABS =================
@@ -73,7 +76,7 @@ export default function TeamPageDetail() {
       key: "projects",
       label: (
         <span>
-          <FolderOutlined /> Dự án
+          <FolderOutlined /> {t("teamDetail.projects")}
         </span>
       ),
       children: (
@@ -100,7 +103,7 @@ export default function TeamPageDetail() {
       key: "members",
       label: (
         <span>
-          <UserOutlined /> Thành viên
+          <UserOutlined /> {t("teamDetail.members")}
         </span>
       ),
       children: (
@@ -133,7 +136,7 @@ export default function TeamPageDetail() {
       key: "settings",
       label: (
         <span>
-          <SettingOutlined /> Cài đặt
+          <SettingOutlined /> {t("teamDetail.settings")}
         </span>
       ),
       children: (
@@ -150,31 +153,47 @@ export default function TeamPageDetail() {
   return (
     <MainLayout breadcrumbItems={breadcrumbItems}>
       <Space vertical size={16} style={{ width: "100%" }}>
-        {/* CARD TIÊU ĐỀ THÔNG TIN NHÓM */}
-        <Card>
-          {isTeamLoading || isMeLoading ? (
-            <Skeleton active paragraph={{ rows: 1 }} />
-          ) : (
-            <Space vertical size={4}>
-              <Title level={4} style={{ margin: 0 }}>
-                {teamDetail?.name || "Chi tiết nhóm"}
-              </Title>
-              <Text type="secondary">{teamDetail?.description}</Text>
-            </Space>
-          )}
-        </Card>
+        {/* TRƯỜNG HỢP 1: Đã load xong mà không có dữ liệu Team (404) */}
+        {!isTeamLoading && !teamDetail ? (
+          <Card>
+            <NotFound
+              icon={<TeamOutlined />}
+              title={t("notFound.teamTitle")}
+              description={t("notFound.teamDescription")}
+              onHandleClick={() => navigate("/teams")}
+              buttonText={t("notFound.teamButton")}
+            />
+          </Card>
+        ) : (
+          /* TRƯỜNG HỢP 2: Đang load hoặc Đã có dữ liệu thành công */
+          <>
+            {/* CARD TIÊU ĐỀ THÔNG TIN NHÓM */}
+            <Card>
+              {isTeamLoading || isMeLoading ? (
+                <Skeleton active paragraph={{ rows: 1 }} />
+              ) : (
+                <Space vertical size={4}>
+                  <Title level={4} style={{ margin: 0 }}>
+                    {teamDetail?.name || t("team.detailTitle")}
+                  </Title>
+                  <Text type="secondary">{teamDetail?.description}</Text>
+                </Space>
+              )}
+            </Card>
 
-        {/* CARD NỘI DUNG TABS HOẠT ĐỘNG */}
-        <Card>
-          <Tabs
-            activeKey={activeTab}
-            onChange={(key) => setActiveTab(key)} // Cập nhật active tab để trigger lazy loading API
-            defaultActiveKey="projects"
-            items={tabItems}
-            // Loại bỏ hoàn toàn hiệu ứng làm mờ (opacity) và khóa pointer khi loading
-            // để người dùng vẫn có thể click chuyển tab thoải mái, tăng trải nghiệm mượt mà!
-          />
-        </Card>
+            {/* CARD NỘI DUNG TABS HOẠT ĐỘNG */}
+            {/* Nếu đang loading lần đầu, có thể hiện skeleton cho tab, hoặc ẩn đi cho tới khi có teamDetail */}
+
+            <Card>
+              <Tabs
+                activeKey={activeTab}
+                onChange={(key) => setActiveTab(key)}
+                defaultActiveKey="projects"
+                items={tabItems}
+              />
+            </Card>
+          </>
+        )}
       </Space>
     </MainLayout>
   );
