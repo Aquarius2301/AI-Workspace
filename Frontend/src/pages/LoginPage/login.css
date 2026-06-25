@@ -1,0 +1,231 @@
+/* ===== LOGIN PAGE LAYOUT ===== */
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ant-color-bg-layout);
+  padding: 24px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.login-card-content {
+  display: flex;
+  min-height: 550px;
+}
+
+/* ===== BANNER SECTION (LEFT) ===== */
+.login-banner-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
+  padding: 48px 32px;
+  border-radius: 0 !important;
+}
+
+/* ===== BANNER COMPONENT ===== */
+.banner-container {
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.banner-icons {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.banner-icon {
+  font-size: 40px;
+  opacity: 0.9;
+  animation: float 3s ease-in-out infinite;
+}
+
+.banner-icon:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+.banner-icon:nth-child(3) {
+  animation-delay: 1s;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.banner-title {
+  color: #FFFFFF !important;
+  margin-bottom: 16px !important;
+  font-size: 36px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.5px;
+}
+
+.banner-slogan {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 16px !important;
+  line-height: 1.6 !important;
+  margin-bottom: 0 !important;
+}
+
+/* ===== FORM SECTION (RIGHT) ===== */
+.login-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 40px;
+}
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 380px;
+}
+
+/* Mobile header - hidden by default */
+.login-mobile-header {
+  display: none;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.login-mobile-title {
+  margin-bottom: 8px !important;
+}
+
+.login-mobile-slogan {
+  color: var(--ant-color-text-description);
+  font-size: 14px;
+}
+
+/* Theme toggle */
+.login-theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.toggle-label {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.login-title {
+  margin-bottom: 8px !important;
+}
+
+.login-subtitle {
+  color: var(--ant-color-text-description);
+  font-size: 14px;
+  display: block;
+  margin-bottom: 32px;
+}
+
+.login-form {
+  margin-top: 8px;
+}
+
+.login-form .ant-form-item:last-child {
+  margin-bottom: 0;
+}
+
+.login-button {
+  height: 44px !important;
+  font-weight: 600 !important;
+  font-size: 16px !important;
+  border-radius: 8px !important;
+  margin-top: 8px;
+}
+
+.login-footer {
+  text-align: center;
+  margin-top: 24px;
+}
+
+.login-footer-text {
+  color: var(--ant-color-text-description);
+  font-size: 14px;
+}
+
+.register-link {
+  padding: 0 !important;
+  font-size: 14px !important;
+}
+
+/* ===== RESPONSIVE: Tablet & Mobile ===== */
+@media (max-width: 768px) {
+  .login-page {
+    padding: 16px;
+    align-items: flex-start;
+    padding-top: 48px;
+  }
+
+  .login-card {
+    max-width: 450px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+  }
+
+  .login-card-content {
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  /* Hide banner on small screens */
+  .login-banner-section {
+    display: none;
+  }
+
+  .login-form-section {
+    padding: 32px 24px;
+  }
+
+  /* Show mobile header */
+  .login-mobile-header {
+    display: block;
+  }
+
+  .login-theme-toggle {
+    margin-bottom: 24px;
+  }
+}
+
+/* ===== DARK MODE TWEAKS ===== */
+.login-card {
+  background: var(--ant-color-bg-container) !important;
+}
+
+/* Adjust banner gradient for dark mode - slightly different gradient */
+.login-banner-section {
+  background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #A855F7 100%);
+}
+
+/* Input styling for consistency */
+.login-form .ant-input-affix-wrapper {
+  border-radius: 8px;
+}
+
+.login-form .ant-input-affix-wrapper-lg {
+  padding: 10px 12px;
+}
+
+/* Ensure card shadow works in both modes */
+.login-card {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+html.dark .login-card {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
