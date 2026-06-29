@@ -69,10 +69,8 @@ public sealed class GetTeamsQueryHandler
                 t.Name,
                 t.Description,
                 t.TeamMembers.Count,
-                t.TeamMembers
-                    .FirstOrDefault(tm => tm.UserId == request.CurrentUserId)
-                    ?.Role
-                    .ToString()
+                t.TeamMembers.FirstOrDefault(tm => tm.UserId == request.CurrentUserId)
+                    ?.Role.ToString()
             ))
             .ToList();
 

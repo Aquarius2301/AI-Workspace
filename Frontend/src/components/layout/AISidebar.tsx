@@ -19,7 +19,7 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 import type { AuthResponse } from "@/types";
-import { AUTH_ME_QUERY_KEY, useAuth, useGetCacheData, useTheme } from "@/hooks";
+import { AUTH_ME_QUERY_KEY, useAuth, useGetCacheData } from "@/hooks";
 import { AIModal, AIThemeSwitch, UserAvatar } from "../ui";
 
 const { Sider } = Layout;
@@ -34,7 +34,6 @@ export interface AISidebarProps {
 export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { theme: currentTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
