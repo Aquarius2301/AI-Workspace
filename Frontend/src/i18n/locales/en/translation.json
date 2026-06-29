@@ -161,6 +161,9 @@
       "notFoundDescription": "Try adjusting your search keywords",
       "view": "View",
       "createdBy": "Created by",
+      "memberCount": "members",
+      "completed": "completed",
+      "noTasks": "No tasks",
       "create": {
         "success": "Project created successfully!",
         "title": "Create Project",

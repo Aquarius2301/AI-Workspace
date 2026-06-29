@@ -23,7 +23,10 @@ public sealed record TeamProjectItem(
     string? Description,
     string CreatorName,
     string Visibility,
-    bool CanView
+    bool CanView,
+    int MemberCount,
+    int CompletedTaskCount,
+    int TotalTaskCount
 );
 
 public sealed class GetTeamProjectsQueryHandler
@@ -70,6 +73,7 @@ public sealed class GetTeamProjectsQueryHandler
         var allProjects = await projectsQuery
             .Include(p => p.Creator)
             .Include(p => p.ProjectMembers)
+            .Include(p => p.TaskItems)
             .ToListAsync(cancellationToken);
 
         // Step 3: Get the list of project IDs where the current user is a member
@@ -87,7 +91,10 @@ public sealed class GetTeamProjectsQueryHandler
                 p.Description,
                 p.Creator.Name,
                 p.Visibility.ToString(),
-                CanViewProject(userRole, userProjectIds.Contains(p.Id))
+                CanViewProject(userRole, userProjectIds.Contains(p.Id)),
+                p.ProjectMembers.Count,
+                p.TaskItems.Count(t => t.Status == TaskItemStatus.Done),
+                p.TaskItems.Count
             ))
             .OrderBy(p => p.CanView ? 0 : 1) // Prioritize projects that can be viewed
             .ThenBy(p => p.Name) // Then order by name

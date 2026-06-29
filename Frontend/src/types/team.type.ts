@@ -55,4 +55,7 @@ export interface TeamProjectItem {
   creatorName: string;
   visibility: string;
   canView: boolean;
+  memberCount: number;
+  completedTaskCount: number;
+  totalTaskCount: number;
 }

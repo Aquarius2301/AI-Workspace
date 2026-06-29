@@ -159,6 +159,9 @@
       "notFoundDescription": "Thử điều chỉnh từ khóa tìm kiếm",
       "view": "Xem",
       "createdBy": "Được tạo bởi",
+      "memberCount": "thành viên",
+      "completed": "hoàn thành",
+      "noTasks": "Chưa có việc",
       "create": {
         "success": "Tạo dự án thành công!",
         "title": "Tạo Dự Án",
