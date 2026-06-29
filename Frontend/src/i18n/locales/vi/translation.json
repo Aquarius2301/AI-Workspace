@@ -116,6 +116,7 @@
     "title": "Nhóm",
     "description": "Quản lý nhóm và cộng tác hiệu quả",
     "createTeam": "Tạo Nhóm",
+    "members": "thành viên",
     "searchTeams": "Tìm kiếm nhóm...",
     "total": "{{count}} nhóm",
     "notFound": {
@@ -310,7 +311,8 @@
   "list": {
     "of": "của",
     "emptyDescription": "Vui lòng thử điều chỉnh tìm kiếm hoặc bộ lọc để tìm những gì bạn đang tìm kiếm.",
-    "empty": "Không có mục nào để hiển thị"
+    "empty": "Không có mục nào để hiển thị",
+    "page": "trang"
   },
   "modal": {
     "ok": "OK",

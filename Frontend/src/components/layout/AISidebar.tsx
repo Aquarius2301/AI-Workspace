@@ -9,7 +9,6 @@ import {
   Typography,
   theme,
   Drawer,
-  Tooltip,
 } from "antd";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -21,9 +20,7 @@ import {
 } from "@ant-design/icons";
 import type { AuthResponse } from "@/types";
 import { AUTH_ME_QUERY_KEY, useAuth, useGetCacheData, useTheme } from "@/hooks";
-import { UserAvatar } from "../display";
-import { AIThemeSwitch } from "./AIThemeSwitch";
-import { AIModal } from "../form";
+import { AIModal, AIThemeSwitch, UserAvatar } from "../ui";
 
 const { Sider } = Layout;
 const { Text, Title } = Typography;
@@ -75,6 +72,7 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
   };
 
   const getSelectedKey = (pathname: string) => {
+    if (pathname.startsWith("/overview")) return "/overview";
     if (pathname.startsWith("/teams")) return "/teams";
     if (pathname.startsWith("/projects")) return "/projects";
     if (pathname.startsWith("/settings")) return "/settings";
@@ -101,29 +99,27 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
             transition: "all 0.2s",
           }}
         >
-          <Space size={16}>
-            <Title
-              level={4}
-              style={{
-                margin: 0,
-                color: token.colorPrimary,
-                fontWeight: 800,
-                letterSpacing: "-0.03em",
-              }}
-            >
-              AIWorkspace
-            </Title>
-            <Tooltip
-              title={
-                currentTheme === "dark"
-                  ? t("sidebar.lightMode")
-                  : t("sidebar.darkMode")
-              }
-            >
+          {collapsed ? (
+            <Flex justify="center">
               <AIThemeSwitch />
-            </Tooltip>
-          </Space>
-          {/* )} */}
+            </Flex>
+          ) : (
+            <Space size={16}>
+              <Title
+                level={4}
+                style={{
+                  margin: 0,
+                  color: token.colorPrimary,
+                  fontWeight: 800,
+                  letterSpacing: "-0.03em",
+                }}
+              >
+                AIWorkspace
+              </Title>
+
+              <AIThemeSwitch />
+            </Space>
+          )}
         </div>
 
         {/* MENU CHÍNH */}

@@ -4,6 +4,8 @@ export interface TeamItem {
   id: string;
   name: string;
   description?: string;
+  memberCount: number;
+  currentUserRole: string;
 }
 
 export interface TeamDetail {

@@ -118,6 +118,7 @@
     "createTeam": "Create Team",
     "searchTeams": "Search teams...",
     "total": "{{count}} teams",
+    "members": "members",
     "notFound": {
       "title": "No teams found",
       "description": "Try adjusting your search"
@@ -305,7 +306,8 @@
   "list": {
     "of": "of",
     "emptyDescription": "Please try adjusting your search or filter to find what you're looking for.",
-    "empty": "No items to display"
+    "empty": "No items to display",
+    "page": "page"
   },
   "modal": {
     "ok": "OK",

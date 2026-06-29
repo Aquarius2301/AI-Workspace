@@ -22,14 +22,19 @@ public class TeamController : ControllerBase
     }
 
     /// <summary>
-    /// Get a paginated list of teams, optionally filtered by user membership or search term
+    /// Get a paginated list of teams, optionally filtered by user membership or search term.
+    /// Returns team info along with member count and the current user's role in each team.
     /// </summary>
     /// <param name="myTeams">If true, only return teams the current user is a member of</param>
     /// <param name="search">Optional search term to filter by team name</param>
     /// <param name="page">Page number (default: 1)</param>
     /// <param name="pageSize">Number of items per page (default: 20)</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <response code="200">Returns a paginated list of teams</response>
+    /// <remarks>
+    /// Response items include: id, name, description, memberCount, currentUserRole.
+    /// currentUserRole is null if the user is not a member of the team (when myTeams=false).
+    /// </remarks>
+    /// <response code="200">Returns a paginated list of teams with member count and user role</response>
     /// <response code="401">Unauthorized if the user is not authenticated</response>
     /// <response code="500">InternalServerError if an internal server error occurs</response>
     [HttpGet]
