@@ -2,6 +2,9 @@
 
 A collaborative project management platform integrated with AI capabilities, built with a modern **.NET 8 + React** stack. Teams can manage projects, tasks, documents, and engage with AI-powered interactions — all in one workspace.
 
+> 🚧 This project is currently under active development.
+> Features, APIs, UI, and architecture may change over time.
+
 ## ✨ Features
 
 - **Team Collaboration** — Create teams, manage members with role-based access (Admin, CoAdmin, Leader, Member)
