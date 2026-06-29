@@ -1,0 +1,317 @@
+{
+  "error": {
+    "InternalServerError": "There are some errors on the server. Please try again later.",
+    "BadRequest": "The request was invalid. Please check your input and try again.",
+    "Unauthorized": "You are not authorized to perform this action. Please log in and try again.",
+    "Forbidden": "You do not have permission to perform this action.",
+    "NotFound": "The requested resource was not found.",
+    "EmailPasswordRequired": "Email and password are required.",
+    "EmailAlreadyExists": "The email address is already in use. Please use a different email.",
+    "InvalidEmailOrPassword": "The email or password you entered is incorrect. Please try again.",
+    "InvalidRefreshToken": "The refresh token is invalid or expired. Please log in again.",
+    "UserNotFound": "The user was not found. Please check your input and try again.",
+    "NameRequired": "Name is required.",
+    "EmailRequired": "Email is required.",
+    "PasswordRequired": "Password is required.",
+    "PasswordInvalid": "The password does not meet the requirements. It must be at least 8 characters long, contain at least one uppercase letter, and include at least one special character.",
+    "OldPasswordIncorrect": "The old password you entered is incorrect. Please try again.",
+    "MemberNotFound": "The member was not found. Please check your input and try again.",
+    "TeamNotFound": "The team was not found. Please check your input and try again.",
+    "NotTeamMember": "You are not a member of this team. Please join the team to access its resources.",
+    "TeamMinOneAdmin": "A team must have at least one admin. Please assign another member as admin before removing the last admin.",
+    "TeamMinOneAdminTransferRole": "You cannot remove the last admin of the team. Please transfer the admin role to another member before removing yourself.",
+    "InvalidRoleRequest": "The role you requested is invalid. Please select a valid role.",
+    "TeamNameRequired": "Team name is required.",
+    "OneMemberRequired": "A team must have at least one member. Please add another member before removing the last member.",
+    "NoPermissionRemoveTeamMember": "You do not have permission to remove this team member.",
+    "NoPermissionUpdateMemberRole": "You do not have permission to update this member's role.",
+    "NoPermissionAddMemberRole": "You do not have permission to add this member's role.",
+    "NoPermissionManageTeam": "You do not have permission to manage this team.",
+    "NoPermissionChangePassword": "You do not have permission to change this user's password."
+  },
+  "login": {
+    "title": "Welcome Back",
+    "subtitle": "Sign in to continue",
+    "email": {
+      "default": "Email",
+      "required": "Please enter your email",
+      "invalid": "Please enter a valid email",
+      "placeholder": "Enter your email"
+    },
+    "password": {
+      "default": "Password",
+      "required": "Please enter your password",
+      "placeholder": "Enter your password"
+    },
+    "submit": "Sign In",
+    "success": "Login successful!",
+    "error": "Login failed. Please try again.",
+    "register": {
+      "default": "Don't have an account?",
+      "link": "Contact Admin"
+    },
+    "mobile": {
+      "slogan": "Manage your workspace efficiently"
+    },
+    "banner": {
+      "slogan": "AI Workspace — Smart Collaboration",
+      "subslogan": "Manage projects, teams, and tasks with ease"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "AI Workspace",
+      "subtitle": "Manage your teams, projects, and tasks in one place"
+    },
+    "quickActions": {
+      "overview": {
+        "desc": "View your dashboard and task summary"
+      },
+      "teams": {
+        "desc": "Manage your teams and members"
+      },
+      "projects": {
+        "desc": "Browse and manage your projects"
+      }
+    }
+  },
+  "overview": {
+    "title": "Overview",
+    "welcome": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening",
+      "teams": "Teams",
+      "projects": "Projects"
+    },
+    "taskStats": {
+      "default": "Task Summary",
+      "description": "Total tasks"
+    },
+    "open": "Open",
+    "inProgress": "In Progress",
+    "done": "Done",
+    "blocked": "Blocked",
+    "overdue": "Overdue",
+    "recentTasks": {
+      "default": "Recent Tasks",
+      "empty": "No tasks found",
+      "project": "Project",
+      "created": "Created",
+      "due": "Due"
+    },
+    "recentComments": {
+      "default": "Recent Comments",
+      "empty": "No comments found"
+    },
+    "team": {
+      "default": "My Teams",
+      "viewAll": "View All",
+      "empty": "You are not in any team yet",
+      "members": "members",
+      "projects": "projects"
+    }
+  },
+  "team": {
+    "title": "Teams",
+    "description": "Manage your teams and collaborate effectively",
+    "createTeam": "Create Team",
+    "searchTeams": "Search teams...",
+    "total": "{{count}} teams",
+    "notFound": {
+      "title": "No teams found",
+      "description": "Try adjusting your search"
+    },
+    "empty": "No teams yet",
+    "emptyDescription": "Create your first team to get started",
+    "view": "View",
+    "create": {
+      "title": "Create New Team",
+      "submit": "Create",
+      "cancel": "Cancel",
+      "name": {
+        "default": "Team Name",
+        "required": "Please enter a team name",
+        "placeholder": "Enter team name"
+      },
+      "description": {
+        "default": "Description",
+        "placeholder": "Enter team description (optional)",
+        "helper": "The creator of the team will be the team Admin"
+      },
+      "success": "Team created successfully!",
+      "error": "Failed to create team"
+    }
+  },
+  "teamDetail": {
+    "notFound": {
+      "default": "Team not found",
+      "title": "Team Not Found",
+      "description": "The team you are looking for does not exist or has been deleted.",
+      "button": "Back to Teams"
+    },
+    "projects": {
+      "default": "Projects",
+      "searchProjects": "Search projects...",
+      "total": "{{count}} projects",
+      "empty": "No projects found",
+      "emptyDescription": "There are no projects in this team yet.",
+      "notFound": "No results found",
+      "notFoundDescription": "Try adjusting your search keywords",
+      "view": "View",
+      "createdBy": "Created by",
+      "create": {
+        "success": "Project created successfully!",
+        "title": "Create Project",
+        "name": {
+          "default": "Project Name",
+          "required": "Please enter a project name"
+        },
+        "description": {
+          "default": "Description",
+          "placeholder": "Enter project description (optional)"
+        },
+        "publicDescription": "Public: Anyone can see this project",
+        "privateDescription": "Private: Only team members can see this project",
+        "visibility": "Visibility"
+      }
+    },
+    "members": {
+      "default": "Members",
+      "searchMembers": "Search members...",
+      "addMember": "Add Member",
+      "empty": "No members found",
+      "notFound": "No members match your search",
+      "you": "(You)",
+      "joinedAt": "Joined",
+      "total": "{{count}} members",
+      "edit": "Edit",
+      "editMember": {
+        "title": "Edit Member"
+      },
+      "remove": {
+        "success": "Removed {{userName}} from team",
+        "error": "Failed to remove {{userName}}",
+        "loading": "Removing...",
+        "label": "Remove Member"
+      },
+      "updateRole": {
+        "success": "Updated {{userName}}'s role",
+        "error": "Failed to update {{userName}}'s role",
+        "loading": "Updating...",
+        "label": "Update Role"
+      },
+      "userName": "Name:",
+      "email": "Email:",
+      "role": "Role:",
+      "selectRole": "Select role",
+      "confirmDeleteTitle": "Remove Member",
+      "confirmDeleteMemberContent": "Are you sure you want to remove {{userName}} ({{email}})?",
+      "confirmDeleteMemberWarning": "This action cannot be undone.",
+      "confirmDeleteMemberOk": "Remove",
+      "confirmDeleteMemberCancel": "Cancel"
+    },
+    "settings": {
+      "default": "Settings",
+      "title": "Team Settings",
+      "description": "Manage settings for {{teamName}}",
+      "editTeam": "Edit Team",
+      "editTeamDescription": "Update team name and description",
+      "deleteTeam": "Delete Team",
+      "deleteTeamDescription": "Permanently delete this team and all its data"
+    },
+    "delete": {
+      "success": "Team deleted successfully",
+      "error": "Failed to delete team",
+      "title": "Delete Team",
+      "description": "Are you sure you want to delete this team?",
+      "warning": "This action cannot be undone. All projects and data will be permanently deleted.",
+      "confirmTitle": "Confirm Deletion",
+      "confirmInput": "Type \"{{teamName}}\" to confirm:",
+      "typeNameWarning": "After this action, you will not be able to recover the team or its data."
+    },
+    "editTeam": {
+      "success": "Team updated successfully!",
+      "error": "Failed to update team",
+      "title": "Edit Team",
+      "ok": "Save",
+      "cancel": "Cancel",
+      "name": {
+        "default": "Team Name",
+        "required": "Please enter a team name"
+      },
+      "description": {
+        "default": "Description",
+        "placeholder": "Enter team description"
+      }
+    }
+  },
+  "sidebar": {
+    "logout": {
+      "title": "Confirm Logout",
+      "content": "Are you sure you want to log out?",
+      "ok": "Logout",
+      "cancel": "Cancel"
+    },
+    "menu": {
+      "overview": "Overview",
+      "teams": "Teams",
+      "projects": "Projects",
+      "settings": "Settings"
+    },
+    "darkMode": "Switch to Dark Mode",
+    "lightMode": "Switch to Light Mode"
+  },
+
+  "visibilitySelect": {
+    "public": "Public",
+    "private": "Private",
+    "Public": "Public",
+    "Private": "Private",
+    "all": "Show All"
+  },
+  "roleSelect": {
+    "CoAdmin": "CoAdmin",
+    "Admin": "Admin",
+    "Leader": "Leader",
+    "Member": "Member",
+    "coAdmin": "CoAdmin",
+    "admin": "Admin",
+    "leader": "Leader",
+    "member": "Member",
+    "all": "All Roles"
+  },
+  "taskStatus": {
+    "open": "Open",
+    "inProgress": "In Progress",
+    "done": "Done",
+    "blocked": "Blocked",
+    "overdue": "Overdue"
+  },
+  "userAvatar": {
+    "online": "Online",
+    "offline": "Offline",
+    "minutesAgo": "{{minutes}} minutes ago",
+    "hoursAgo": "{{hours}} hours ago",
+    "daysAgo": "{{days}} days ago"
+  },
+  "common": {
+    "showMore": "Show more",
+    "authenticating": "Authenticating..."
+  },
+  "task": {
+    "createProject": "Create Project"
+  },
+  "list": {
+    "of": "of",
+    "emptyDescription": "Please try adjusting your search or filter to find what you're looking for.",
+    "empty": "No items to display"
+  },
+  "modal": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete"
+  }
+}

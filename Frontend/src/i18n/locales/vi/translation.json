@@ -1,0 +1,322 @@
+{
+  "error": {
+    "InternalServerError": "Có lỗi xảy ra trên máy chủ. Vui lòng thử lại sau.",
+    "BadRequest": "Yêu cầu không hợp lệ. Vui lòng kiểm tra đầu vào và thử lại.",
+    "Unauthorized": "Bạn không được ủy quyền để thực hiện hành động này. Vui lòng đăng nhập và thử lại.",
+    "Forbidden": "Bạn không có quyền để thực hiện hành động này.",
+    "NotFound": "Tài nguyên được yêu cầu không tồn tại.",
+    "EmailPasswordRequired": "Email và mật khẩu là bắt buộc.",
+    "EmailAlreadyExists": "Địa chỉ email đã được sử dụng. Vui lòng sử dụng email khác.",
+    "InvalidEmailOrPassword": "Email hoặc mật khẩu bạn nhập không đúng. Vui lòng thử lại.",
+    "InvalidRefreshToken": "Token làm mới không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.",
+    "UserNotFound": "Người dùng không được tìm thấy. Vui lòng kiểm tra đầu vào và thử lại.",
+    "NameRequired": "Tên là bắt buộc.",
+    "EmailRequired": "Email là bắt buộc.",
+    "PasswordRequired": "Mật khẩu là bắt buộc.",
+    "PasswordInvalid": "Mật khẩu không đáp ứng các yêu cầu. Phải có ít nhất 8 ký tự, chứa ít nhất một ký tự viết hoa và bao gồm ít nhất một ký tự đặc biệt.",
+    "OldPasswordIncorrect": "Mật khẩu cũ bạn nhập không đúng. Vui lòng thử lại.",
+    "MemberNotFound": "Thành viên không được tìm thấy. Vui lòng kiểm tra đầu vào và thử lại.",
+    "TeamNotFound": "Nhóm không được tìm thấy. Vui lòng kiểm tra đầu vào và thử lại.",
+    "NotTeamMember": "Bạn không phải là thành viên của nhóm này. Vui lòng tham gia nhóm để truy cập các tài nguyên của nó.",
+    "TeamMinOneAdmin": "Một nhóm phải có ít nhất một quản trị viên. Vui lòng chỉ định một thành viên khác là quản trị viên trước khi xóa quản trị viên cuối cùng.",
+    "TeamMinOneAdminTransferRole": "Bạn không thể xóa quản trị viên cuối cùng của nhóm. Vui lòng chuyển quyền quản trị viên sang thành viên khác trước khi xóa bản thân.",
+    "InvalidRoleRequest": "Vai trò bạn yêu cầu không hợp lệ. Vui lòng chọn một vai trò hợp lệ.",
+    "TeamNameRequired": "Tên nhóm là bắt buộc.",
+    "OneMemberRequired": "Một nhóm phải có ít nhất một thành viên. Vui lòng thêm một thành viên khác trước khi xóa thành viên cuối cùng.",
+    "NoPermissionRemoveTeamMember": "Bạn không có quyền để xóa thành viên nhóm này.",
+    "NoPermissionUpdateMemberRole": "Bạn không có quyền để cập nhật vai trò của thành viên này.",
+    "NoPermissionAddMemberRole": "Bạn không có quyền để thêm vai trò cho thành viên này.",
+    "NoPermissionManageTeam": "Bạn không có quyền để quản lý nhóm này.",
+    "NoPermissionChangePassword": "Bạn không có quyền để thay đổi mật khẩu của người dùng này."
+  },
+  "login": {
+    "title": "Chào Mừng Trở Lại",
+    "subtitle": "Đăng nhập để tiếp tục",
+    "email": {
+      "default": "Email",
+      "required": "Vui lòng nhập email",
+      "invalid": "Vui lòng nhập email hợp lệ",
+      "placeholder": "Nhập email của bạn"
+    },
+    "password": {
+      "default": "Mật khẩu",
+      "required": "Vui lòng nhập mật khẩu",
+      "placeholder": "Nhập mật khẩu của bạn"
+    },
+    "submit": "Đăng Nhập",
+    "success": "Đăng nhập thành công!",
+    "error": "Đăng nhập thất bại. Vui lòng thử lại.",
+    "register": {
+      "default": "Chưa có tài khoản?",
+      "link": "Liên hệ Admin"
+    },
+    "mobile": {
+      "slogan": "Quản lý không gian làm việc hiệu quả"
+    },
+    "banner": {
+      "slogan": "AI Workspace — Cộng Tác Thông Minh",
+      "subslogan": "Quản lý dự án, nhóm và công việc dễ dàng"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "AI Workspace",
+      "subtitle": "Quản lý nhóm, dự án và công việc tại một nơi"
+    },
+    "quickActions": {
+      "overview": {
+        "desc": "Xem bảng điều khiển và tổng quan công việc"
+      },
+      "teams": {
+        "desc": "Quản lý nhóm và thành viên"
+      },
+      "projects": {
+        "desc": "Duyệt và quản lý dự án của bạn"
+      }
+    }
+  },
+  "overview": {
+    "title": "Tổng quan",
+    "welcome": {
+      "morning": "Chào Buổi Sáng",
+      "afternoon": "Chào Buổi Chiều",
+      "evening": "Chào Buổi Tối",
+      "teams": "Nhóm",
+      "projects": "Dự án"
+    },
+    "taskStats": {
+      "default": "Tổng Quan Công Việc",
+      "description": "Tổng số công việc"
+    },
+    "open": "Mở",
+    "inProgress": "Đang Thực Hiện",
+    "done": "Hoàn Thành",
+    "blocked": "Bị Chặn",
+    "overdue": "Quá Hạn",
+    "recentTasks": {
+      "default": "Công Việc Gần Đây",
+      "empty": "Không có công việc nào",
+      "project": "Dự án",
+      "created": "Đã tạo",
+      "due": "Hạn chót"
+    },
+    "recentComments": {
+      "default": "Bình Luận Gần Đây",
+      "empty": "Không có bình luận nào"
+    },
+    "team": {
+      "default": "Nhóm Của Tôi",
+      "viewAll": "Xem Tất Cả",
+      "empty": "Bạn chưa tham gia nhóm nào",
+      "members": "thành viên",
+      "projects": "dự án"
+    }
+  },
+  "team": {
+    "title": "Nhóm",
+    "description": "Quản lý nhóm và cộng tác hiệu quả",
+    "createTeam": "Tạo Nhóm",
+    "searchTeams": "Tìm kiếm nhóm...",
+    "total": "{{count}} nhóm",
+    "notFound": {
+      "title": "Không tìm thấy nhóm",
+      "description": "Thử điều chỉnh từ khóa tìm kiếm"
+    },
+    "empty": "Chưa có nhóm nào",
+    "emptyDescription": "Tạo nhóm đầu tiên để bắt đầu",
+    "view": "Xem",
+    "create": {
+      "title": "Tạo Nhóm Mới",
+      "name": {
+        "default": "Tên Nhóm",
+        "required": "Vui lòng nhập tên nhóm",
+        "placeholder": "Nhập tên nhóm"
+      },
+      "description": {
+        "default": "Mô Tả",
+        "placeholder": "Nhập mô tả nhóm (không bắt buộc)",
+        "helper": "Người tạo ra team sẽ là Quản trị viên của nhóm"
+      },
+      "success": "Tạo nhóm thành công!",
+      "error": "Tạo nhóm thất bại"
+    }
+  },
+  "teamDetail": {
+    "notFound": {
+      "default": "Không tìm thấy nhóm",
+      "title": "Không Tìm Thấy Nhóm",
+      "description": "Nhóm bạn đang tìm không tồn tại hoặc đã bị xóa.",
+      "button": "Quay Lại Danh Sách Nhóm"
+    },
+    "projects": {
+      "default": "Dự Án",
+      "searchProjects": "Tìm kiếm dự án...",
+      "total": "{{count}} dự án",
+      "empty": "Không có dự án nào",
+      "emptyDescription": "Chưa có dự án nào trong nhóm này.",
+      "notFound": "Không tìm thấy kết quả",
+      "notFoundDescription": "Thử điều chỉnh từ khóa tìm kiếm",
+      "view": "Xem",
+      "createdBy": "Được tạo bởi",
+      "create": {
+        "success": "Tạo dự án thành công!",
+        "title": "Tạo Dự Án",
+        "name": {
+          "default": "Tên dự án",
+          "required": "Vui lòng nhập tên dự án"
+        },
+        "description": {
+          "default": "Mô tả",
+          "placeholder": "Nhập mô tả dự án (không bắt buộc)"
+        },
+        "publicDescription": "Công khai: Bất kỳ ai cũng có thể thấy dự án này",
+        "privateDescription": "Riêng tư: Chỉ thành viên nhóm mới có thể thấy dự án này",
+        "visibility": "Phạm vi"
+      }
+    },
+    "members": {
+      "default": "Thành Viên",
+      "searchMembers": "Tìm kiếm thành viên...",
+      "addMember": "Thêm Thành Viên",
+      "empty": "Không có thành viên nào",
+      "notFound": "Không tìm thấy thành viên phù hợp",
+      "you": "(Bạn)",
+      "joinedAt": "Tham gia",
+      "total": "{{count}} thành viên",
+      "edit": "Chỉnh Sửa",
+      "editMember": {
+        "title": "Chỉnh Sửa Thành Viên"
+      },
+      "remove": {
+        "success": "Đã xóa {{userName}} khỏi nhóm",
+        "error": "Xóa {{userName}} thất bại",
+        "loading": "Đang xóa...",
+        "label": "Xóa Thành Viên"
+      },
+      "updateRole": {
+        "success": "Đã cập nhật vai trò của {{userName}}",
+        "error": "Cập nhật vai trò của {{userName}} thất bại",
+        "loading": "Đang cập nhật...",
+        "label": "Cập Nhật Vai Trò"
+      },
+      "userName": "Tên:",
+      "email": "Email:",
+      "role": "Vai trò:",
+      "selectRole": "Chọn vai trò",
+      "confirmDeleteTitle": "Xóa Thành Viên",
+      "confirmDeleteMemberContent": "Bạn có chắc muốn xóa {{userName}} ({{email}})?",
+      "confirmDeleteMemberWarning": "Hành động này không thể hoàn tác.",
+      "confirmDeleteMemberOk": "Xóa",
+      "confirmDeleteMemberCancel": "Hủy"
+    },
+    "settings": {
+      "default": "Cài Đặt",
+      "title": "Cài Đặt Nhóm",
+      "description": "Quản lý cài đặt cho {{teamName}}",
+      "editTeam": "Chỉnh Sửa Nhóm",
+      "editTeamDescription": "Cập nhật tên và mô tả nhóm",
+      "deleteTeam": "Xóa Nhóm",
+      "deleteTeamDescription": "Xóa vĩnh viễn nhóm này và tất cả dữ liệu"
+    },
+    "delete": {
+      "success": "Xóa nhóm thành công",
+      "error": "Xóa nhóm thất bại",
+      "title": "Xóa Nhóm",
+      "ok": "Xóa",
+      "cancel": "Hủy",
+      "description": "Bạn có chắc muốn xóa nhóm này?",
+      "warning": "Hành động này không thể hoàn tác. Tất cả dự án và dữ liệu sẽ bị xóa vĩnh viễn.",
+      "confirmTitle": "Xác Nhận Xóa",
+      "confirmInput": "Nhập \"{{teamName}}\" để xác nhận:",
+      "typeNameWarning": "Sau hành động này, bạn sẽ không thể khôi phục nhóm hoặc dữ liệu của nó."
+    },
+    "editTeam": {
+      "success": "Cập nhật nhóm thành công!",
+      "error": "Cập nhật nhóm thất bại",
+      "title": "Chỉnh Sửa Nhóm",
+      "ok": "Lưu",
+      "cancel": "Hủy",
+      "name": {
+        "default": "Tên Nhóm",
+        "required": "Vui lòng nhập tên nhóm"
+      },
+      "description": {
+        "default": "Mô Tả",
+        "placeholder": "Nhập mô tả nhóm"
+      }
+    }
+  },
+  "sidebar": {
+    "logout": {
+      "title": "Xác Nhận Đăng Xuất",
+      "content": "Bạn có chắc muốn đăng xuất?",
+      "ok": "Đăng Xuất",
+      "cancel": "Hủy"
+    },
+    "menu": {
+      "overview": "Tổng Quan",
+      "teams": "Nhóm",
+      "projects": "Dự Án",
+      "settings": "Cài Đặt"
+    },
+    "darkMode": "Chuyển sang Chế độ Tối",
+    "lightMode": "Chuyển sang Chế độ Sáng"
+  },
+  "visibilitySelect": {
+    "public": "Công khai",
+    "private": "Riêng tư",
+    "Public": "Công khai",
+    "Private": "Riêng tư",
+    "all": "Hiển thị tất cả"
+  },
+  "roleSelect": {
+    "CoAdmin": "Đồng quản trị",
+    "Admin": "Quản trị viên",
+    "Leader": "Trưởng nhóm",
+    "Member": "Thành viên",
+    "coAdmin": "Đồng quản trị",
+    "admin": "Quản trị viên",
+    "leader": "Trưởng hóm",
+    "member": "Thành viên",
+    "all": "Tất cả vai trò"
+  },
+  "taskStatus": {
+    "open": "Mở",
+    "inProgress": "Đang Thực Hiện",
+    "done": "Hoàn Thành",
+    "blocked": "Bị Chặn",
+    "overdue": "Quá Hạn"
+  },
+  "userAvatar": {
+    "online": "Trực Tuyến",
+    "offline": "Ngoại Tuyến",
+    "minutesAgo": "{{minutes}} phút trước",
+    "hoursAgo": "{{hours}} giờ trước",
+    "daysAgo": "{{days}} ngày trước"
+  },
+  "visibility": {
+    "public": "Công Khai",
+    "private": "Riêng Tư",
+    "all": "Tất Cả",
+    "placeholder": "Chọn chế độ hiển thị"
+  },
+  "common": {
+    "showMore": "Xem thêm",
+    "authenticating": "Đang xác thực..."
+  },
+  "task": {
+    "createProject": "Tạo Dự Án"
+  },
+  "list": {
+    "of": "của",
+    "emptyDescription": "Vui lòng thử điều chỉnh tìm kiếm hoặc bộ lọc để tìm những gì bạn đang tìm kiếm.",
+    "empty": "Không có mục nào để hiển thị"
+  },
+  "modal": {
+    "ok": "OK",
+    "cancel": "Hủy",
+    "create": "Tạo",
+    "update": "Cập Nhật",
+    "delete": "Xóa"
+  }
+}
