@@ -1,9 +1,8 @@
-import { Flex, Pagination, Empty, Grid, Result } from "antd";
+import { Flex, Result, Empty } from "antd";
 import { AICardItem, type AICardItemProps } from "./AICardItem";
+import { AIPagination } from "./AIPagination";
 import type { PageSize } from "@/types";
 import { useTranslation } from "react-i18next";
-
-const { useBreakpoint } = Grid;
 export interface AIListProps<T = any> {
   /** Array of data items to render */
   data: T[];
@@ -39,8 +38,6 @@ export interface AIListProps<T = any> {
   };
 }
 
-const PAGE_SIZE_OPTIONS: PageSize[] = [5, 10, 20, 50];
-
 export function AIList<T>({
   data,
   itemKey,
@@ -59,9 +56,6 @@ export function AIList<T>({
   const end = start + pageSize;
   const displayData = paginationProps ? data.slice(start, end) : data;
   const { t } = useTranslation();
-
-  const screens = useBreakpoint();
-  const isMobile = !screens.md;
 
   if (!isLoading && data.length === 0) {
     const emptyConfig = hasSearchQuery ? (notFound ?? empty) : empty;
@@ -91,32 +85,15 @@ export function AIList<T>({
       })}
 
       {paginationProps && data.length > 0 && (
-        <Flex justify="end" style={{ marginTop: gap ? 12 : 0 }}>
-          <Pagination
-            current={paginationProps.page}
+        <div style={{ marginTop: gap ? 12 : 0 }}>
+          <AIPagination
+            page={paginationProps.page}
             pageSize={paginationProps.pageSize}
             total={paginationProps.total}
-            showSizeChanger={!isMobile}
-            locale={{ items_per_page: `/ ${t("list.page")}` }}
-            pageSizeOptions={PAGE_SIZE_OPTIONS}
-            simple={isMobile}
-            showTotal={
-              isMobile
-                ? undefined
-                : (total, range) =>
-                    `${range[0]}-${range[1]} ${t("list.of")} ${total}`
-            }
-            onChange={(page, pageSize) => {
-              if (page !== paginationProps.page) {
-                paginationProps.onPageChange(page);
-              }
-              if (pageSize !== paginationProps.pageSize) {
-                paginationProps.onPageSizeChange(pageSize as PageSize);
-              }
-            }}
-            style={{ borderRadius: 8 }}
+            onPageChange={paginationProps.onPageChange}
+            onPageSizeChange={paginationProps.onPageSizeChange}
           />
-        </Flex>
+        </div>
       )}
     </Flex>
   );

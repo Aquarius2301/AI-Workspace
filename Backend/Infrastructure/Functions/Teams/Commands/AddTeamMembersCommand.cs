@@ -16,7 +16,8 @@ public sealed record AddTeamMembersCommand(
     CancellationToken CancellationToken = default
 ) : IRequest, IRequireTeamRole
 {
-    TeamMemberRole[] IRequireTeamRole.AllowedRoles => [TeamMemberRole.Admin, TeamMemberRole.CoAdmin];
+    TeamMemberRole[] IRequireTeamRole.AllowedRoles =>
+        [TeamMemberRole.Admin, TeamMemberRole.CoAdmin];
 }
 
 public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMembersCommand>
@@ -30,17 +31,19 @@ public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMember
 
     public async Task Handle(AddTeamMembersCommand request, CancellationToken cancellationToken)
     {
-        var team = await _unitOfWork
-            .Teams.GetQuery()
-            .FirstOrDefaultAsync(t => t.Id == request.TeamId, cancellationToken);
-
-        if (team is null)
-            throw new NotFoundException(ErrorCodes.TeamNotFound);
+        var team =
+            await _unitOfWork
+                .Teams.GetQuery()
+                .FirstOrDefaultAsync(t => t.Id == request.TeamId, cancellationToken)
+            ?? throw new NotFoundException(ErrorCodes.TeamNotFound);
 
         // Get the current user's role to enforce permissions
         var currentMember = await _unitOfWork
             .TeamMembers.GetQuery()
-            .FirstOrDefaultAsync(tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId, cancellationToken);
+            .FirstOrDefaultAsync(
+                tm => tm.TeamId == request.TeamId && tm.UserId == request.CurrentUserId,
+                cancellationToken
+            );
 
         var isAdmin = currentMember?.Role == TeamMemberRole.Admin;
 
@@ -56,11 +59,13 @@ public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMember
                 throw new BadRequestException(ErrorCodes.InvalidRoleRequest);
             }
 
-            // CoAdmin cannot add members with Admin or CoAdmin role
-            if (!isAdmin && (role == TeamMemberRole.Admin || role == TeamMemberRole.CoAdmin))
-            {
+            // Admin and CoAdmin cannot add members with Admin role
+            if (role == TeamMemberRole.Admin)
                 throw new BadRequestException(ErrorCodes.NoPermissionAddMemberRole);
-            }
+
+            // CoAdmin cannot add members with CoAdmin role
+            if (!isAdmin && role == TeamMemberRole.CoAdmin)
+                throw new BadRequestException(ErrorCodes.NoPermissionAddMemberRole);
 
             // Check if already a member
             var existing = await _unitOfWork

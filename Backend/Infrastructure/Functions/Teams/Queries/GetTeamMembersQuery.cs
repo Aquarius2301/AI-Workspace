@@ -58,9 +58,10 @@ public sealed class GetTeamMembersQueryHandler
         var members = await query
             .OrderBy(x =>
                 x.Role == TeamMemberRole.Admin ? 1
-                : x.Role == TeamMemberRole.Leader ? 2
-                : 3
-            ) // Order by Role (Admin first, then Leader, then Member)
+                : x.Role == TeamMemberRole.CoAdmin ? 2
+                : x.Role == TeamMemberRole.Leader ? 3
+                : 4
+            ) // Order by Role (Admin first, then CoAdmin, then Leader, then Member)
             .ThenBy(x => x.User.Name) // Then by UserName
             .Select(tm => new TeamMemberItem(
                 tm.UserId,

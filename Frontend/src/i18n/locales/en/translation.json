@@ -209,6 +209,14 @@
       "email": "Email:",
       "role": "Role:",
       "selectRole": "Select role",
+      "addMemberModal": {
+        "title": "Add Members",
+        "searchPlaceholder": "Search users...",
+        "noAvailable": "No available users found",
+        "selected": "{{count}} member(s) selected",
+        "selectRole": "Select role",
+        "success": "Members added successfully"
+      },
       "confirmDeleteTitle": "Remove Member",
       "confirmDeleteMemberContent": "Are you sure you want to remove {{userName}} ({{email}})?",
       "confirmDeleteMemberWarning": "This action cannot be undone.",

@@ -5,6 +5,7 @@ import { useTeamMembers, useSearch } from "@/hooks";
 import { AIList, UserAvatar, AIRoleTag, AIRoleSelect } from "@/components";
 import type { TeamMemberItem, TeamRole } from "@/types";
 import { EditMemberRoleModal } from "../modals/EditMemberRoleModal";
+import { AddMemberModal } from "../modals/AddMemberModal";
 const { Text } = Typography;
 const { useBreakpoint } = Grid;
 
@@ -46,9 +47,12 @@ export function MembersTab({ teamId, userId, role }: MembersTabProps) {
     member: null,
   });
 
+  // ── Add member modal state ──
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   return (
     <Flex vertical gap={16}>
-      {/* ── Filter bar: search + role filter ── */}
+      {/* ── Filter bar: search + role filter + create ── */}
       {showFilters && (
         <Flex wrap="wrap" gap={12} align="center">
           <Input.Search
@@ -63,6 +67,11 @@ export function MembersTab({ teamId, userId, role }: MembersTabProps) {
             value={roleProps.role}
             onChange={(role) => roleProps.onRoleChange(role)}
           />
+          {(isAdmin || isCoAdmin) && (
+            <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
+              {t("teamDetail.members.addMember")}
+            </Button>
+          )}
         </Flex>
       )}
 
@@ -134,6 +143,16 @@ export function MembersTab({ teamId, userId, role }: MembersTabProps) {
           onClose={() => setEditModal({ isOpened: false, member: null })}
           teamId={teamId}
           member={editModal.member}
+          currentUserRole={role}
+        />
+      )}
+
+      {/* ── Add member modal ── */}
+      {isAddModalOpen && (
+        <AddMemberModal
+          isOpen
+          onClose={() => setIsAddModalOpen(false)}
+          teamId={teamId}
           currentUserRole={role}
         />
       )}

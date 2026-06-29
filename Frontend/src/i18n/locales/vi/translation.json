@@ -207,6 +207,14 @@
       "email": "Email:",
       "role": "Vai trò:",
       "selectRole": "Chọn vai trò",
+      "addMemberModal": {
+        "title": "Thêm Thành Viên",
+        "searchPlaceholder": "Tìm kiếm người dùng...",
+        "noAvailable": "Không tìm thấy người dùng nào",
+        "selected": "Đã chọn {{count}} người",
+        "selectRole": "Chọn vai trò",
+        "success": "Thêm thành viên thành công"
+      },
       "confirmDeleteTitle": "Xóa Thành Viên",
       "confirmDeleteMemberContent": "Bạn có chắc muốn xóa {{userName}} ({{email}})?",
       "confirmDeleteMemberWarning": "Hành động này không thể hoàn tác.",

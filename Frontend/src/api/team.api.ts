@@ -83,7 +83,7 @@ export const teamApi = {
   getAvailableMembers: (
     id: string,
     pagination: { search?: string; page?: number; pageSize?: number },
-  ): Promise<AvailableTeamMemberItem[]> => {
+  ): Promise<PageResponse<AvailableTeamMemberItem>> => {
     return axiosClient.get(`${baseUrl}/${id}/available-members`, {
       params: pagination,
     });
