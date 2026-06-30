@@ -13,7 +13,13 @@ public sealed record GetTeamsQuery(
     CancellationToken CancellationToken = default
 ) : IRequest<PaginationResult<TeamItem>>;
 
-public sealed record TeamItem(Guid Id, string Name, string? Description);
+public sealed record TeamItem(
+    Guid Id,
+    string Name,
+    string? Description,
+    int MemberCount,
+    string? CurrentUserRole
+);
 
 public sealed class GetTeamsQueryHandler
     : IRequestHandler<GetTeamsQuery, PaginationResult<TeamItem>>
@@ -51,17 +57,30 @@ public sealed class GetTeamsQueryHandler
         var total = await query.CountAsync(cancellationToken);
 
         var items = await query
+            .Include(t => t.TeamMembers)
             .OrderBy(t => t.Name)
             .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
             .Take(request.Pagination.PageSize)
-            .Select(t => new TeamItem(t.Id, t.Name, t.Description))
             .ToListAsync(cancellationToken);
+
+        var resultItems = items
+            .Select(t => new TeamItem(
+                t.Id,
+                t.Name,
+                t.Description,
+                t.TeamMembers.Count,
+                t.TeamMembers
+                    .FirstOrDefault(tm => tm.UserId == request.CurrentUserId)
+                    ?.Role
+                    .ToString()
+            ))
+            .ToList();
 
         return new PaginationResult<TeamItem>(
             request.Pagination.Page,
             request.Pagination.PageSize,
             total,
-            items
+            resultItems
         );
     }
 }

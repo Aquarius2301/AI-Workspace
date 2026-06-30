@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Input, Flex, Empty, Typography } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { AIList } from "@/components";
+import { PlusOutlined, TeamOutlined } from "@ant-design/icons";
+import { AIList, AIRoleTag } from "@/components";
 import { useSearch, useTeamList } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import { AppLayout } from "@/layouts";
@@ -61,13 +61,24 @@ export default function TeamPage() {
           itemKey={(item) => item.id}
           renderItem={(team) => ({
             header: (
-              <Text strong style={{ fontSize: 15 }}>
-                {team.name}
-              </Text>
+              <Flex align="center" gap={8}>
+                <Text strong style={{ fontSize: 15 }}>
+                  {team.name}
+                </Text>
+
+                <AIRoleTag role={team.currentUserRole} />
+              </Flex>
             ),
-            content: team.description ? (
-              <Text type="secondary">{team.description}</Text>
-            ) : undefined,
+            content: (
+              <Flex vertical gap={4}>
+                {team.description && (
+                  <Text type="secondary">{team.description}</Text>
+                )}
+                <Text type="secondary" style={{ fontSize: 13 }}>
+                  <TeamOutlined /> {team.memberCount} {t("team.members")}
+                </Text>
+              </Flex>
+            ),
             rightSide: (
               <Button onClick={() => navigate(`/teams/${team.id}`)}>
                 {t("team.view")}

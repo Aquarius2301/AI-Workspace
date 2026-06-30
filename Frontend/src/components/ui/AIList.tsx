@@ -39,6 +39,8 @@ export interface AIListProps<T = any> {
   };
 }
 
+const PAGE_SIZE_OPTIONS: PageSize[] = [5, 10, 20, 50];
+
 export function AIList<T>({
   data,
   itemKey,
@@ -95,6 +97,8 @@ export function AIList<T>({
             pageSize={paginationProps.pageSize}
             total={paginationProps.total}
             showSizeChanger={!isMobile}
+            locale={{ items_per_page: `/ ${t("list.page")}` }}
+            pageSizeOptions={PAGE_SIZE_OPTIONS}
             simple={isMobile}
             showTotal={
               isMobile
