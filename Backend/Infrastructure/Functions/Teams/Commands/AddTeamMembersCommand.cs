@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Functions.Teams;
 
-public sealed record AddTeamMemberRequest(Guid UserId, string? Role);
+public sealed record AddTeamMemberRequest(Guid UserId, TeamMemberRole? Role);
 
 public sealed record AddTeamMembersCommand(
     Guid CurrentUserId,
@@ -49,15 +49,7 @@ public sealed class AddTeamMembersCommandHandler : IRequestHandler<AddTeamMember
 
         foreach (var memberReq in request.Members)
         {
-            TeamMemberRole role;
-            if (string.IsNullOrWhiteSpace(memberReq.Role))
-            {
-                role = TeamMemberRole.Member;
-            }
-            else if (!Enum.TryParse<TeamMemberRole>(memberReq.Role, true, out role))
-            {
-                throw new BadRequestException(ErrorCodes.InvalidRoleRequest);
-            }
+            TeamMemberRole role = memberReq.Role ?? TeamMemberRole.Member;
 
             // Admin and CoAdmin cannot add members with Admin role
             if (role == TeamMemberRole.Admin)

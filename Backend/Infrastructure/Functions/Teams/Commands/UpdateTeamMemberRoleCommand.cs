@@ -11,7 +11,7 @@ public sealed record UpdateTeamMemberRoleCommand(
     Guid CurrentUserId,
     Guid TeamId,
     Guid UserId,
-    string? Role,
+    TeamMemberRole? Role,
     CancellationToken CancellationToken = default
 ) : IRequest, IRequireTeamRole
 {
@@ -66,15 +66,7 @@ public sealed class UpdateTeamMemberRoleCommandHandler
         }
 
         // Parse role
-        TeamMemberRole role;
-        if (string.IsNullOrWhiteSpace(request.Role))
-        {
-            role = TeamMemberRole.Member;
-        }
-        else if (!Enum.TryParse(request.Role, true, out role))
-        {
-            throw new BadRequestException(ErrorCodes.InvalidRoleRequest);
-        }
+        TeamMemberRole role = request.Role ?? TeamMemberRole.Member;
 
         // Admin and CoAdmin cannot assign Admin role to anyone
         if (role == TeamMemberRole.Admin)

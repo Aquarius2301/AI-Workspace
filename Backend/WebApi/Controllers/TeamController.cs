@@ -455,4 +455,4 @@ public sealed record UpdateTeamRequest(string? Name, string? Description);
 
 public sealed record AddTeamMembersRequest(List<AddTeamMemberRequest> Members);
 
-public sealed record UpdateMemberRoleRequest(string? Role);
+public sealed record UpdateMemberRoleRequest(TeamMemberRole? Role);
