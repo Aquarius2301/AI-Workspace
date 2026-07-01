@@ -34,6 +34,7 @@ namespace Infrastructure.Exceptions
         // ─── NotFound ───────────────────────────────────────────
         public const string MemberNotFound = "MemberNotFound";
         public const string TeamNotFound = "TeamNotFound";
+        public const string SessionNotFound = "SessionNotFound";
 
         // ─── Member / Team ──────────────────────────────────────
         public const string NotTeamMember = "NotTeamMember";

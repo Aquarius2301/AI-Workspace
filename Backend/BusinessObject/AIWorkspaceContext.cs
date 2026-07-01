@@ -95,6 +95,7 @@ public class AIWorkspaceContext : DbContext
             entity.Property(x => x.CreatedAt).IsRequired().HasColumnType("datetimeoffset");
             entity.Property(x => x.ExpiresAt).IsRequired().HasColumnType("datetimeoffset");
             entity.Property(x => x.DeviceInfo).HasMaxLength(500);
+            entity.Property(x => x.DeviceId).HasMaxLength(128);
         });
 
         modelBuilder.Entity<Team>(entity =>

@@ -36,4 +36,10 @@ public class RefreshToken
     /// Gets or sets the optional device information for the token.
     /// </summary>
     public string? DeviceInfo { get; set; }
+
+    /// <summary>
+    /// Gets or sets the persistent device identifier (UUID cookie) that uniquely
+    /// identifies the browser/device that created this token.
+    /// </summary>
+    public string? DeviceId { get; set; }
 }

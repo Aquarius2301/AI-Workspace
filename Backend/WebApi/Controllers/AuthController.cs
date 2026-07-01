@@ -50,8 +50,28 @@ public class AuthController : ControllerBase
 
         var deviceInfo = HttpContext.Request.Headers.UserAgent.ToString();
 
+        // Read or create a persistent device_id cookie to identify this browser/device
+        var deviceId = CookieHelper.GetCookie(HttpContext.Request, "device_id");
+
+        if (string.IsNullOrEmpty(deviceId))
+        {
+            deviceId = Guid.NewGuid().ToString();
+            CookieHelper.AddCookie(
+                HttpContext.Response,
+                "device_id",
+                deviceId,
+                TimeSpan.FromDays(3650) // 10 years — effectively permanent
+            );
+        }
+
         var result = await _mediator.Send(
-            new LoginCommand(request.Email, request.Password, deviceInfo, cancellationToken)
+            new LoginCommand(
+                request.Email,
+                request.Password,
+                deviceInfo,
+                deviceId,
+                cancellationToken
+            )
         );
 
         CookieHelper.AddCookie(
@@ -201,6 +221,59 @@ public class AuthController : ControllerBase
 
         CookieHelper.RemoveCookie(HttpContext.Response, "access_token");
         CookieHelper.RemoveCookie(HttpContext.Response, "refresh_token");
+
+        return Ok("Success");
+    }
+
+    /// <summary>
+    /// Get all active sessions (logged-in devices) for the current user
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <remarks>
+    /// Requires authentication.
+    /// Returns a list of active sessions with browser, OS, and timestamps.
+    /// The current session is marked with <c>IsCurrent = true</c>.
+    /// </remarks>
+    /// <response code="200">Returns the list of active sessions</response>
+    /// <response code="401">Unauthorized if the user is not authenticated</response>
+    [Authorize]
+    [HttpGet("sessions")]
+    public async Task<IActionResult> GetSessions(CancellationToken cancellationToken)
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        var currentDeviceId = CookieHelper.GetCookie(HttpContext.Request, "device_id");
+
+        var result = await _mediator.Send(
+            new GetSessionsQuery(userId, currentDeviceId),
+            cancellationToken
+        );
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Revoke a specific device session by its device ID
+    /// </summary>
+    /// <param name="deviceId">The device identifier from the session list</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <remarks>
+    /// Requires authentication.
+    /// Removes the refresh token for the specified device, effectively logging it out.
+    /// </remarks>
+    /// <response code="200">Success if the session was revoked</response>
+    /// <response code="401">Unauthorized if the user is not authenticated</response>
+    /// <response code="404">SessionNotFound if the device session does not exist</response>
+    [Authorize]
+    [HttpDelete("sessions/{deviceId}")]
+    public async Task<IActionResult> RevokeSession(
+        string deviceId,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(new RevokeSessionCommand(userId, deviceId), cancellationToken);
 
         return Ok("Success");
     }

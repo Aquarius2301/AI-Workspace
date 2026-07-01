@@ -13,6 +13,7 @@ public sealed record LoginCommand(
     string Email,
     string Password,
     string? DeviceInfo = null,
+    string? DeviceId = null,
     CancellationToken CancellationToken = default
 ) : IRequest<LoginResult>;
 
@@ -39,6 +40,18 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
         if (!PasswordHelper.Verify(user.PasswordHash, request.Password))
             throw new UnauthorizedException(ErrorCodes.InvalidEmailOrPassword);
 
+        // If a device_id is provided, revoke any existing refresh token for the same device.
+        // This ensures only one active session per device.
+        if (request.DeviceId != null)
+        {
+            var existingToken = _unitOfWork
+                .RefreshTokens.GetQuery()
+                .FirstOrDefault(rt => rt.UserId == user.Id && rt.DeviceId == request.DeviceId);
+
+            if (existingToken != null)
+                _unitOfWork.RefreshTokens.Remove(existingToken);
+        }
+
         var accessToken = JwtHelper.GenerateToken(user.Id, user.Email, _authSetting);
 
         var refreshTokenValue = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
@@ -50,6 +63,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
             CreatedAt = DateTimeOffset.UtcNow,
             ExpiresAt = DateTimeOffset.UtcNow.AddDays(_authSetting.RefreshTokenDays),
             DeviceInfo = request.DeviceInfo,
+            DeviceId = request.DeviceId,
         };
 
         _unitOfWork.RefreshTokens.Add(refreshToken);
