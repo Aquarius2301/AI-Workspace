@@ -24,6 +24,9 @@ public static class DependencyInjectionService
             cfg.AddOpenBehavior(typeof(TeamRoleBehavior<,>));
         });
 
+        // Register HttpClient for ImageKitService
+        services.AddHttpClient<ImageKitService>();
+
         return services;
     }
 }

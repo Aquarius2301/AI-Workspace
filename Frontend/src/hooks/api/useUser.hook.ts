@@ -1,6 +1,7 @@
 import { userApi } from "@/api";
 import type { PageSize } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AUTH_ME_QUERY_KEY } from "./useAuth.hook";
 
 export const USER_QUERY_KEY = ["user"] as const;
 
@@ -10,13 +11,12 @@ export const useGetUsers = (page: number, pageSize: PageSize) =>
     queryFn: () => userApi.getUsers(page, pageSize),
   });
 
-export const useAccount = () => {
+export const useUser = () => {
   const queryClient = useQueryClient();
-
   const updateProfile = useMutation({
     mutationFn: userApi.updateProfile,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: USER_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
     },
   });
 
@@ -25,8 +25,16 @@ export const useAccount = () => {
       userApi.changePassword(params),
   });
 
+  const uploadAvatar = useMutation({
+    mutationFn: (file: File) => userApi.uploadAvatar(file),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
+    },
+  });
+
   return {
     updateProfile,
     changePassword,
+    uploadAvatar,
   };
 };

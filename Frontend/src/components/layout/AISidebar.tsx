@@ -149,8 +149,18 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
         {isMobile || collapsed ? (
           <Space vertical size="small" style={{ width: "100%" }}>
             <Space>
-              <UserAvatar src={me?.avatar} userName={me?.name} size={44} />
-              <Space vertical align="start" size={0} style={{ width: "100%" }}>
+              <Button
+                type="text"
+                onClick={() => navigate("/profile/me")}
+                style={{
+                  background: "transparent",
+                  padding: 0,
+                  border: "none",
+                }}
+              >
+                <UserAvatar src={me?.avatar} userName={me?.name} size={44} />
+              </Button>
+              {/* <Space vertical align="start" size={0} style={{ width: "100%" }}>
                 <Text
                   strong
                   style={{
@@ -173,7 +183,7 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
                 >
                   {me?.email}
                 </Text>
-              </Space>
+              </Space> */}
             </Space>
             <Flex justify="center" style={{ width: "100%" }}>
               <Button
@@ -193,7 +203,17 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
             }}
           >
             <Space size="middle" style={{ overflow: "hidden" }}>
-              <UserAvatar src={me?.avatar} userName={me?.name} size={44} />
+              <Button
+                type="text"
+                onClick={() => navigate("/profile/me")}
+                style={{
+                  background: "transparent",
+                  padding: 0,
+                  border: "none",
+                }}
+              >
+                <UserAvatar src={me?.avatar} userName={me?.name} size={44} />
+              </Button>
               <div
                 style={{
                   display: "flex",

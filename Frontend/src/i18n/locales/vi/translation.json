@@ -316,6 +316,21 @@
     "showMore": "Xem thêm",
     "authenticating": "Đang xác thực..."
   },
+  "profile": {
+    "title": "Hồ Sơ Của Tôi",
+    "name": "Tên",
+    "email": "Email",
+    "language": "Ngôn Ngữ",
+    "details": "Chi Tiết",
+    "edit": "Chỉnh Sửa Hồ Sơ",
+    "updateSuccess": "Cập nhật hồ sơ thành công!",
+    "updateError": "Cập nhật hồ sơ thất bại",
+    "nameRequired": "Vui lòng nhập tên",
+    "avatar": "Ảnh đại diện",
+    "avatarUploadError": "Tải ảnh đại diện thất bại",
+    "avatarTypeError": "Chỉ chấp nhận ảnh JPEG, PNG, WebP và GIF",
+    "avatarSizeError": "Ảnh phải nhỏ hơn 5MB"
+  },
   "task": {
     "createProject": "Tạo Dự Án"
   },

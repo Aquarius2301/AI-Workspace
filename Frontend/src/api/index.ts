@@ -1,4 +1,4 @@
-export * from "./account.api";
+export * from "./user.api";
 export * from "./auth.api";
 export * from "./team.api";
 export * from "./project.api";

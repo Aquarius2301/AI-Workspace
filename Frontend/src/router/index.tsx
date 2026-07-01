@@ -10,6 +10,7 @@ import {
 import i18n from "@/i18n";
 import {
   LoginPage,
+  ProfilePage,
   TeamPage,
   TeamDetailPage,
   OverviewPage,
@@ -44,6 +45,11 @@ interface AppRoute {
 }
 
 const protectedRoutes: AppRoute[] = [
+  {
+    name: "Profile",
+    path: "/profile/me",
+    component: ProfilePage,
+  },
   {
     name: "Overview",
     path: "/overview",

@@ -6,6 +6,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApi.Helpers;
+using WebApi.Services;
 
 namespace WebApi.Controllers;
 
@@ -15,10 +16,12 @@ namespace WebApi.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly ImageKitService _imageKitService;
 
-    public UserController(IMediator mediator)
+    public UserController(IMediator mediator, ImageKitService imageKitService)
     {
         _mediator = mediator;
+        _imageKitService = imageKitService;
     }
 
     /// <summary>
@@ -73,6 +76,54 @@ public class UserController : ControllerBase
     }
 
     /// <summary>
+    /// Upload an avatar image for the current user. The image is uploaded to
+    /// ImageKit and the user's AvatarUrl is updated automatically.
+    /// </summary>
+    /// <param name="file">The image file to upload (JPEG, PNG, WEBP, GIF).</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <response code="200">Returns the URL of the uploaded avatar image.</response>
+    /// <response code="400">Invalid file type or file is empty.</response>
+    /// <response code="401">Unauthorized if the user is not authenticated.</response>
+    /// <response code="500">InternalServerError if an upload or database error occurs.</response>
+    [HttpPost("avatar")]
+    public async Task<IActionResult> UploadAvatar(
+        IFormFile file,
+        CancellationToken cancellationToken
+    )
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest("File is empty.");
+
+        // Validate content type
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp", "image/gif" };
+        if (!allowedTypes.Contains(file.ContentType))
+            return BadRequest("Invalid file type. Allowed: JPEG, PNG, WEBP, GIF.");
+
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        using var stream = file.OpenReadStream();
+        var avatarUrl = await _imageKitService.UploadImageAsync(
+            stream,
+            file.FileName,
+            cancellationToken
+        );
+
+        // Update the user's AvatarUrl in the database
+        await _mediator.Send(
+            new UpdateProfileCommand(
+                userId,
+                Name: null,
+                AvatarUrl: avatarUrl,
+                Language: null,
+                CancellationToken: cancellationToken
+            ),
+            cancellationToken
+        );
+
+        return Ok(new { avatarUrl });
+    }
+
+    /// <summary>
     /// Change the current user's password
     /// </summary>
     /// <param name="id">The user ID</param>
@@ -103,7 +154,7 @@ public class UserController : ControllerBase
                 cancellationToken
             )
         );
-        return NoContent();
+        return Ok("Success");
     }
 }
 

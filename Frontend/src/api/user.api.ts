@@ -3,6 +3,7 @@ import type {
   UserItem,
   UpdateProfileRequest,
   ChangePasswordRequest,
+  UploadAvatarResponse,
 } from "@/types";
 import axiosClient from "./config.api";
 
@@ -19,7 +20,15 @@ export const userApi = {
   },
 
   updateProfile: (data: UpdateProfileRequest): Promise<string> => {
-    return axiosClient.put(`${baseUrl}/users`, data);
+    return axiosClient.put(`${baseUrl}`, data);
+  },
+
+  uploadAvatar: (file: File): Promise<UploadAvatarResponse> => {
+    const formData = new FormData();
+    formData.append("file", file);
+    return axiosClient.post(`${baseUrl}/avatar`, formData, {
+      headers: { "Content-Type": undefined },
+    });
   },
 
   changePassword: (data: ChangePasswordRequest): Promise<string> => {

@@ -8,6 +8,7 @@ public static class SettingService
     )
     {
         services.Configure<AuthSetting>(configuration.GetSection("AuthSettings"));
+        services.Configure<UploadSettings>(configuration.GetSection("UploadSettings"));
 
         return services;
     }

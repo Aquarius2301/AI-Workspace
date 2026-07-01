@@ -307,6 +307,21 @@
     "hoursAgo": "{{hours}} hours ago",
     "daysAgo": "{{days}} days ago"
   },
+  "profile": {
+    "title": "My Profile",
+    "name": "Name",
+    "email": "Email",
+    "language": "Language",
+    "details": "Details",
+    "edit": "Edit Profile",
+    "updateSuccess": "Profile updated successfully!",
+    "updateError": "Failed to update profile",
+    "nameRequired": "Please enter your name",
+    "avatar": "Avatar",
+    "avatarUploadError": "Failed to upload avatar",
+    "avatarTypeError": "Only JPEG, PNG, WebP and GIF images are allowed",
+    "avatarSizeError": "Image must be smaller than 5MB"
+  },
   "common": {
     "showMore": "Show more",
     "authenticating": "Authenticating..."
