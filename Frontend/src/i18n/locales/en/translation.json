@@ -335,9 +335,24 @@
     "confirmPasswordRequired": "Please confirm your new password",
     "confirmPasswordMismatch": "Passwords do not match"
   },
-  "common": {
-    "showMore": "Show more",
-    "authenticating": "Authenticating..."
+  "sessions": {
+    "title": "Active Sessions",
+    "currentDevice": "Current Device",
+    "logOutDevice": "Log Out This Device",
+    "logOutAllDevices": "Log Out All Devices",
+    "noSessions": "No active sessions found",
+    "loading": "Loading sessions...",
+    "error": "Failed to load sessions",
+    "confirmRevokeTitle": "Confirm Log Out",
+    "confirmRevokeContent": "Are you sure you want to log out this device?",
+    "confirmRevokeAllContent": "This will log out all devices including this one. Continue?",
+    "sessionRevoked": "Session logged out successfully",
+    "browser": "Browser",
+    "operatingSystem": "Operating System",
+    "lastActive": "Last Active",
+    "unknown": "Unknown",
+    "retry": "Retry",
+    "loggedInAt": "Logged in at {{date}}"
   },
   "task": {
     "createProject": "Create Project"

@@ -344,6 +344,25 @@
     "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu mới",
     "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp"
   },
+  "sessions": {
+    "title": "Thiết Bị Đã Đăng Nhập",
+    "currentDevice": "Thiết Bị Hiện Tại",
+    "logOutDevice": "Đăng Xuất Thiết Bị Này",
+    "logOutAllDevices": "Đăng Xuất Tất Cả",
+    "noSessions": "Không tìm thấy thiết bị nào",
+    "loading": "Đang tải danh sách thiết bị...",
+    "error": "Không thể tải danh sách thiết bị",
+    "confirmRevokeTitle": "Xác Nhận Đăng Xuất",
+    "confirmRevokeContent": "Bạn có chắc muốn đăng xuất khỏi thiết bị này?",
+    "confirmRevokeAllContent": "Thao tác này sẽ đăng xuất tất cả thiết bị bao gồm cả thiết bị hiện tại. Tiếp tục?",
+    "sessionRevoked": "Đã đăng xuất thiết bị thành công",
+    "browser": "Trình Duyệt",
+    "operatingSystem": "Hệ Điều Hành",
+    "lastActive": "Hoạt Động Gần Đây",
+    "unknown": "Không xác định",
+    "retry": "Thử lại",
+    "loggedInAt": "Đăng nhập lúc {{date}}"
+  },
   "task": {
     "createProject": "Tạo Dự Án"
   },

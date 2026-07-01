@@ -2,14 +2,15 @@ import { useState } from "react";
 import {
   Button,
   Card,
-  Descriptions,
+  Dropdown,
   Flex,
   Grid,
   Skeleton,
   Typography,
   theme,
 } from "antd";
-import { KeyOutlined } from "@ant-design/icons";
+import { DownOutlined, KeyOutlined, UserOutlined } from "@ant-design/icons";
+import type { MenuProps } from "antd";
 import { useTranslation } from "react-i18next";
 import { UserAvatar } from "@/components";
 import { AUTH_ME_QUERY_KEY, useGetCacheData } from "@/hooks";
@@ -17,6 +18,7 @@ import { AppLayout } from "@/layouts";
 import type { AuthResponse } from "@/types";
 import { EditProfileModal } from "./modals/EditProfileModal";
 import { ChangePasswordModal } from "./modals/ChangePasswordModal";
+import ActiveSessionsCard from "./components/ActiveSessionsCard";
 
 const { useBreakpoint } = Grid;
 const { Title, Text } = Typography;
@@ -38,6 +40,21 @@ export default function ProfilePage() {
   const handleCloseEditModal = () => setEditModalOpen(false);
   const handleOpenPasswordModal = () => setPasswordModalOpen(true);
   const handleClosePasswordModal = () => setPasswordModalOpen(false);
+
+  const menuItems: MenuProps["items"] = [
+    {
+      key: "edit",
+      icon: <UserOutlined />,
+      label: t("profile.edit"),
+      onClick: handleOpenEditModal,
+    },
+    {
+      key: "password",
+      icon: <KeyOutlined />,
+      label: t("profile.changePassword"),
+      onClick: handleOpenPasswordModal,
+    },
+  ];
 
   return (
     <AppLayout breadcrumbItems={breadcrumbItems}>
@@ -106,68 +123,24 @@ export default function ProfilePage() {
                   </Flex>
                 </Flex>
 
-                <Button
-                  type="primary"
-                  onClick={handleOpenEditModal}
-                  style={{ marginTop: isMobile ? 8 : 0 }}
-                >
-                  {t("profile.edit")}
-                </Button>
+                <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
+                  <Button
+                    type="primary"
+                    style={{ marginTop: isMobile ? 8 : 0 }}
+                  >
+                    <Flex align="center" gap={8}>
+                      {t("profile.edit")}
+                      <DownOutlined />
+                    </Flex>
+                  </Button>
+                </Dropdown>
               </Flex>
             </Flex>
           )}
         </Card>
 
-        {/* Detail Info Card */}
-        {me && (
-          <>
-            <Card
-              title={
-                <Flex
-                  align="center"
-                  justify="space-between"
-                  style={{ width: "100%" }}
-                >
-                  <Text strong style={{ fontSize: 15 }}>
-                    {t("profile.details")}
-                  </Text>
-                  <Button
-                    type="text"
-                    icon={<KeyOutlined />}
-                    onClick={handleOpenPasswordModal}
-                    size="small"
-                  >
-                    {t("profile.changePassword")}
-                  </Button>
-                </Flex>
-              }
-              styles={{
-                body: {
-                  padding: isMobile ? 20 : 24,
-                },
-              }}
-            >
-              <Descriptions
-                column={1}
-                size="large"
-                labelStyle={{
-                  fontWeight: 500,
-                  color: token.colorTextSecondary,
-                }}
-              >
-                <Descriptions.Item label={t("profile.name")}>
-                  {me.name}
-                </Descriptions.Item>
-                <Descriptions.Item label={t("profile.email")}>
-                  {me.email}
-                </Descriptions.Item>
-                <Descriptions.Item label={t("profile.language")}>
-                  {me.language === "vi" ? "Tiếng Việt" : "English"}
-                </Descriptions.Item>
-              </Descriptions>
-            </Card>
-          </>
-        )}
+        {/* Active Sessions Card */}
+        {me && <ActiveSessionsCard />}
       </Flex>
 
       <EditProfileModal isOpen={editModalOpen} onClose={handleCloseEditModal} />

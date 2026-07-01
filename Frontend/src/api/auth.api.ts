@@ -1,4 +1,4 @@
-import type { AuthResponse, LoginRequest, RegisterRequest } from "@/types";
+import type { AuthResponse, LoginRequest, RegisterRequest, SessionResult } from "@/types";
 import axiosClient from "./config.api";
 
 const baseUrl = "/api/auth";
@@ -22,6 +22,14 @@ export const authApi = {
 
   revokeAllRefresh: (): Promise<string> => {
     return axiosClient.post(`${baseUrl}/revoke-all-refresh`);
+  },
+
+  getSessions: (): Promise<SessionResult[]> => {
+    return axiosClient.get(`${baseUrl}/sessions`);
+  },
+
+  revokeSession: (deviceId: string): Promise<string> => {
+    return axiosClient.delete(`${baseUrl}/sessions/${deviceId}`);
   },
 
   me: (): Promise<AuthResponse> => {

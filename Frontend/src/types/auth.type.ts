@@ -17,3 +17,14 @@ export interface AuthResponse {
   email: string;
   language: LanguageDisplay;
 }
+
+export interface SessionResult {
+  id: string;
+  deviceId: string | null;
+  deviceInfo: string | null;
+  browser: string | null;
+  os: string | null;
+  createdAt: string;
+  expiresAt: string;
+  isCurrent: boolean;
+}
