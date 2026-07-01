@@ -25,16 +25,8 @@ export const useUser = () => {
       userApi.changePassword(params),
   });
 
-  const uploadAvatar = useMutation({
-    mutationFn: (file: File) => userApi.uploadAvatar(file),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: AUTH_ME_QUERY_KEY });
-    },
-  });
-
   return {
     updateProfile,
     changePassword,
-    uploadAvatar,
   };
 };
