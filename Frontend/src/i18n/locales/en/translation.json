@@ -260,6 +260,7 @@
   },
   "sidebar": {
     "logout": {
+      "default": "Logout",
       "title": "Confirm Logout",
       "content": "Are you sure you want to log out?",
       "ok": "Logout",
@@ -320,7 +321,19 @@
     "avatar": "Avatar",
     "avatarUploadError": "Failed to upload avatar",
     "avatarTypeError": "Only JPEG, PNG, WebP and GIF images are allowed",
-    "avatarSizeError": "Image must be smaller than 5MB"
+    "avatarSizeError": "Image must be smaller than 5MB",
+    "changePassword": "Change Password",
+    "changePasswordSuccess": "Password changed successfully!",
+    "oldPassword": "Old Password",
+    "oldPasswordRequired": "Please enter your old password",
+    "newPassword": "New Password",
+    "newPasswordRequired": "Please enter your new password",
+    "newPasswordLength": "Password must be at least 8 characters",
+    "newPasswordUppercase": "Password must contain at least one uppercase letter",
+    "newPasswordSpecialChar": "Password must contain at least one special character",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordRequired": "Please confirm your new password",
+    "confirmPasswordMismatch": "Passwords do not match"
   },
   "common": {
     "showMore": "Show more",

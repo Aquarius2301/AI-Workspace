@@ -260,6 +260,7 @@
   },
   "sidebar": {
     "logout": {
+      "default": "Logout",
       "title": "Xác Nhận Đăng Xuất",
       "content": "Bạn có chắc muốn đăng xuất?",
       "ok": "Đăng Xuất",
@@ -329,7 +330,19 @@
     "avatar": "Ảnh đại diện",
     "avatarUploadError": "Tải ảnh đại diện thất bại",
     "avatarTypeError": "Chỉ chấp nhận ảnh JPEG, PNG, WebP và GIF",
-    "avatarSizeError": "Ảnh phải nhỏ hơn 5MB"
+    "avatarSizeError": "Ảnh phải nhỏ hơn 5MB",
+    "changePassword": "Đổi Mật Khẩu",
+    "changePasswordSuccess": "Đổi mật khẩu thành công!",
+    "oldPassword": "Mật Khẩu Cũ",
+    "oldPasswordRequired": "Vui lòng nhập mật khẩu cũ",
+    "newPassword": "Mật Khẩu Mới",
+    "newPasswordRequired": "Vui lòng nhập mật khẩu mới",
+    "newPasswordLength": "Mật khẩu phải có ít nhất 8 ký tự",
+    "newPasswordUppercase": "Mật khẩu phải có ít nhất 1 ký tự in hoa",
+    "newPasswordSpecialChar": "Mật khẩu phải có ít nhất 1 ký tự đặc biệt",
+    "confirmPassword": "Xác Nhận Mật Khẩu",
+    "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu mới",
+    "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp"
   },
   "task": {
     "createProject": "Tạo Dự Án"

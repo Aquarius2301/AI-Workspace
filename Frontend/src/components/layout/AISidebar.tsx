@@ -15,8 +15,8 @@ import {
   AppstoreOutlined,
   SettingOutlined,
   FolderOpenOutlined,
-  LogoutOutlined,
   TeamOutlined,
+  LogoutOutlined,
 } from "@ant-design/icons";
 import type { AuthResponse } from "@/types";
 import { AUTH_ME_QUERY_KEY, useAuth, useGetCacheData } from "@/hooks";
@@ -36,7 +36,6 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
   const { token } = theme.useToken();
   const navigate = useNavigate();
   const location = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
   const [logOutModal, setLogOutModal] = useState(false);
 
   const me = useGetCacheData<AuthResponse>(AUTH_ME_QUERY_KEY);
@@ -93,32 +92,25 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
         {/* LOGO BRANDING */}
         <div
           style={{
-            padding: collapsed ? "24px 0" : "24px 20px",
+            padding: "24px 20px",
             textAlign: "center",
-            transition: "all 0.2s",
           }}
         >
-          {collapsed ? (
-            <Flex justify="center">
-              <AIThemeSwitch />
-            </Flex>
-          ) : (
-            <Space size={16}>
-              <Title
-                level={4}
-                style={{
-                  margin: 0,
-                  color: token.colorPrimary,
-                  fontWeight: 800,
-                  letterSpacing: "-0.03em",
-                }}
-              >
-                AIWorkspace
-              </Title>
+          <Space size={16}>
+            <Title
+              level={4}
+              style={{
+                margin: 0,
+                color: token.colorPrimary,
+                fontWeight: 800,
+                letterSpacing: "-0.03em",
+              }}
+            >
+              AIWorkspace
+            </Title>
 
-              <AIThemeSwitch />
-            </Space>
-          )}
+            <AIThemeSwitch />
+          </Space>
         </div>
 
         {/* MENU CHÍNH */}
@@ -146,21 +138,20 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
           transition: "all 0.2s",
         }}
       >
-        {isMobile || collapsed ? (
-          <Space vertical size="small" style={{ width: "100%" }}>
+        <Space vertical size="small" style={{ width: "100%" }} align="end">
+          <Button
+            type="default"
+            onClick={() => navigate("/profile/me")}
+            style={{
+              padding: 16,
+              width: "100%",
+              height: "100%",
+            }}
+          >
             <Space>
-              <Button
-                type="text"
-                onClick={() => navigate("/profile/me")}
-                style={{
-                  background: "transparent",
-                  padding: 0,
-                  border: "none",
-                }}
-              >
-                <UserAvatar src={me?.avatar} userName={me?.name} size={44} />
-              </Button>
-              {/* <Space vertical align="start" size={0} style={{ width: "100%" }}>
+              <UserAvatar src={me?.avatar} userName={me?.name} size={44} />
+
+              <Space vertical align="start" size={0} style={{ width: "100%" }}>
                 <Text
                   strong
                   style={{
@@ -183,17 +174,18 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
                 >
                   {me?.email}
                 </Text>
-              </Space> */}
+              </Space>
             </Space>
-            <Flex justify="center" style={{ width: "100%" }}>
-              <Button
-                type="text"
-                danger
-                icon={<LogoutOutlined style={{ fontSize: 18 }} />}
-                onClick={() => setLogOutModal(true)}
-              />
-            </Flex>
-          </Space>
+          </Button>
+          <Flex justify="center" style={{ width: "100%" }}>
+            <Button type="text" danger onClick={() => setLogOutModal(true)}>
+              {t("sidebar.logout.default")}{" "}
+              <LogoutOutlined style={{ fontSize: 18 }} />
+            </Button>
+          </Flex>
+        </Space>
+        {/* {isMobile ? ( 
+          
         ) : (
           <div
             style={{
@@ -255,7 +247,7 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
               style={{ flexShrink: 0 }}
             />
           </div>
-        )}
+        )} */}
       </div>
     </div>
   );
@@ -292,13 +284,7 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
     </Drawer>
   ) : (
     <Sider
-      collapsible
-      breakpoint="lg"
-      collapsedWidth={72}
       width={260}
-      collapsed={collapsed}
-      onCollapse={(value) => setCollapsed(value)}
-      trigger={null}
       style={{
         height: "100vh",
         position: "sticky",
@@ -306,7 +292,6 @@ export function AISidebar({ isMobile, open, onClose }: AISidebarProps) {
         left: 0,
         borderRight: `1px solid ${token.colorBorder}`,
         backgroundColor: token.colorBgContainer,
-        transition: "all 0.2s ease",
       }}
     >
       {sidebarContent}

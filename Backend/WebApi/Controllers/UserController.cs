@@ -75,7 +75,6 @@ public class UserController : ControllerBase
     /// <summary>
     /// Change the current user's password
     /// </summary>
-    /// <param name="id">The user ID</param>
     /// <param name="request">An object containing the old and new passwords</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <response code="204">No Content if password is changed successfully</response>
@@ -84,16 +83,13 @@ public class UserController : ControllerBase
     /// <response code="403">NoPermissionChangePassword if the user tries to change another user's password</response>
     /// <response code="404">UserNotFound if the user does not exist</response>
     /// <response code="500">InternalServerError if an internal server error occurs</response>
-    [HttpPatch("{id:guid}/password")]
+    [HttpPatch("password")]
     public async Task<IActionResult> ChangePassword(
-        Guid id,
         [FromBody] ChangePasswordRequest request,
         CancellationToken cancellationToken
     )
     {
         var userId = ClaimHelper.GetCurrentUserId();
-        if (userId != id)
-            throw new ForbiddenException(ErrorCodes.NoPermissionChangePassword);
 
         await _mediator.Send(
             new ChangePasswordCommand(

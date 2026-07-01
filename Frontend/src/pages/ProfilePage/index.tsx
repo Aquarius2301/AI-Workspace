@@ -1,11 +1,22 @@
 import { useState } from "react";
-import { Button, Card, Descriptions, Flex, Grid, Skeleton, Typography, theme } from "antd";
+import {
+  Button,
+  Card,
+  Descriptions,
+  Flex,
+  Grid,
+  Skeleton,
+  Typography,
+  theme,
+} from "antd";
+import { KeyOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { UserAvatar } from "@/components";
 import { AUTH_ME_QUERY_KEY, useGetCacheData } from "@/hooks";
 import { AppLayout } from "@/layouts";
 import type { AuthResponse } from "@/types";
 import { EditProfileModal } from "./modals/EditProfileModal";
+import { ChangePasswordModal } from "./modals/ChangePasswordModal";
 
 const { useBreakpoint } = Grid;
 const { Title, Text } = Typography;
@@ -16,14 +27,17 @@ export default function ProfilePage() {
   const screens = useBreakpoint();
   const isMobile = !screens.md;
 
-  const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [passwordModalOpen, setPasswordModalOpen] = useState(false);
 
   const me = useGetCacheData<AuthResponse>(AUTH_ME_QUERY_KEY);
 
   const breadcrumbItems = [{ title: t("profile.title") }];
 
-  const handleOpenModal = () => setModalOpen(true);
-  const handleCloseModal = () => setModalOpen(false);
+  const handleOpenEditModal = () => setEditModalOpen(true);
+  const handleCloseEditModal = () => setEditModalOpen(false);
+  const handleOpenPasswordModal = () => setPasswordModalOpen(true);
+  const handleClosePasswordModal = () => setPasswordModalOpen(false);
 
   return (
     <AppLayout breadcrumbItems={breadcrumbItems}>
@@ -94,7 +108,7 @@ export default function ProfilePage() {
 
                 <Button
                   type="primary"
-                  onClick={handleOpenModal}
+                  onClick={handleOpenEditModal}
                   style={{ marginTop: isMobile ? 8 : 0 }}
                 >
                   {t("profile.edit")}
@@ -106,41 +120,61 @@ export default function ProfilePage() {
 
         {/* Detail Info Card */}
         {me && (
-          <Card
-            title={
-              <Text strong style={{ fontSize: 15 }}>
-                {t("profile.details")}
-              </Text>
-            }
-            styles={{
-              body: {
-                padding: isMobile ? 20 : 24,
-              },
-            }}
-          >
-            <Descriptions
-              column={1}
-              size="large"
-              labelStyle={{
-                fontWeight: 500,
-                color: token.colorTextSecondary,
+          <>
+            <Card
+              title={
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  style={{ width: "100%" }}
+                >
+                  <Text strong style={{ fontSize: 15 }}>
+                    {t("profile.details")}
+                  </Text>
+                  <Button
+                    type="text"
+                    icon={<KeyOutlined />}
+                    onClick={handleOpenPasswordModal}
+                    size="small"
+                  >
+                    {t("profile.changePassword")}
+                  </Button>
+                </Flex>
+              }
+              styles={{
+                body: {
+                  padding: isMobile ? 20 : 24,
+                },
               }}
             >
-              <Descriptions.Item label={t("profile.name")}>
-                {me.name}
-              </Descriptions.Item>
-              <Descriptions.Item label={t("profile.email")}>
-                {me.email}
-              </Descriptions.Item>
-              <Descriptions.Item label={t("profile.language")}>
-                {me.language === "vi" ? "Tiếng Việt" : "English"}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
+              <Descriptions
+                column={1}
+                size="large"
+                labelStyle={{
+                  fontWeight: 500,
+                  color: token.colorTextSecondary,
+                }}
+              >
+                <Descriptions.Item label={t("profile.name")}>
+                  {me.name}
+                </Descriptions.Item>
+                <Descriptions.Item label={t("profile.email")}>
+                  {me.email}
+                </Descriptions.Item>
+                <Descriptions.Item label={t("profile.language")}>
+                  {me.language === "vi" ? "Tiếng Việt" : "English"}
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
+          </>
         )}
       </Flex>
 
-      <EditProfileModal isOpen={modalOpen} onClose={handleCloseModal} />
+      <EditProfileModal isOpen={editModalOpen} onClose={handleCloseEditModal} />
+      <ChangePasswordModal
+        isOpen={passwordModalOpen}
+        onClose={handleClosePasswordModal}
+      />
     </AppLayout>
   );
 }
