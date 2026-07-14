@@ -4,7 +4,7 @@ import axios, {
   type InternalAxiosRequestConfig,
   type AxiosResponse,
 } from "axios";
-import { ENDPOINTS } from "@/constants";
+import { ENDPOINTS, ROUTE } from "@/constants";
 import type { ApiResponse, ApiErrorResponse } from "@/types/common.type";
 
 // ---------- Types ----------
@@ -116,7 +116,7 @@ axiosClient.interceptors.response.use(
       } catch (refreshError) {
         // Refresh failed -> process queue with error, redirect login
         processQueue(refreshError as AxiosError);
-        window.location.href = "/login";
+        window.location.href = ROUTE.LOGIN;
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

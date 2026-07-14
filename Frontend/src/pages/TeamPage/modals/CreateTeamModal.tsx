@@ -55,7 +55,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
       >
         <Form.Item
           name="name"
-          label={t("teamPage.createTeam.name.default")}
+          label={t("teamPage.createTeam.name.title")}
           rules={[
             {
               required: true,
@@ -72,7 +72,7 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
 
         <Form.Item
           name="description"
-          label={t("teamPage.createTeam.description.default")}
+          label={t("teamPage.createTeam.description.title")}
           rules={[
             {
               max: 500,
