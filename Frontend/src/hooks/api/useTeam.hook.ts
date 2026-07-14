@@ -6,6 +6,7 @@ import type {
   UpdateMemberRoleRequest,
 } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { SUMMARY_QUERY_KEY } from "./useSummary.hook";
 
 export const TEAM_QUERY_KEY = ["teams"] as const;
 export const TEAM_LIST_QUERY_KEY = [...TEAM_QUERY_KEY, "list"] as const;
@@ -102,6 +103,7 @@ export const useCreateTeam = () => {
     mutationFn: teamApi.create,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_LIST_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
     },
   });
 };
@@ -115,6 +117,7 @@ export const useUpdateTeam = () => {
       data: { name?: string; description?: string };
     }) => teamApi.update(params.id, params.data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TEAM_LIST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: TEAM_DETAIL_QUERY_KEY });
     },
   });

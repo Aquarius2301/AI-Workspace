@@ -200,7 +200,8 @@
         "placeholder": "Mô tả nhóm (không bắt buộc)",
         "max": "Vui lòng không nhập mô tả quá 500 kí tự"
       },
-      "helper": "Người tạo ra team sẽ là Quản trị viên của nhóm"
+      "helper": "Người tạo ra team sẽ là Quản trị viên của nhóm",
+      "success": "Tạo nhóm thành công!"
     }
   },
   "teamDetailPage": {

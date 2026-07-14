@@ -200,7 +200,8 @@
         "placeholder": "Team description (optional)",
         "max": "Please do not enter a description exceeding 500 characters"
       },
-      "helper": "The team creator will be the Team Admin"
+      "helper": "The team creator will be the Team Admin",
+      "success": "Create team successfully!"
     }
   },
   "teamDetailPage": {
