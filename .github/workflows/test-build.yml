@@ -1,0 +1,61 @@
+name: Test Build Pre-merge
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "Backend/**"
+      - "Frontend/**"
+
+jobs:
+  # 1. Check which folder has changed
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'Backend/**'
+            frontend:
+              - 'Frontend/**'
+
+  # 2. Build backend (.NET)
+  test-backend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0" # Dotnet version
+      - name: Restore dependencies
+        run: dotnet restore Backend/AIWorkspace.sln
+      - name: Build Backend Test
+        run: dotnet build Backend/AIWorkspace.sln --no-restore --configuration Release
+
+  # 3. Build frontend (VITE/REACT)
+  test-frontend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # Node version
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+      - name: Install Dependencies
+        run: cd Frontend && npm ci
+      - name: Build Frontend Test
+        run: cd Frontend && npm run build
