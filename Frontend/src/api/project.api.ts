@@ -1,0 +1,27 @@
+import type {
+  CreateProjectRequest,
+  PageResponse,
+  PageSize,
+  ProjectItem,
+  ProjectVisibility,
+} from "@/types";
+import axiosClient from "./config.api";
+import { ENDPOINTS } from "@/constants";
+
+export const projectApi = {
+  getListByTeam: (
+    id: string,
+    search?: string,
+    visibility?: ProjectVisibility,
+    page?: number,
+    pageSize?: PageSize,
+  ): Promise<PageResponse<ProjectItem>> => {
+    return axiosClient.get(ENDPOINTS.TEAM.GET_PROJECTS(id), {
+      params: { search, visibility, page, pageSize },
+    });
+  },
+
+  create: (request: CreateProjectRequest): Promise<void> => {
+    return axiosClient.post(ENDPOINTS.PROJECT.BASE, request);
+  },
+};

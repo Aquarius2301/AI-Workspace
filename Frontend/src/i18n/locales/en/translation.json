@@ -1,0 +1,338 @@
+{
+  "error": {
+    "InternalServerError": "An error occurred on the server. Please try again later",
+    "BadRequest": "Invalid request. Please check your input and try again",
+    "Unauthorized": "You are not authorized to perform this action. Please log in and try again",
+    "Forbidden": "You do not have permission to perform this action",
+    "NotFound": "The requested resource does not exist.",
+    "TooManyRequests": "Too many requests. Please try again in a few minutes",
+    "LoginFailed": "Incorrect email or password",
+    "EmailRequired": "Please enter your email",
+    "PasswordRequired": "Please enter your password",
+    "NameRequired": "Please enter your name",
+    "NameMaxLength": "Name must not exceed the maximum allowed length",
+    "EmailInvalid": "Invalid email",
+    "PasswordInvalid": "Invalid password",
+    "EmailAlreadyExists": "Email already exists",
+    "RefreshTokenRequired": "Please provide a refresh token",
+    "DeviceIdRequired": "Please provide a device ID",
+    "UserIdRequired": "Please provide a user ID",
+    "ProjectNameRequired": "Please enter a project name",
+    "ProjectNameMaxLength": "Project name must not exceed the maximum allowed length",
+    "ProjectNotFound": "Project not found",
+    "TeamNotFound": "Team not found",
+    "TeamNameRequired": "Please enter a team name",
+    "TeamNameMaxLength": "Team name must not exceed the maximum allowed length",
+    "TeamDescriptionMaxLength": "Team description must not exceed the maximum allowed length",
+    "FileRequired": "Please select a file",
+    "FileSizeTooLarge": "File size exceeds the allowed limit",
+    "ImageKitUploadFailed": "Image upload failed",
+    "UserNotFound": "User not found",
+    "PictureNotFound": "Picture not found"
+  },
+  "common": {
+    "authenticating": "Authenticating"
+  },
+  "sidebar": {
+    "logout": {
+      "default": "Logout",
+      "title": "Confirm Logout",
+      "content": "Are you sure you want to log out?",
+      "ok": "Logout"
+    }
+  },
+  "visibilitySelect": {
+    "public": "Public",
+    "private": "Private",
+    "all": "Show All"
+  },
+  "roleSelect": {
+    "coAdmin": "Co-Admin",
+    "admin": "Admin",
+    "leader": "Leader",
+    "member": "Member",
+    "all": "All Roles"
+  },
+  "taskPrioritySelect": {
+    "all": "All Priorities",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "taskStatusSelect": {
+    "toDo": "To Do",
+    "doing": "Doing",
+    "done": "Done",
+    "overdue": "Overdue",
+    "ToDo": "To Do",
+    "Doing": "Doing",
+    "Done": "Done",
+    "Overdue": "Overdue",
+    "all": "All Statuses"
+  },
+  "userAvatar": {
+    "online": "Online",
+    "offline": "Offline",
+    "minutesAgo": "{{minutes}} minutes ago",
+    "hoursAgo": "{{hours}} hours ago",
+    "daysAgo": "{{days}} days ago"
+  },
+  "list": {
+    "of": "of",
+    "emptyDescription": "Please try adjusting your search or filters to find what you're looking for.",
+    "empty": "No items to display",
+    "page": "page"
+  },
+  "modal": {
+    "ok": "OK",
+    "cancel": "Cancel",
+    "create": "Create",
+    "update": "Update",
+    "delete": "Delete",
+    "close": "Close"
+  },
+  "loginPage": {
+    "title": "Welcome Back",
+    "subtitle": "Login to continue",
+    "email": {
+      "title": "Email",
+      "required": "Please enter your email",
+      "placeholder": "Enter your email"
+    },
+    "password": {
+      "title": "Password",
+      "required": "Please enter your password",
+      "placeholder": "Enter your password"
+    },
+    "submit": "Login",
+    "success": "Login successful!",
+    "register": {
+      "title": "Don't have an account?",
+      "link": "Contact Admin"
+    },
+    "language": {
+      "vietnamese": "Tiếng Việt",
+      "english": "English"
+    },
+    "mobile": {
+      "slogan": "Efficient workspace management"
+    },
+    "banner": {
+      "slogan": "AI Workspace — Smart Collaboration",
+      "subslogan": "Manage projects, teams, and tasks with ease"
+    }
+  },
+  "homePage": {
+    "hero": {
+      "title": "AI Workspace",
+      "subtitle": "Manage teams, projects, and tasks in one place"
+    },
+
+    "overview": {
+      "title": "Overview",
+      "desc": "View dashboard and work overview"
+    },
+    "teams": {
+      "title": "Teams",
+      "desc": "Manage teams and members"
+    },
+    "projects": {
+      "title": "Projects",
+      "desc": "Browse and manage your projects"
+    }
+  },
+  "overviewPage": {
+    "title": "Overview",
+    "welcome": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening",
+      "teams": "Teams",
+      "projects": "Projects",
+      "taskStats": "Tasks",
+      "overdue": "Overdue"
+    },
+    "taskStats": {
+      "title": "Task Overview",
+      "done": "Done",
+      "toDo": "To Do",
+      "doing": "Doing",
+      "overdue": "Overdue"
+    },
+    "recentTasks": {
+      "title": "Recent Tasks",
+      "empty": "No tasks",
+      "project": "Project",
+      "created": "Created",
+      "due": "Due date"
+    },
+    "team": {
+      "title": "My Teams",
+      "empty": "You haven't joined any teams yet",
+      "members": "members",
+      "projects": "projects"
+    }
+  },
+  "teamPage": {
+    "title": "My Teams",
+    "description": "Manage teams and collaborate effectively",
+    "members": "members",
+    "searchTeams": "Search teams...",
+    "view": "Click to view",
+    "notFound": {
+      "title": "No teams found",
+      "description": "Try adjusting your search keywords"
+    },
+    "empty": {
+      "title": "You don't have any teams yet",
+      "description": "Click \"Create Team\" to create a new team."
+    },
+    "createTeam": {
+      "title": "Create Team",
+      "name": {
+        "title": "Team Name",
+        "required": "Please enter a team name",
+        "max": "Please do not enter a name exceeding 100 characters",
+        "placeholder": "Team ABC"
+      },
+      "description": {
+        "title": "Description",
+        "placeholder": "Team description (optional)",
+        "max": "Please do not enter a description exceeding 500 characters"
+      },
+      "helper": "The team creator will be the Team Admin"
+    }
+  },
+  "teamDetailPage": {
+    "notFound": {
+      "title": "Team Not Found",
+      "description": "The team you are looking for does not exist or has been deleted.",
+      "button": "Back to My Teams"
+    },
+    "editTeam": {
+      "title": "Edit Team",
+      "name": {
+        "title": "Project Name",
+        "required": "Please enter a team name",
+        "max": "Please do not enter a name exceeding 100 characters"
+      },
+      "description": {
+        "title": "Description",
+        "placeholder": "Team description (optional)",
+        "max": "Please do not enter a description exceeding 500 characters"
+      },
+      "success": "Update successful!"
+    },
+    "projects": {
+      "title": "Projects",
+      "searchProjects": "Search projects...",
+      "createdBy": "Created by",
+      "memberCount": "members",
+      "completed": "completed",
+      "noTasks": "No tasks yet",
+      "view": "Click to view",
+      "unviewable": "Cannot view this project",
+      "empty": {
+        "title": "You don't have any projects yet.",
+        "description": "Click \"Create Project\" to create a new project."
+      },
+      "notFound": {
+        "title": "No results found",
+        "description": "Try adjusting your search keywords"
+      },
+      "createProject": {
+        "title": "Create Project",
+        "name": {
+          "title": "Project Name",
+          "required": "Please enter a project name",
+          "max": "Project name must not exceed 100 characters",
+          "placeholder": "Project ABC"
+        },
+        "description": {
+          "title": "Description",
+          "placeholder": "Project description (optional)",
+          "max": "Description must not exceed 500 characters"
+        },
+        "visibility": {
+          "title": "Visibility"
+        },
+        "success": "Project created successfully!"
+      }
+    },
+    "members": {
+      "title": "Members",
+      "searchMembers": "Search members...",
+      "you": "(You)",
+      "email": "Email",
+      "joinedAt": "Joined",
+      "addMember": {
+        "title": "Add Member",
+        "success": "Member added successfully!",
+        "searchPlaceholder": "Search users...",
+        "selected": "{{count}} user(s) selected",
+        "noAvailable": "No users available"
+      },
+      "editRole": {
+        "title": "Edit Role",
+        "searchRole": "Select role",
+        "save": "Save",
+        "success": "Update successful!"
+      },
+      "deleteMember": {
+        "title": "Remove Member"
+      },
+
+      "notFound": {
+        "title": "No results found",
+        "description": "Try adjusting your search keywords"
+      }
+    }
+  },
+  "projectPage": {
+    "title": "My Projects"
+  },
+  "profilePage": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "changeAvatar": "Change Avatar",
+    "helper": "Images over 3MB will be automatically compressed. This may take a moment.",
+    "compressProgress": "Compressing image...",
+    "uploadAvatar": {
+      "success": "Avatar updated successfully!",
+      "invalidType": "Only JPEG, PNG, GIF, WebP images are allowed"
+    },
+    "userInfo": {
+      "title": "Personal Information",
+      "language": "Language"
+    },
+    "updateProfile": {
+      "title": "Update Profile",
+      "name": {
+        "title": "Name",
+        "required": "Please enter your name",
+        "max": "Name must not exceed 100 characters",
+        "placeholder": "Enter your name"
+      },
+      "language": "Language",
+      "success": "Profile updated successfully!"
+    },
+    "sessions": {
+      "title": "Active Sessions",
+      "currentSession": "Current Session",
+      "revoke": {
+        "title": "Revoke",
+        "confirmation": "Are you sure you want to revoke this session?",
+        "success": "Revoke successfully"
+      },
+      "revokeAll": {
+        "title": "Revoke All",
+        "confirmation": "Are you sure you want to revoke all other sessions? This will log you out from all other devices.",
+        "success": "Revoke successfully"
+      },
+      "deviceInfo": "{{browser}} on {{os}}",
+      "unknownDevice": "Unknown Device",
+      "createdAt": "Created",
+      "expiresAt": "Expires"
+    }
+  }
+}

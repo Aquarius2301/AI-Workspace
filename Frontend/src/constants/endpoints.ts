@@ -1,0 +1,41 @@
+const AUTH = "/auth" as const;
+const USERS = "/users" as const;
+const PROJECT = "/projects" as const;
+const SUMMARY = "/summaries" as const;
+const TEAM = "/teams" as const;
+const UPLOADS = "/uploads" as const;
+
+export const ENDPOINTS = {
+  AUTH: {
+    LOGIN: `${AUTH}/login`,
+    REGISTER: `${AUTH}/register`,
+    REFRESH: `${AUTH}/refresh`,
+    LOGOUT: `${AUTH}/logout`,
+    SESSION: `${AUTH}/sessions`,
+    SESSION_DEVICE: (deviceId: string) => `${AUTH}/sessions/${deviceId}`,
+    SESSION_ALL: `${AUTH}/sessions/all`,
+    ME: `${AUTH}/me`,
+  },
+  USERS: {
+    BASE: USERS,
+    UPDATE_PROFILE: USERS,
+  },
+  PROJECT: {
+    BASE: PROJECT,
+  },
+  TEAM: {
+    BASE: TEAM,
+    BY_ID: (id: string) => `${TEAM}/${id}`,
+    GET_ID: (slug: string) => `${TEAM}/${slug}`,
+    GET_PROJECTS: (id: string) => `${TEAM}/${id}/projects`,
+    GET_MEMBERS: (id: string) => `${TEAM}/${id}/members`,
+    UPDATE_MEMBERS: (id: string, memberId: string) =>
+      `${TEAM}/${id}/members/${memberId}`,
+  },
+  SUMMARY: {
+    BASE: SUMMARY,
+  },
+  UPLOADS: {
+    PICTURE: `${UPLOADS}/picture`,
+  },
+} as const;

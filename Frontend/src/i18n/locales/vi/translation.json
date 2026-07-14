@@ -1,0 +1,338 @@
+{
+  "error": {
+    "InternalServerError": "Có lỗi xảy ra trên máy chủ. Vui lòng thử lại sau",
+    "BadRequest": "Yêu cầu không hợp lệ. Vui lòng kiểm tra đầu vào và thử lại",
+    "Unauthorized": "Bạn không được ủy quyền để thực hiện hành động này. Vui lòng đăng nhập và thử lại",
+    "Forbidden": "Bạn không có quyền để thực hiện hành động này",
+    "NotFound": "Tài nguyên được yêu cầu không tồn tại.",
+    "TooManyRequests": "Đã vượt quá số lần truy cập cho phép. Vui lòng thử lại sau ít phút",
+    "LoginFailed": "Email hoặc mật khẩu không đúng",
+    "EmailRequired": "Vui lòng nhập email",
+    "PasswordRequired": "Vui lòng nhập mật khẩu",
+    "NameRequired": "Vui lòng nhập tên",
+    "NameMaxLength": "Tên không được vượt quá độ dài cho phép",
+    "EmailInvalid": "Email không hợp lệ",
+    "PasswordInvalid": "Mật khẩu không hợp lệ",
+    "EmailAlreadyExists": "Email đã tồn tại",
+    "RefreshTokenRequired": "Vui lòng cung cấp refresh token",
+    "DeviceIdRequired": "Vui lòng cung cấp mã thiết bị",
+    "UserIdRequired": "Vui lòng cung cấp ID người dùng",
+    "ProjectNameRequired": "Vui lòng nhập tên dự án",
+    "ProjectNameMaxLength": "Tên dự án không được vượt quá độ dài cho phép",
+    "ProjectNotFound": "Không tìm thấy dự án",
+    "TeamNotFound": "Không tìm thấy nhóm",
+    "TeamNameRequired": "Vui lòng nhập tên nhóm",
+    "TeamNameMaxLength": "Tên nhóm không được vượt quá độ dài cho phép",
+    "TeamDescriptionMaxLength": "Mô tả nhóm không được vượt quá độ dài cho phép",
+    "FileRequired": "Vui lòng chọn tệp",
+    "FileSizeTooLarge": "Kích thước tệp vượt quá giới hạn cho phép",
+    "ImageKitUploadFailed": "Tải ảnh lên thất bại",
+    "UserNotFound": "Không tìm thấy người dùng",
+    "PictureNotFound": "Không tìm thấy hình ảnh"
+  },
+  "common": {
+    "authenticating": "Đang xác thực"
+  },
+  "sidebar": {
+    "logout": {
+      "default": "Đăng xuất",
+      "title": "Xác Nhận Đăng Xuất",
+      "content": "Bạn có chắc muốn đăng xuất?",
+      "ok": "Đăng xuất"
+    }
+  },
+  "visibilitySelect": {
+    "public": "Công khai",
+    "private": "Riêng tư",
+    "all": "Hiển thị tất cả"
+  },
+  "roleSelect": {
+    "coAdmin": "Đồng quản trị",
+    "admin": "Quản trị viên",
+    "leader": "Trưởng nhóm",
+    "member": "Thành viên",
+    "all": "Tất cả vai trò"
+  },
+  "taskPrioritySelect": {
+    "all": "Tất cả mức độ",
+    "low": "Thấp",
+    "medium": "Trung Bình",
+    "high": "Cao"
+  },
+  "taskStatusSelect": {
+    "toDo": "Cần Làm",
+    "doing": "Đang Làm",
+    "done": "Hoàn Thành",
+    "overdue": "Quá Hạn",
+    "ToDo": "Cần Làm",
+    "Doing": "Đang Làm",
+    "Done": "Hoàn Thành",
+    "Overdue": "Quá Hạn",
+    "all": "Tất cả trạng thái"
+  },
+  "userAvatar": {
+    "online": "Trực Tuyến",
+    "offline": "Ngoại Tuyến",
+    "minutesAgo": "{{minutes}} phút trước",
+    "hoursAgo": "{{hours}} giờ trước",
+    "daysAgo": "{{days}} ngày trước"
+  },
+  "list": {
+    "of": "của",
+    "emptyDescription": "Vui lòng thử điều chỉnh tìm kiếm hoặc bộ lọc để tìm những gì bạn đang tìm kiếm.",
+    "empty": "Không có mục nào để hiển thị",
+    "page": "trang"
+  },
+  "modal": {
+    "ok": "OK",
+    "cancel": "Hủy",
+    "create": "Tạo",
+    "update": "Cập Nhật",
+    "delete": "Xóa",
+    "close": "Đóng"
+  },
+  "loginPage": {
+    "title": "Chào Mừng Trở Lại",
+    "subtitle": "Đăng nhập để tiếp tục",
+    "email": {
+      "title": "Email",
+      "required": "Vui lòng nhập email",
+      "placeholder": "Nhập email của bạn"
+    },
+    "password": {
+      "title": "Mật khẩu",
+      "required": "Vui lòng nhập mật khẩu",
+      "placeholder": "Nhập mật khẩu của bạn"
+    },
+    "submit": "Đăng Nhập",
+    "success": "Đăng nhập thành công!",
+    "register": {
+      "title": "Chưa có tài khoản?",
+      "link": "Liên hệ Admin"
+    },
+    "language": {
+      "vietnamese": "Tiếng Việt",
+      "english": "English"
+    },
+    "mobile": {
+      "slogan": "Quản lý không gian làm việc hiệu quả"
+    },
+    "banner": {
+      "slogan": "AI Workspace — Cộng Tác Thông Minh",
+      "subslogan": "Quản lý dự án, nhóm và công việc dễ dàng"
+    }
+  },
+  "homePage": {
+    "hero": {
+      "title": "AI Workspace",
+      "subtitle": "Quản lý nhóm, dự án và công việc tại một nơi"
+    },
+
+    "overview": {
+      "title": "Tổng quan",
+      "desc": "Xem bảng điều khiển và tổng quan công việc"
+    },
+    "teams": {
+      "title": "Nhóm",
+      "desc": "Quản lý nhóm và thành viên"
+    },
+    "projects": {
+      "title": "Dự án",
+      "desc": "Duyệt và quản lý dự án của bạn"
+    }
+  },
+  "overviewPage": {
+    "title": "Tổng quan",
+    "welcome": {
+      "morning": "Chào Buổi Sáng",
+      "afternoon": "Chào Buổi Chiều",
+      "evening": "Chào Buổi Tối",
+      "teams": "Nhóm",
+      "projects": "Dự án",
+      "taskStats": "Công việc",
+      "overdue": "Quá Hạn"
+    },
+    "taskStats": {
+      "title": "Tổng Quan Công Việc",
+      "done": "Hoàn Thành",
+      "toDo": "Cần Làm",
+      "doing": "Đang Làm",
+      "overdue": "Quá Hạn"
+    },
+    "recentTasks": {
+      "title": "Công Việc Gần Đây",
+      "empty": "Không có công việc nào",
+      "project": "Dự án",
+      "created": "Đã tạo",
+      "due": "Hạn chót"
+    },
+    "team": {
+      "title": "Nhóm Của Tôi",
+      "empty": "Bạn chưa tham gia nhóm nào",
+      "members": "thành viên",
+      "projects": "dự án"
+    }
+  },
+  "teamPage": {
+    "title": "Nhóm của tôi",
+    "description": "Quản lý nhóm và cộng tác hiệu quả",
+    "members": "thành viên",
+    "searchTeams": "Tìm kiếm nhóm...",
+    "view": "Nhấn vào để xem",
+    "notFound": {
+      "title": "Không tìm thấy nhóm",
+      "description": "Thử điều chỉnh từ khóa tìm kiếm"
+    },
+    "empty": {
+      "title": "Hiện tại, bạn chưa có nhóm",
+      "description": "Hãy nhấn \"Tạo nhóm\" để tạo dự án mới."
+    },
+    "createTeam": {
+      "title": "Tạo Nhóm",
+      "name": {
+        "title": "Tên Nhóm",
+        "required": "Vui lòng nhập tên nhóm",
+        "max": "Vui lòng không nhập tên quá 100 kí tự",
+        "placeholder": "Nhóm ABC"
+      },
+      "description": {
+        "title": "Mô Tả",
+        "placeholder": "Mô tả nhóm (không bắt buộc)",
+        "max": "Vui lòng không nhập mô tả quá 500 kí tự"
+      },
+      "helper": "Người tạo ra team sẽ là Quản trị viên của nhóm"
+    }
+  },
+  "teamDetailPage": {
+    "notFound": {
+      "title": "Không Tìm Thấy Nhóm",
+      "description": "Nhóm bạn đang tìm không tồn tại hoặc đã bị xóa.",
+      "button": "Quay Lại Nhóm của tôi"
+    },
+    "editTeam": {
+      "title": "Sửa nhóm",
+      "name": {
+        "title": "Tên dự án",
+        "required": "Vui lòng nhập tên nhóm",
+        "max": "Vui lòng không nhập tên quá 100 kí tự"
+      },
+      "description": {
+        "title": "Mô tả",
+        "placeholder": "Mô tả nhóm (không bắt buộc)",
+        "max": "Vui lòng không nhập mô tả quá 500 kí tự"
+      },
+      "success": "Cập nhật thành công!"
+    },
+    "projects": {
+      "title": "Dự Án",
+      "searchProjects": "Tìm kiếm dự án...",
+      "createdBy": "Được tạo bởi",
+      "memberCount": "thành viên",
+      "completed": "hoàn thành",
+      "noTasks": "Chưa có việc",
+      "view": "Nhấn vào để xem",
+      "unviewable": "Không thể xem dự án này",
+      "empty": {
+        "title": "Hiện tại, bạn chưa có dự án nào.",
+        "description": "Hãy nhấn \"Tạo dự án\" để tạo dự án mới."
+      },
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "createProject": {
+        "title": "Tạo Dự Án",
+        "name": {
+          "title": "Tên Dự Án",
+          "required": "Vui lòng nhập tên dự án",
+          "max": "Tên dự án không được vượt quá 100 kí tự",
+          "placeholder": "Dự Án ABC"
+        },
+        "description": {
+          "title": "Mô Tả",
+          "placeholder": "Mô tả dự án (không bắt buộc)",
+          "max": "Mô tả không được vượt quá 500 kí tự"
+        },
+        "visibility": {
+          "title": "Hiển thị"
+        },
+        "success": "Tạo dự án thành công!"
+      }
+    },
+    "members": {
+      "title": "Thành viên",
+      "searchMembers": "Tìm kiếm thành viên...",
+      "you": "(Bạn)",
+      "email": "Email",
+      "joinedAt": "Tham gia",
+      "addMember": {
+        "title": "Thêm Thành Viên",
+        "success": "Thêm thành viên thành công!",
+        "searchPlaceholder": "Tìm kiếm người dùng...",
+        "selected": "Đã chọn {{count}} người dùng",
+        "noAvailable": "Không có người dùng nào khả dụng"
+      },
+      "editRole": {
+        "title": "Chỉnh sửa vai trò",
+        "searchRole": "Chọn vai trò",
+        "save": "Lưu",
+        "success": "Cập nhật thành công!"
+      },
+      "deleteMember": {
+        "title": "Xóa thành viên"
+      },
+
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      }
+    }
+  },
+  "projectPage": {
+    "title": "Dự án của tôi"
+  },
+  "profilePage": {
+    "title": "Hồ Sơ",
+    "editProfile": "Chỉnh Sửa Hồ Sơ",
+    "changeAvatar": "Đổi Ảnh Đại Diện",
+    "helper": "Ảnh trên 3MB sẽ được tự động nén. Quá trình này có thể mất vài giây.",
+    "compressProgress": "Đang nén ảnh...",
+    "uploadAvatar": {
+      "success": "Cập nhật ảnh đại diện thành công!",
+      "invalidType": "Chỉ chấp nhận ảnh JPEG, PNG, GIF, WebP"
+    },
+    "userInfo": {
+      "title": "Thông Tin Cá Nhân",
+      "language": "Ngôn ngữ"
+    },
+    "updateProfile": {
+      "title": "Cập Nhật Hồ Sơ",
+      "name": {
+        "title": "Tên",
+        "required": "Vui lòng nhập tên",
+        "max": "Tên không được vượt quá 100 kí tự",
+        "placeholder": "Nhập tên của bạn"
+      },
+      "language": "Ngôn ngữ",
+      "success": "Cập nhật hồ sơ thành công!"
+    },
+    "sessions": {
+      "title": "Phiên Đăng Nhập",
+      "currentSession": "Phiên Hiện Tại",
+      "revoke": {
+        "title": "Thu Hồi",
+        "confirmation": "Bạn có chắc muốn thu hồi phiên đăng nhập này?",
+        "success": "Thu hồi thành công"
+      },
+      "revokeAll": {
+        "title": "Thu Hồi Tất Cả",
+        "confirmation": "Bạn có chắc muốn thu hồi tất cả phiên đăng nhập khác? Điều này sẽ đăng xuất bạn khỏi tất cả thiết bị khác.",
+        "success": "Thu hồi thành công"
+      },
+      "deviceInfo": "{{browser}} trên {{os}}",
+      "unknownDevice": "Thiết bị không xác định",
+      "createdAt": "Đã tạo",
+      "expiresAt": "Hết hạn"
+    }
+  }
+}
