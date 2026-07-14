@@ -18,7 +18,7 @@ public class JwtService : IJwtService
         _authSetting = authSetting.Value;
     }
 
-    public string GenerateAccessToken(Guid userId, string email)
+    public string GenerateAccessToken(Guid userId, string email, string deviceId)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSetting.JwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -32,6 +32,7 @@ public class JwtService : IJwtService
                 DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
                 ClaimValueTypes.Integer64
             ),
+            new Claim("deviceId", deviceId),
         };
 
         var tokenDescriptor = new SecurityTokenDescriptor

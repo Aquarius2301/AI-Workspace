@@ -51,7 +51,7 @@ public sealed class RefreshCommandHandler : IRequestHandler<RefreshCommand, Refr
         _context.RefreshTokens.Remove(oldRefreshToken);
 
         // Generate new access token
-        var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email);
+        var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email, request.DeviceId);
 
         // Generate new refresh token with ABSOLUTE expiry (based on original CreatedAt)
         // This ensures the user must re-login after RefreshTokenDays regardless of how many times they refresh

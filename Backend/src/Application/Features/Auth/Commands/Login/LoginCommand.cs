@@ -44,7 +44,7 @@ public sealed class LoginCommandHandler : IRequestHandler<LoginCommand, LoginRes
         await _context.SaveChangesAsync(cancellationToken);
 
         // TODO: generate real JWT access token
-        var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email);
+        var accessToken = _jwtService.GenerateAccessToken(user.Id, user.Email, request.DeviceId!);
         var refreshToken = _jwtService.GenerateRefreshToken();
 
         var refreshTokenEntity = new RefreshToken
