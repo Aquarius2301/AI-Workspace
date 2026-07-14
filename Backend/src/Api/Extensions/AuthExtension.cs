@@ -1,6 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
+using AIWorkspace.Application.Common;
 using AIWorkspace.Infrastructure.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AIWorkspace.Api.Extensions;
@@ -51,9 +55,32 @@ public static class AuthServiceExtension
                         {
                             return Task.CompletedTask;
                         },
-                        OnTokenValidated = context =>
+                        OnTokenValidated = async context =>
                         {
-                            return Task.CompletedTask;
+                            var userIdClaim = context.Principal?.FindFirstValue(
+                                JwtRegisteredClaimNames.Sub
+                            );
+                            var deviceId = context.Principal?.FindFirstValue("deviceId");
+
+                            if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(deviceId))
+                            {
+                                context.Fail("Missing required claims (userId or deviceId)");
+                                return;
+                            }
+
+                            var dbContext =
+                                context.HttpContext.RequestServices.GetRequiredService<IAppDbContext>();
+
+                            var hasValidSession = await dbContext.RefreshTokens.AnyAsync(t =>
+                                t.UserId == Guid.Parse(userIdClaim)
+                                && t.DeviceId == deviceId
+                                && t.ExpiresAt > DateTimeOffset.UtcNow
+                            );
+
+                            if (!hasValidSession)
+                            {
+                                context.Fail("Session has been revoked");
+                            }
                         },
                     };
                 });
