@@ -1,0 +1,47 @@
+name: Monorepo Smart Deploy to Render
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "Backend/**"
+      - "Frontend/**"
+
+jobs:
+  # Check which part has changed (Backend or Frontend)
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'Backend/**'
+            frontend:
+              - 'Frontend/**'
+
+  # Only deploy Backend if Backend has changed
+  deploy-backend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Backend Deploy
+        run: |
+          curl -X POST "https://api.render.com/deploy/srv-d9b2vcgk1i2s73arn1q0?key=S6bFAT92dVA"
+
+  # Only deploy Frontend if Frontend has changed
+  deploy-frontend:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.frontend == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Frontend Deploy
+        run: |
+          curl -X POST "https://api.render.com/deploy/srv-d9b2vgjeo5us73dr86gg?key=QJtkYkTwrno"
