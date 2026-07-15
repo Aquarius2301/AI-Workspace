@@ -13,9 +13,11 @@ import type { TeamRole } from "@/types";
 import {
   EditOutlined,
   EllipsisOutlined,
+  DeleteOutlined,
   DownOutlined,
 } from "@ant-design/icons";
 import { EditTeamModal } from "../modals/EditTeamModal";
+import { DeleteTeamModal } from "../modals/DeleteTeamModal";
 
 const { Text, Paragraph } = Typography;
 
@@ -35,14 +37,22 @@ export function TeamInfoCard({
   isLoading = false,
 }: TeamInfoCardProps) {
   const { t } = useTranslation();
-  const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
 
   const menu: MenuProps["items"] = [
     {
       key: "edit",
       icon: <EditOutlined />,
       label: t("teamDetailPage.editTeam.title"),
-      onClick: () => setModalOpen(true),
+      onClick: () => setEditModalOpen(true),
+    },
+    {
+      key: "delete",
+      icon: <DeleteOutlined />,
+      danger: true,
+      label: t("teamDetailPage.deleteTeam.menu"),
+      onClick: () => setDeleteModalOpen(true),
     },
   ];
 
@@ -84,11 +94,17 @@ export function TeamInfoCard({
         }
       />
       <EditTeamModal
-        isOpen={modalOpen}
-        onClose={() => setModalOpen(false)}
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
         teamId={teamId}
         initialName={name}
         initialDescription={description}
+      />
+      <DeleteTeamModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        teamId={teamId}
+        teamName={name}
       />
     </>
   );

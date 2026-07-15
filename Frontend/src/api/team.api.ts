@@ -76,4 +76,8 @@ export const teamApi = {
   ): Promise<TeamMemberItem> => {
     return axiosClient.put(ENDPOINTS.TEAM.UPDATE_MEMBERS(id, memberId), data);
   },
+
+  delete: (id: string): Promise<void> => {
+    return axiosClient.delete(ENDPOINTS.TEAM.BY_ID(id));
+  },
 };

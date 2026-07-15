@@ -156,3 +156,15 @@ export const useUpdateMemberRole = () => {
     },
   });
 };
+
+export const useDeleteTeam = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => teamApi.delete(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TEAM_LIST_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+    },
+  });
+};

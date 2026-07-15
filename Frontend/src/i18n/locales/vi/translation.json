@@ -289,6 +289,17 @@
         "title": "Không tìm thấy kết quả",
         "description": "Thử điều chỉnh từ khóa tìm kiếm"
       }
+    },
+    "deleteTeam": {
+      "menu": "Xóa Nhóm",
+      "confirmTitle": "Xóa Nhóm",
+      "confirmWarning": "Hành động này không thể hoàn tác. Tất cả dự án, công việc và dữ liệu thành viên liên quan đến nhóm này sẽ bị xóa vĩnh viễn.",
+      "confirmButton": "Tôi hiểu, tiếp tục",
+      "verifyTitle": "Nhập tên nhóm để xác nhận",
+      "verifyLabel": "Vui lòng nhập {{teamName}} để xác nhận xóa",
+      "verifyPlaceholder": "Nhập tên nhóm",
+      "verifyError": "Tên nhóm không khớp",
+      "success": "Xóa nhóm thành công"
     }
   },
   "projectPage": {
