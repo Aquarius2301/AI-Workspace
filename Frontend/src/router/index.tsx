@@ -15,6 +15,7 @@ import {
   TeamPage,
   TeamDetailPage,
   ProfilePage,
+  ProjectPage,
 } from "@/pages";
 import { AppLayout } from "@/layouts";
 import { ROUTE } from "@/constants";
@@ -67,6 +68,11 @@ const protectedRoutes: AppRoute[] = [
     name: "Profile",
     path: ROUTE.PROFILE,
     component: ProfilePage,
+  },
+  {
+    name: "Projects",
+    path: ROUTE.PROJECT,
+    component: ProjectPage,
   },
 ];
 

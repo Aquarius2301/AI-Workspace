@@ -292,7 +292,19 @@
     }
   },
   "projectPage": {
-    "title": "Dự án của tôi"
+    "title": "Dự án của tôi",
+    "searchProjects": "Tìm kiếm dự án...",
+    "memberCount": "thành viên",
+    "completed": "hoàn thành",
+    "view": "Nhấn vào để xem",
+    "notFound": {
+      "title": "Không tìm thấy kết quả",
+      "description": "Thử điều chỉnh từ khóa tìm kiếm"
+    },
+    "empty": {
+      "title": "Hiện tại, bạn chưa có dự án nào.",
+      "description": "Hãy tạo dự án từ nhóm của bạn"
+    }
   },
   "profilePage": {
     "title": "Hồ Sơ",

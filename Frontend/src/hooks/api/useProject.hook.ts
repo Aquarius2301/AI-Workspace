@@ -29,6 +29,27 @@ export const useProjectList = (
     enabled: !!id && enabled,
   });
 
+export const MY_PROJECT_LIST_QUERY_KEY = [
+  ...PROJECT_QUERY_KEY,
+  "my-list",
+] as const;
+
+export const useMyProjectList = (
+  search?: string,
+  visibility?: ProjectVisibility,
+  page?: number,
+  pageSize?: PageSize,
+  enabled: boolean = true,
+) =>
+  useQuery({
+    queryKey: [
+      ...MY_PROJECT_LIST_QUERY_KEY,
+      { search, visibility, page, pageSize },
+    ],
+    queryFn: () => projectApi.getMyList(search, visibility, page, pageSize),
+    enabled,
+  });
+
 export const useCreateProject = () => {
   const queryClient = useQueryClient();
 

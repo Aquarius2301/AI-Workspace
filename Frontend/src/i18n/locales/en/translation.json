@@ -292,7 +292,19 @@
     }
   },
   "projectPage": {
-    "title": "My Projects"
+    "title": "My Projects",
+    "searchProjects": "Search projects...",
+    "memberCount": "members",
+    "completed": "completed",
+    "view": "Click to view",
+    "notFound": {
+      "title": "No results found",
+      "description": "Try adjusting your search keywords"
+    },
+    "empty": {
+      "title": "You don't have any projects yet.",
+      "description": "Let's create project from your team"
+    }
   },
   "profilePage": {
     "title": "Profile",

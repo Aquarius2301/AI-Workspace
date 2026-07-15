@@ -1,6 +1,7 @@
 import type {
   CreateProjectRequest,
   CreateProjectResponse,
+  MyProjectItem,
   PageResponse,
   PageSize,
   ProjectItem,
@@ -18,6 +19,17 @@ export const projectApi = {
     pageSize?: PageSize,
   ): Promise<PageResponse<ProjectItem>> => {
     return axiosClient.get(ENDPOINTS.TEAM.GET_PROJECTS(id), {
+      params: { search, visibility, page, pageSize },
+    });
+  },
+
+  getMyList: (
+    search?: string,
+    visibility?: ProjectVisibility,
+    page?: number,
+    pageSize?: PageSize,
+  ): Promise<PageResponse<MyProjectItem>> => {
+    return axiosClient.get(ENDPOINTS.PROJECT.BASE, {
       params: { search, visibility, page, pageSize },
     });
   },
