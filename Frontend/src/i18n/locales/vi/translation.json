@@ -344,6 +344,23 @@
         "title": "Không có thành viên nào",
         "description": "Dự án này chưa có thành viên"
       }
+    },
+    "editProject": {
+      "title": "Chỉnh Sửa Dự Án",
+      "name": {
+        "title": "Tên Dự Án",
+        "required": "Vui lòng nhập tên dự án",
+        "max": "Tên dự án không được vượt quá 100 ký tự"
+      },
+      "description": {
+        "title": "Mô Tả",
+        "placeholder": "Mô tả dự án (không bắt buộc)",
+        "max": "Mô tả không được vượt quá 500 ký tự"
+      },
+      "visibility": {
+        "title": "Phạm Vi"
+      },
+      "success": "Cập nhật dự án thành công!"
     }
   },
   "profilePage": {

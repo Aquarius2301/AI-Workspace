@@ -6,6 +6,7 @@ import { AppLayout } from "@/layouts";
 import { useProjectDetailById, useProjectDetailBySlug } from "@/hooks";
 import { ROUTE } from "@/constants";
 import { ProjectInfoCard } from "./components/ProjectInfoCard";
+import { EditProjectModal } from "./modals/EditProjectModal";
 import { MyTaskTab } from "./tabs/MyTaskTab";
 import { MembersTab } from "./tabs/MembersTab";
 import { NotFound } from "@/components";
@@ -37,6 +38,9 @@ export default function ProjectDetailPage() {
   // ── Tab state ──
   const [activeTab, setActiveTab] = useState("myTasks");
 
+  // ── Edit modal state ──
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   // ── Not found state ──
   if (!isLoading && !slugData) {
     return (
@@ -67,7 +71,21 @@ export default function ProjectDetailPage() {
           visibility={project?.visibility!}
           creatorName={project?.creatorName!}
           teamName={project?.teamName!}
+          canEdit={project?.canEdit}
+          onEdit={() => setIsEditModalOpen(true)}
         />
+
+        {/* ── Edit project modal ── */}
+        {projectId && project && (
+          <EditProjectModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            projectId={projectId}
+            initialName={project.name}
+            initialDescription={project.description}
+            initialVisibility={project.visibility}
+          />
+        )}
 
         {/* ── Tabs ── */}
         {projectId && (

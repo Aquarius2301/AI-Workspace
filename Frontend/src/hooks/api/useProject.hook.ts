@@ -6,6 +6,7 @@ import type {
   ProjectVisibility,
   TaskPriority,
   TaskStatus,
+  UpdateProjectRequest,
 } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SUMMARY_QUERY_KEY } from "./useSummary.hook";
@@ -127,6 +128,20 @@ export const useCreateProject = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: PROJECT_LIST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+    },
+  });
+};
+
+export const useUpdateProject = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { id: string; data: UpdateProjectRequest }) =>
+      projectApi.update(params.id, params.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PROJECT_DETAIL_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PROJECT_LIST_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: MY_PROJECT_LIST_QUERY_KEY });
     },
   });
 };

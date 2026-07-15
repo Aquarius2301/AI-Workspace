@@ -1,6 +1,8 @@
 import { Flex, Space, Typography } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { AICardItem, AIVisibilityTag } from "@/components";
+import { Button } from "antd";
 
 const { Text, Paragraph } = Typography;
 
@@ -11,6 +13,8 @@ interface ProjectInfoCardProps {
   creatorName: string;
   teamName: string;
   isLoading?: boolean;
+  canEdit?: boolean;
+  onEdit?: () => void;
 }
 
 export function ProjectInfoCard({
@@ -20,6 +24,8 @@ export function ProjectInfoCard({
   creatorName,
   teamName,
   isLoading = false,
+  canEdit,
+  onEdit,
 }: ProjectInfoCardProps) {
   const { t } = useTranslation();
 
@@ -34,6 +40,13 @@ export function ProjectInfoCard({
             </Text>
             <AIVisibilityTag visibility={visibility} />
           </Space>
+          {canEdit && onEdit && (
+            <Button
+              type="text"
+              icon={<EditOutlined />}
+              onClick={onEdit}
+            />
+          )}
         </Flex>
       }
       content={

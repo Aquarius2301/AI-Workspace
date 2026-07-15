@@ -37,6 +37,7 @@ export interface ProjectDetailResult {
   teamName: string;
   visibility: string;
   canView: boolean;
+  canEdit: boolean;
   memberCount: number;
   completedTaskCount: number;
   totalTaskCount: number;
@@ -65,6 +66,12 @@ export interface CreateProjectRequest {
   name: string;
   description?: string;
   visibility: ProjectVisibility;
+}
+
+export interface UpdateProjectRequest {
+  name?: string;
+  description?: string;
+  visibility?: ProjectVisibility;
 }
 
 export interface ProjectMemberItem {

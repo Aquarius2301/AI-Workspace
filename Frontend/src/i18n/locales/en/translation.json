@@ -344,6 +344,23 @@
         "title": "No members found",
         "description": "This project has no members yet"
       }
+    },
+    "editProject": {
+      "title": "Edit Project",
+      "name": {
+        "title": "Project Name",
+        "required": "Please enter a project name",
+        "max": "Please do not enter a name exceeding 100 characters"
+      },
+      "description": {
+        "title": "Description",
+        "placeholder": "Project description (optional)",
+        "max": "Please do not enter a description exceeding 500 characters"
+      },
+      "visibility": {
+        "title": "Visibility"
+      },
+      "success": "Project updated successfully!"
     }
   },
   "profilePage": {

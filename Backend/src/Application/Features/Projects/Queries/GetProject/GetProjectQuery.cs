@@ -22,6 +22,7 @@ public sealed record GetProjectResult(
     string TeamName,
     string Visibility,
     bool CanView,
+    bool CanEdit,
     int MemberCount,
     int CompletedTaskCount,
     int TotalTaskCount
@@ -78,6 +79,12 @@ public sealed class GetProjectQueryHandler : IRequestHandler<GetProjectQuery, Ge
         );
         var canView = isTeamAdminOrCoAdmin || hasProjectMembership;
 
+        // Check if user can edit (Team Admin/CoAdmin or Project Leader)
+        var isProjectLeader = project.ProjectMembers.Any(pm =>
+            pm.UserId == request.CurrentUserId && pm.Role == ProjectRole.Leader
+        );
+        var canEdit = isTeamAdminOrCoAdmin || isProjectLeader;
+
         // If private and user can't view, throw
         if (project.Visibility == ProjectVisibility.Private && !canView)
         {
@@ -93,6 +100,7 @@ public sealed class GetProjectQueryHandler : IRequestHandler<GetProjectQuery, Ge
             project.Team.Name,
             project.Visibility.ToString(),
             canView,
+            canEdit,
             project.ProjectMembers.Count,
             project.TaskItems.Count(t => t.Status == TaskItemStatus.Done),
             project.TaskItems.Count
