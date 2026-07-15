@@ -333,7 +333,17 @@
     },
     "members": {
       "title": "Members",
-      "comingSoon": "Coming soon"
+      "searchMembers": "Search members...",
+      "email": "Email",
+      "joinedAt": "Joined",
+      "notFound": {
+        "title": "No results found",
+        "description": "Try adjusting your search keywords"
+      },
+      "empty": {
+        "title": "No members found",
+        "description": "This project has no members yet"
+      }
     }
   },
   "profilePage": {

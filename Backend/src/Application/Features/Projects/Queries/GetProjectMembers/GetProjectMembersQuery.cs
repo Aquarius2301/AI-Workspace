@@ -21,7 +21,7 @@ public sealed record ProjectMemberItem(
     Guid UserId,
     string UserName,
     string UserEmail,
-    string Role,
+    ProjectRole Role,
     DateTimeOffset JoinedAt
 );
 
@@ -118,7 +118,7 @@ public sealed class GetProjectMembersQueryHandler
                 pm.UserId,
                 pm.User.Name,
                 pm.User.Email,
-                pm.Role.ToString(),
+                pm.Role,
                 pm.JoinedAt
             ))
             .ToList();

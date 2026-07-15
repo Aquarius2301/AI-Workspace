@@ -7,6 +7,7 @@ import { useProjectDetailById, useProjectDetailBySlug } from "@/hooks";
 import { ROUTE } from "@/constants";
 import { ProjectInfoCard } from "./components/ProjectInfoCard";
 import { MyTaskTab } from "./tabs/MyTaskTab";
+import { MembersTab } from "./tabs/MembersTab";
 import { NotFound } from "@/components";
 
 export default function ProjectDetailPage() {
@@ -93,13 +94,7 @@ export default function ProjectDetailPage() {
               {
                 key: "members",
                 label: t("projectDetailPage.members.title"),
-                children: (
-                  <Flex justify="center" style={{ padding: 40 }}>
-                    <NotFound
-                      title={t("projectDetailPage.members.comingSoon")}
-                    />
-                  </Flex>
-                ),
+                children: <MembersTab projectId={projectId} />,
               },
             ]}
           />

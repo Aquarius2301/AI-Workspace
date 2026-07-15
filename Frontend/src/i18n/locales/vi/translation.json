@@ -333,7 +333,17 @@
     },
     "members": {
       "title": "Thành Viên",
-      "comingSoon": "Sắp ra mắt"
+      "searchMembers": "Tìm kiếm thành viên...",
+      "email": "Email",
+      "joinedAt": "Tham gia",
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "empty": {
+        "title": "Không có thành viên nào",
+        "description": "Dự án này chưa có thành viên"
+      }
     }
   },
   "profilePage": {

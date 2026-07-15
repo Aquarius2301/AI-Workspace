@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDebounce } from "./useDebounce.hook";
 import type {
   PageSize,
+  ProjectRole,
   ProjectVisibility,
   TaskPriority,
   TaskStatus,
@@ -13,6 +14,10 @@ interface SearchProps {
    * Whether to include a role filter in the search functionality. Default is false.
    */
   hasRoleFilter?: boolean;
+  /**
+   * Whether to include a project role filter in the search functionality. Default is false.
+   */
+  hasProjectRoleFilter?: boolean;
   /**
    * Whether to include a visibility filter in the search functionality. Default is false.
    */
@@ -37,6 +42,10 @@ interface SearchProps {
    * The initial role to filter the search results. Default is undefined (no role filter).
    */
   initialRole?: TeamRole | undefined;
+  /**
+   * The initial project role to filter the search results. Default is undefined (no role filter).
+   */
+  initialProjectRole?: ProjectRole | undefined;
   /**
    * The initial visibility to filter the search results. Default is undefined (no visibility filter).
    */
@@ -66,17 +75,20 @@ interface SearchProps {
  * An object containing:
  * - `searchProps`: An object with the current search string and a function to update it.
  * - `roleProps`: An object with the current role filter and a function to update it.
+ * - `projectRoleProps`: An object with the current project role filter and a function to update it.
  * - `paginationProps`: An object with the current page number, page size, and functions to update them.
  * - `queryParams`: An object containing the debounced search string, current role filter, current page number, and current page size for use in API queries.
  */
 export function useSearch({
   hasRoleFilter = false,
+  hasProjectRoleFilter = false,
   hasVisibilityFilter = false,
   hasTaskStatusFilter = false,
   hasPriorityFilter = false,
   debounceTime = 500,
   initialSearch = "",
   initialRole = undefined,
+  initialProjectRole = undefined,
   initialVisibility = undefined,
   initialTaskStatus = undefined,
   initialPriority = undefined,
@@ -84,6 +96,9 @@ export function useSearch({
   initialPageSize = 10,
 }: SearchProps) {
   const [role, setRole] = useState<TeamRole | undefined>(initialRole);
+  const [projectRole, setProjectRole] = useState<ProjectRole | undefined>(
+    initialProjectRole,
+  );
   const [visibility, setVisibility] = useState<ProjectVisibility | undefined>(
     initialVisibility,
   );
@@ -115,6 +130,11 @@ export function useSearch({
     setPage(1);
   };
 
+  const onProjectRoleChange = (value: ProjectRole | undefined) => {
+    setProjectRole(value);
+    setPage(1);
+  };
+
   const onVisibilityChange = (value: ProjectVisibility | undefined) => {
     setVisibility(value);
     setPage(1);
@@ -133,6 +153,7 @@ export function useSearch({
   return {
     searchProps: { search, onSearchChange },
     roleProps: { role, onRoleChange },
+    projectRoleProps: { projectRole, onProjectRoleChange },
     visibilityProps: { visibility, onVisibilityChange },
     taskStatusProps: { taskStatus, onTaskStatusChange },
     priorityProps: { priority, onPriorityChange },
@@ -145,6 +166,7 @@ export function useSearch({
     queryParams: {
       search: debounce,
       role: hasRoleFilter ? role : undefined,
+      projectRole: hasProjectRoleFilter ? projectRole : undefined,
       visibility: hasVisibilityFilter ? visibility : undefined,
       taskStatus: hasTaskStatusFilter ? taskStatus : undefined,
       priority: hasPriorityFilter ? priority : undefined,

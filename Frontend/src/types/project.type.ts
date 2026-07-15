@@ -67,6 +67,14 @@ export interface CreateProjectRequest {
   visibility: ProjectVisibility;
 }
 
+export interface ProjectMemberItem {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  role: string;
+  joinedAt: string;
+}
+
 export interface CreateProjectMemberRequest {
   userId: string;
   role: ProjectRole;

@@ -6,6 +6,8 @@ import type {
   PageSize,
   ProjectDetailResult,
   ProjectItem,
+  ProjectMemberItem,
+  ProjectRole,
   ProjectVisibility,
   TaskItemResult,
   TaskStatus,
@@ -56,6 +58,18 @@ export const projectApi = {
   ): Promise<PageResponse<TaskItemResult>> => {
     return axiosClient.get(ENDPOINTS.PROJECT.GET_MY_TASKS(projectId), {
       params: { search, status, priority, page, pageSize },
+    });
+  },
+
+  getMembers: (
+    projectId: string,
+    search?: string,
+    role?: ProjectRole,
+    page?: number,
+    pageSize?: PageSize,
+  ): Promise<PageResponse<ProjectMemberItem>> => {
+    return axiosClient.get(ENDPOINTS.PROJECT.GET_MEMBERS(projectId), {
+      params: { search, role, page, pageSize },
     });
   },
 

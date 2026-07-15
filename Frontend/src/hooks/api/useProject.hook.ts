@@ -2,6 +2,7 @@ import { projectApi } from "@/api/project.api";
 import type {
   CreateProjectRequest,
   PageSize,
+  ProjectRole,
   ProjectVisibility,
   TaskPriority,
   TaskStatus,
@@ -95,6 +96,26 @@ export const useMyTasksByProject = (
         page,
         pageSize,
       ),
+    enabled: !!projectId && enabled,
+  });
+
+export const useProjectMembers = (
+  projectId: string,
+  search?: string,
+  role?: ProjectRole,
+  page?: number,
+  pageSize?: PageSize,
+  enabled: boolean = true,
+) =>
+  useQuery({
+    queryKey: [
+      ...PROJECT_QUERY_KEY,
+      projectId,
+      "members",
+      { search, role, page, pageSize },
+    ],
+    queryFn: () =>
+      projectApi.getMembers(projectId, search, role, page, pageSize),
     enabled: !!projectId && enabled,
   });
 
