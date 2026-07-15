@@ -114,23 +114,20 @@ public sealed class GetTasksByProjectQueryHandler
                 .ToList();
         }
 
-        return tasks.Select(MapToResult).ToList();
-    }
-
-    private static TaskItemResult MapToResult(Domain.Entities.TaskItem task)
-    {
-        return new TaskItemResult(
-            task.Id,
-            task.ProjectId,
-            task.Project.Name,
-            task.Title,
-            task.Description,
-            task.AssignedToId,
-            task.AssignedTo?.Name,
-            task.Priority.ToString(),
-            task.Status.ToString(),
-            task.CreatedAt,
-            task.DueDate
-        );
+        return tasks
+            .Select(t => new TaskItemResult(
+                t.Id,
+                t.ProjectId,
+                t.Project.Name,
+                t.Title,
+                t.Description,
+                t.AssignedToId,
+                t.AssignedTo?.Name,
+                t.Priority,
+                t.Status,
+                t.CreatedAt,
+                t.DueDate
+            ))
+            .ToList();
     }
 }

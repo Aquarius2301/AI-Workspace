@@ -8,20 +8,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AIWorkspace.Application.Features.Tasks;
 
-/// <summary>
-/// Result item containing task information.
-/// </summary>
-/// <param name="Id">The unique identifier of the task</param>
-/// <param name="ProjectId">The unique identifier of the project</param>
-/// <param name="ProjectName">The name of the project</param>
-/// <param name="Title">The title of the task</param>
-/// <param name="Description">The optional description of the task</param>
-/// <param name="AssignedToId">The optional ID of the assigned user</param>
-/// <param name="AssignedToName">The optional name of the assigned user</param>
-/// <param name="Priority">The priority of the task</param>
-/// <param name="Status">The current status of the task</param>
-/// <param name="CreatedAt">The date and time when the task was created</param>
-/// <param name="DueDate">The optional due date of the task</param>
 public sealed record TaskItemResult(
     Guid Id,
     Guid ProjectId,
@@ -30,8 +16,8 @@ public sealed record TaskItemResult(
     string? Description,
     Guid? AssignedToId,
     string? AssignedToName,
-    string Priority,
-    string Status,
+    TaskPriority Priority,
+    TaskItemStatus Status,
     DateTimeOffset CreatedAt,
     DateTimeOffset? DueDate
 );
@@ -187,8 +173,8 @@ public sealed class GetMyTasksByProjectQueryHandler
             task.Description,
             task.AssignedToId,
             task.AssignedTo?.Name,
-            task.Priority.ToString(),
-            task.Status.ToString(),
+            task.Priority,
+            task.Status,
             task.CreatedAt,
             task.DueDate
         );

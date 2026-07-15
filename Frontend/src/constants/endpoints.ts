@@ -22,6 +22,9 @@ export const ENDPOINTS = {
   },
   PROJECT: {
     BASE: PROJECT,
+    BY_ID: (id: string) => `${PROJECT}/${id}`,
+    BY_SLUG: (slug: string) => `${PROJECT}/${slug}`,
+    GET_MY_TASKS: (projectId: string) => `${PROJECT}/${projectId}/tasks/me`,
   },
   TEAM: {
     BASE: TEAM,

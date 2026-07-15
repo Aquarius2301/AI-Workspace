@@ -303,7 +303,37 @@
     },
     "empty": {
       "title": "You don't have any projects yet.",
-      "description": "Let's create project from your team"
+      "description": "Click \"Create Project\" to create a new project."
+    }
+  },
+  "projectDetailPage": {
+    "creator": "Created by",
+    "team": "Team",
+    "notFound": {
+      "title": "Project Not Found",
+      "description": "The project you are looking for does not exist or has been deleted.",
+      "button": "Back to My Projects"
+    },
+    "myTasks": {
+      "title": "My Tasks",
+      "search": "Search tasks...",
+      "view": "Click to view",
+      "notFound": {
+        "title": "No results found",
+        "description": "Try adjusting your search keywords"
+      },
+      "empty": {
+        "title": "You don't have any tasks yet.",
+        "description": "Tasks assigned to you will appear here"
+      }
+    },
+    "taskList": {
+      "title": "Task List",
+      "comingSoon": "Coming soon"
+    },
+    "members": {
+      "title": "Members",
+      "comingSoon": "Coming soon"
     }
   },
   "profilePage": {

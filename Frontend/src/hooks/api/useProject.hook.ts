@@ -3,12 +3,18 @@ import type {
   CreateProjectRequest,
   PageSize,
   ProjectVisibility,
+  TaskPriority,
+  TaskStatus,
 } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SUMMARY_QUERY_KEY } from "./useSummary.hook";
 
 export const PROJECT_QUERY_KEY = ["projects"] as const;
 export const PROJECT_LIST_QUERY_KEY = [...PROJECT_QUERY_KEY, "list"] as const;
+export const PROJECT_DETAIL_QUERY_KEY = [
+  ...PROJECT_QUERY_KEY,
+  "detail",
+] as const;
 
 export const useProjectList = (
   id: string,
@@ -48,6 +54,48 @@ export const useMyProjectList = (
     ],
     queryFn: () => projectApi.getMyList(search, visibility, page, pageSize),
     enabled,
+  });
+
+export const useProjectDetailBySlug = (slug: string, enabled: boolean = true) =>
+  useQuery({
+    queryKey: [...PROJECT_DETAIL_QUERY_KEY, "slug", slug],
+    queryFn: () => projectApi.getBySlug(slug),
+    enabled: !!slug && enabled,
+  });
+
+export const useProjectDetailById = (id: string, enabled: boolean = true) =>
+  useQuery({
+    queryKey: [...PROJECT_DETAIL_QUERY_KEY, id],
+    queryFn: () => projectApi.getById(id),
+    enabled: !!id && enabled,
+  });
+
+export const useMyTasksByProject = (
+  projectId: string,
+  search?: string,
+  status?: TaskStatus,
+  priority?: TaskPriority,
+  page?: number,
+  pageSize?: PageSize,
+  enabled: boolean = true,
+) =>
+  useQuery({
+    queryKey: [
+      ...PROJECT_QUERY_KEY,
+      projectId,
+      "my-tasks",
+      { search, status, priority, page, pageSize },
+    ],
+    queryFn: () =>
+      projectApi.getMyTasks(
+        projectId,
+        search,
+        status,
+        priority,
+        page,
+        pageSize,
+      ),
+    enabled: !!projectId && enabled,
   });
 
 export const useCreateProject = () => {

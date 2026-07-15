@@ -303,7 +303,37 @@
     },
     "empty": {
       "title": "Hiện tại, bạn chưa có dự án nào.",
-      "description": "Hãy tạo dự án từ nhóm của bạn"
+      "description": "Hãy nhấn \"Tạo dự án\" để tạo dự án mới."
+    }
+  },
+  "projectDetailPage": {
+    "creator": "Người tạo",
+    "team": "Nhóm",
+    "notFound": {
+      "title": "Không Tìm Thấy Dự Án",
+      "description": "Dự án bạn đang tìm không tồn tại hoặc đã bị xóa.",
+      "button": "Quay Lại Dự Án của tôi"
+    },
+    "myTasks": {
+      "title": "Việc Của Tôi",
+      "search": "Tìm kiếm việc...",
+      "view": "Nhấn vào để xem",
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "empty": {
+        "title": "Hiện tại, bạn chưa có việc nào.",
+        "description": "Các việc được giao cho bạn sẽ hiển thị ở đây"
+      }
+    },
+    "taskList": {
+      "title": "Danh Sách Việc",
+      "comingSoon": "Sắp ra mắt"
+    },
+    "members": {
+      "title": "Thành Viên",
+      "comingSoon": "Sắp ra mắt"
     }
   },
   "profilePage": {

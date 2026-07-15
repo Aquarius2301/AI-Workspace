@@ -28,6 +28,20 @@ export interface ProjectDetail {
   visibility: ProjectVisibility;
 }
 
+export interface ProjectDetailResult {
+  id: string;
+  name: string;
+  description: string | null;
+  slug: string;
+  creatorName: string;
+  teamName: string;
+  visibility: string;
+  canView: boolean;
+  memberCount: number;
+  completedTaskCount: number;
+  totalTaskCount: number;
+}
+
 export interface MyProjectItem {
   id: string;
   name: string;
