@@ -1,10 +1,13 @@
 import { AIModal } from "@/components";
 import type { CreateTeamRequest } from "@/types";
-import { Form, App, Input } from "antd";
+import { Form, App, Input, Checkbox } from "antd";
 import { useTranslation } from "react-i18next";
 import { useCreateTeam } from "@/hooks";
 import Text from "antd/es/typography/Text";
 import { getErrorMessage, getFormFieldErrors } from "@/utils";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ROUTE } from "@/constants";
 
 interface CreateTeamModalProps {
   isOpen: boolean;
@@ -14,13 +17,19 @@ interface CreateTeamModalProps {
 export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
   const { t } = useTranslation();
   const [form] = Form.useForm<CreateTeamRequest>();
+  const [isRedirect, setIsRedirect] = useState(false);
   const { message } = App.useApp();
   const create = useCreateTeam();
+  const navigate = useNavigate();
 
   // ── Create team ──
   const handleCreate = async (values: CreateTeamRequest) => {
     try {
-      await create.mutateAsync(values);
+      const res = await create.mutateAsync(values);
+
+      if (isRedirect) {
+        navigate(`${ROUTE.TEAM}/${res.slug}`);
+      }
       message.success(t("teamPage.createTeam.success"));
       onClose();
       form.resetFields();
@@ -86,7 +95,15 @@ export function CreateTeamModal({ isOpen, onClose }: CreateTeamModalProps) {
           />
         </Form.Item>
 
-        <Text type="secondary"> {t("teamPage.createTeam.helper")}</Text>
+        <Checkbox
+          style={{ marginBottom: 8 }}
+          checked={isRedirect}
+          onChange={(e) => setIsRedirect(e.target.checked)}
+        >
+          <Text>{t("teamPage.createTeam.goTo")}</Text>
+        </Checkbox>
+        <br />
+        <Text type="secondary">{t("teamPage.createTeam.helper")}</Text>
       </Form>
     </AIModal>
   );

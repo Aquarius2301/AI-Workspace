@@ -28,6 +28,10 @@ export interface ProjectDetail {
   visibility: ProjectVisibility;
 }
 
+export interface CreateProjectResponse {
+  slug: string;
+}
+
 export interface CreateProjectRequest {
   teamId: string;
   name: string;

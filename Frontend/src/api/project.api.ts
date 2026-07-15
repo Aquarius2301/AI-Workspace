@@ -1,5 +1,6 @@
 import type {
   CreateProjectRequest,
+  CreateProjectResponse,
   PageResponse,
   PageSize,
   ProjectItem,
@@ -21,7 +22,7 @@ export const projectApi = {
     });
   },
 
-  create: (request: CreateProjectRequest): Promise<void> => {
+  create: (request: CreateProjectRequest): Promise<CreateProjectResponse> => {
     return axiosClient.post(ENDPOINTS.PROJECT.BASE, request);
   },
 };

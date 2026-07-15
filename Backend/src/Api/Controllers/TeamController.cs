@@ -115,7 +115,7 @@ public class TeamController : ControllerBase
     /// </remarks>
     /// <param name="request">Team creation data including name and optional description.</param>
     /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
-    /// <response code="200">Team created successfully.</response>
+    /// <response code="200">Returns the team's slug (CreateTeamResult) if team created successfully.</response>
     /// <response code="400">Validation failed (TeamNameRequired, TeamNameMaxLength, TeamDescriptionMaxLength).</response>
     /// <response code="401">User is not authenticated (Unauthorized).</response>
     /// <response code="500">An unexpected internal server error occurred (InternalServerError).</response>
@@ -127,11 +127,11 @@ public class TeamController : ControllerBase
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        await _mediator.Send(
+        var result = await _mediator.Send(
             new CreateTeamCommand(userId, request.Name, request.Description, cancellationToken)
         );
 
-        return Ok("Success");
+        return Ok(result);
     }
 
     /// <summary>

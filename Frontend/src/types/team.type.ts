@@ -22,6 +22,10 @@ export interface CreateTeamRequest {
   description?: string;
 }
 
+export interface CreateTeamResponse {
+  slug: string;
+}
+
 export interface UpdateTeamRequest {
   name?: string;
   description?: string;

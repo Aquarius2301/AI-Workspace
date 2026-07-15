@@ -172,7 +172,7 @@ public class ProjectController : ControllerBase
     /// </remarks>
     /// <param name="request">Project creation data including team ID, name, optional description, and visibility.</param>
     /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
-    /// <response code="200">Project created successfully.</response>
+    /// <response code="200">Returns the project's slug (CreateTeamResult) if project created successfully.</response>
     /// <response code="400">Project name is required (ProjectNameRequired).</response>
     /// <response code="401">User is not authenticated (Unauthorized).</response>
     /// <response code="403">User does not have the Admin or CoAdmin role in the team (Forbidden).</response>
@@ -189,7 +189,7 @@ public class ProjectController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        await _mediator.Send(
+        var result = await _mediator.Send(
             new CreateProjectCommand(
                 userId,
                 request.TeamId,
@@ -201,7 +201,7 @@ public class ProjectController : ControllerBase
             cancellationToken
         );
 
-        return Ok("Success");
+        return Ok(result);
     }
 
     /// <summary>

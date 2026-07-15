@@ -2,6 +2,7 @@ import type {
   AddTeamMemberRequest,
   AvailableTeamMemberItem,
   CreateTeamRequest,
+  CreateTeamResponse,
   PageResponse,
   PageSize,
   TeamDetail,
@@ -25,7 +26,7 @@ export const teamApi = {
     });
   },
 
-  create: (request: CreateTeamRequest): Promise<void> => {
+  create: (request: CreateTeamRequest): Promise<CreateTeamResponse> => {
     return axiosClient.post(ENDPOINTS.TEAM.BASE, request);
   },
 

@@ -200,6 +200,7 @@
         "placeholder": "Team description (optional)",
         "max": "Please do not enter a description exceeding 500 characters"
       },
+      "goTo": "Go to this team after creation",
       "helper": "The team creator will be the Team Admin",
       "success": "Create team successfully!"
     }
@@ -257,7 +258,8 @@
         "visibility": {
           "title": "Visibility"
         },
-        "success": "Project created successfully!"
+        "success": "Project created successfully!",
+        "goToProject": "Go to this project after creation"
       }
     },
     "members": {

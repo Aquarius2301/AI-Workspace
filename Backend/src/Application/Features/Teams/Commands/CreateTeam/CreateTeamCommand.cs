@@ -11,9 +11,11 @@ public sealed record CreateTeamCommand(
     string Name,
     string? Description,
     CancellationToken CancellationToken
-) : IRequest;
+) : IRequest<CreateTeamResult>;
 
-public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand>
+public sealed record CreateTeamResult(string Slug);
+
+public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand, CreateTeamResult>
 {
     private readonly IAppDbContext _context;
 
@@ -22,7 +24,10 @@ public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand
         _context = context;
     }
 
-    public async Task Handle(CreateTeamCommand request, CancellationToken cancellationToken)
+    public async Task<CreateTeamResult> Handle(
+        CreateTeamCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var team = new Team
         {
@@ -44,5 +49,7 @@ public sealed class CreateTeamCommandHandler : IRequestHandler<CreateTeamCommand
         _context.Teams.Add(team);
         _context.TeamMembers.Add(teamMember);
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new CreateTeamResult(team.Slug);
     }
 }

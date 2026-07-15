@@ -200,6 +200,7 @@
         "placeholder": "Mô tả nhóm (không bắt buộc)",
         "max": "Vui lòng không nhập mô tả quá 500 kí tự"
       },
+      "goTo": "Đi tới nhóm này sau khi tạo",
       "helper": "Người tạo ra team sẽ là Quản trị viên của nhóm",
       "success": "Tạo nhóm thành công!"
     }
@@ -257,7 +258,8 @@
         "visibility": {
           "title": "Hiển thị"
         },
-        "success": "Tạo dự án thành công!"
+        "success": "Tạo dự án thành công!",
+        "goToProject": "Đi tới dự án này sau khi tạo"
       }
     },
     "members": {

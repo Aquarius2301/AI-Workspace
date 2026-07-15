@@ -7,6 +7,8 @@ using MediatR;
 
 namespace AIWorkspace.Application.Features.Projects;
 
+public sealed record CreateProjectResult(string Slug);
+
 public sealed record CreateProjectCommand(
     Guid CurrentUserId,
     Guid TeamId,
@@ -14,7 +16,7 @@ public sealed record CreateProjectCommand(
     string? Description,
     ProjectVisibility Visibility,
     CancellationToken CancellationToken
-) : IRequest, IRequireTeamRole
+) : IRequest<CreateProjectResult>, IRequireTeamRole
 {
     Guid IRequireTeamRole.TeamId => TeamId;
     Guid IRequireTeamRole.CurrentUserId => CurrentUserId;
@@ -22,7 +24,8 @@ public sealed record CreateProjectCommand(
         [TeamMemberRole.Admin, TeamMemberRole.CoAdmin];
 }
 
-public sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand>
+public sealed class CreateProjectCommandHandler
+    : IRequestHandler<CreateProjectCommand, CreateProjectResult>
 {
     private readonly IAppDbContext _context;
 
@@ -31,7 +34,10 @@ public sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectC
         _context = context;
     }
 
-    public async Task Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+    public async Task<CreateProjectResult> Handle(
+        CreateProjectCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var project = new Project
         {
@@ -47,5 +53,7 @@ public sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectC
         _context.Projects.Add(project);
 
         await _context.SaveChangesAsync(cancellationToken);
+
+        return new CreateProjectResult(project.Slug);
     }
 }
