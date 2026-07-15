@@ -80,4 +80,8 @@ export const teamApi = {
   delete: (id: string): Promise<void> => {
     return axiosClient.delete(ENDPOINTS.TEAM.BY_ID(id));
   },
+
+  deleteMember: (id: string, memberId: string): Promise<void> => {
+    return axiosClient.delete(ENDPOINTS.TEAM.UPDATE_MEMBERS(id, memberId));
+  },
 };

@@ -7,6 +7,7 @@ import type {
 } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { SUMMARY_QUERY_KEY } from "./useSummary.hook";
+import { PROJECT_QUERY_KEY } from "./useProject.hook";
 
 export const TEAM_QUERY_KEY = ["teams"] as const;
 export const TEAM_LIST_QUERY_KEY = [...TEAM_QUERY_KEY, "list"] as const;
@@ -165,6 +166,19 @@ export const useDeleteTeam = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: TEAM_LIST_QUERY_KEY });
       queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+    },
+  });
+};
+
+export const useDeleteMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { id: string; memberId: string }) =>
+      teamApi.deleteMember(params.id, params.memberId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: TEAM_MEMBERS_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: PROJECT_QUERY_KEY });
     },
   });
 };

@@ -282,7 +282,9 @@
         "success": "Update successful!"
       },
       "deleteMember": {
-        "title": "Remove Member"
+        "title": "Remove Member",
+        "confirmation": "Are you sure you want to remove {{name}} from this team?",
+        "success": "{{name}} has been removed from the team"
       },
 
       "notFound": {

@@ -282,7 +282,9 @@
         "success": "Cập nhật thành công!"
       },
       "deleteMember": {
-        "title": "Xóa thành viên"
+        "title": "Xóa thành viên",
+        "confirmation": "Bạn có chắc muốn xóa {{name}} khỏi nhóm này?",
+        "success": "{{name}} đã bị xóa khỏi nhóm"
       },
 
       "notFound": {
