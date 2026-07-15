@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Flex, Tabs } from "antd";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import {
+  useParams,
+  Link,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AppLayout } from "@/layouts";
 import { useProjectDetailById, useProjectDetailBySlug } from "@/hooks";
@@ -15,6 +20,7 @@ export default function ProjectDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   // ── Get project ID from slug ──
   const { data: slugData, isLoading: isSlugLoading } = useProjectDetailBySlug(
@@ -35,8 +41,24 @@ export default function ProjectDetailPage() {
     { title: project?.name || "..." },
   ];
 
+  // ── Read taskId from URL query params ──
+  const taskIdParam = searchParams.get("taskId");
+
   // ── Tab state ──
-  const [activeTab, setActiveTab] = useState("myTasks");
+  const [activeTab, setActiveTab] = useState(taskIdParam ? "myTasks" : "myTasks");
+
+  // ── Selected task ──
+  const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(
+    taskIdParam ?? undefined,
+  );
+
+  // ── Clean up taskId from URL after consuming ──
+  useEffect(() => {
+    if (taskIdParam) {
+      searchParams.delete("taskId");
+      setSearchParams(searchParams, { replace: true });
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ── Edit modal state ──
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -91,12 +113,20 @@ export default function ProjectDetailPage() {
         {projectId && (
           <Tabs
             activeKey={activeTab}
-            onChange={setActiveTab}
+            onChange={(key) => {
+              setActiveTab(key);
+              setSelectedTaskId(undefined);
+            }}
             items={[
               {
                 key: "myTasks",
                 label: t("projectDetailPage.myTasks.title"),
-                children: <MyTaskTab projectId={projectId} />,
+                children: (
+                  <MyTaskTab
+                    projectId={projectId}
+                    selectedTaskId={selectedTaskId}
+                  />
+                ),
               },
               {
                 key: "taskList",

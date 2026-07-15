@@ -28,7 +28,11 @@ export interface TaskItemSummary {
 
   title: string;
 
+  projectId: string;
+
   projectName: string;
+
+  projectSlug: string;
 
   status: TaskStatus | "overdue";
 

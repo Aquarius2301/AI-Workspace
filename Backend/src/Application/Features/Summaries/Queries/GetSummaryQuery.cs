@@ -24,7 +24,9 @@ public sealed record TaskSummary(int Total, int ToDo, int Doing, int Done, int O
 public sealed record TaskItemSummary(
     Guid Id,
     string Title,
+    Guid ProjectId,
     string ProjectName,
+    string ProjectSlug,
     TaskItemStatus Status,
     DateTimeOffset CreatedAt,
     DateTimeOffset? DueDate
@@ -118,7 +120,9 @@ public sealed class GetSummaryQueryHandler : IRequestHandler<GetSummaryQuery, Su
             .Select(t => new TaskItemSummary(
                 t.Id,
                 t.Title,
+                t.ProjectId,
                 t.Project.Name,
+                t.Project.Slug,
                 t.Status,
                 t.CreatedAt,
                 t.DueDate
