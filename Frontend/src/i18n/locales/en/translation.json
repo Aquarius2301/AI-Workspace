@@ -342,7 +342,15 @@
     },
     "taskList": {
       "title": "Task List",
-      "comingSoon": "Coming soon"
+      "search": "Search tasks...",
+      "notFound": {
+        "title": "No results found",
+        "description": "Try adjusting your search keywords"
+      },
+      "empty": {
+        "title": "No tasks yet",
+        "description": "Tasks for this project will appear here"
+      }
     },
     "members": {
       "title": "Members",

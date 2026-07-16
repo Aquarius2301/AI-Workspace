@@ -342,7 +342,15 @@
     },
     "taskList": {
       "title": "Danh Sách Việc",
-      "comingSoon": "Sắp ra mắt"
+      "search": "Tìm kiếm việc...",
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "empty": {
+        "title": "Chưa có việc nào",
+        "description": "Các việc trong dự án này sẽ hiển thị ở đây"
+      }
     },
     "members": {
       "title": "Thành Viên",

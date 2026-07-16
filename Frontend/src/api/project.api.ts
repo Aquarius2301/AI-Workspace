@@ -10,8 +10,8 @@ import type {
   ProjectRole,
   ProjectVisibility,
   TaskItemResult,
-  TaskStatus,
   TaskPriority,
+  TaskStatus,
   UpdateProjectRequest,
 } from "@/types";
 import axiosClient from "./config.api";
@@ -47,6 +47,16 @@ export const projectApi = {
 
   getById: (id: string): Promise<ProjectDetailResult> => {
     return axiosClient.get(ENDPOINTS.PROJECT.BY_ID(id));
+  },
+
+  getTasks: (
+    projectId: string,
+    search?: string,
+    priority?: TaskPriority,
+  ): Promise<TaskItemResult[]> => {
+    return axiosClient.get(ENDPOINTS.PROJECT.GET_TASKS(projectId), {
+      params: { search, priority },
+    });
   },
 
   getMyTasks: (

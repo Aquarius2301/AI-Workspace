@@ -72,6 +72,27 @@ export const useProjectDetailById = (id: string, enabled: boolean = true) =>
     enabled: !!id && enabled,
   });
 
+export const TASKS_BY_PROJECT_QUERY_KEY = (projectId: string) => [
+  ...PROJECT_QUERY_KEY,
+  projectId,
+  "tasks",
+] as const;
+
+export const useTasksByProject = (
+  projectId: string,
+  search?: string,
+  priority?: TaskPriority,
+  enabled: boolean = true,
+) =>
+  useQuery({
+    queryKey: [
+      ...TASKS_BY_PROJECT_QUERY_KEY(projectId),
+      { search, priority },
+    ],
+    queryFn: () => projectApi.getTasks(projectId, search, priority),
+    enabled: !!projectId && enabled,
+  });
+
 export const useMyTasksByProject = (
   projectId: string,
   search?: string,

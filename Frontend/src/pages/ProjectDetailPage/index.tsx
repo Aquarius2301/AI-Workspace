@@ -14,6 +14,7 @@ import { ProjectInfoCard } from "./components/ProjectInfoCard";
 import { EditProjectModal } from "./modals/EditProjectModal";
 import { MyTaskTab } from "./tabs/MyTaskTab";
 import { MembersTab } from "./tabs/MembersTab";
+import { TaskTab } from "./tabs/TaskTab";
 import { NotFound } from "@/components";
 
 export default function ProjectDetailPage() {
@@ -131,13 +132,7 @@ export default function ProjectDetailPage() {
               {
                 key: "taskList",
                 label: t("projectDetailPage.taskList.title"),
-                children: (
-                  <Flex justify="center" style={{ padding: 40 }}>
-                    <NotFound
-                      title={t("projectDetailPage.taskList.comingSoon")}
-                    />
-                  </Flex>
-                ),
+                children: <TaskTab projectId={projectId} />,
               },
               {
                 key: "members",

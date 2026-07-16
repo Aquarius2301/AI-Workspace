@@ -24,6 +24,7 @@ export const ENDPOINTS = {
     BASE: PROJECT,
     BY_ID: (id: string) => `${PROJECT}/${id}`,
     BY_SLUG: (slug: string) => `${PROJECT}/${slug}`,
+    GET_TASKS: (projectId: string) => `${PROJECT}/${projectId}/tasks`,
     GET_MY_TASKS: (projectId: string) => `${PROJECT}/${projectId}/tasks/me`,
     GET_MEMBERS: (projectId: string) => `${PROJECT}/${projectId}/members`,
   },
