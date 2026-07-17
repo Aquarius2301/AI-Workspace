@@ -29,6 +29,9 @@ public static class ErrorCodes
     public const string DeviceIdRequired = "DeviceIdRequired";
     public const string UserIdRequired = "UserIdRequired";
 
+    // ─── Task ────────────────────────────────────────────────
+    public const string TaskNotFound = "TaskNotFound";
+
     // ─── Project ─────────────────────────────────────────────
     public const string ProjectNameRequired = "ProjectNameRequired";
     public const string ProjectNameMaxLength = "ProjectNameMaxLength";

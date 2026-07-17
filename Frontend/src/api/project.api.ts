@@ -91,4 +91,15 @@ export const projectApi = {
   update: (id: string, data: UpdateProjectRequest): Promise<void> => {
     return axiosClient.put(ENDPOINTS.PROJECT.BY_ID(id), data);
   },
+
+  updateTaskStatus: (
+    projectId: string,
+    taskId: string,
+    status: TaskStatus,
+  ): Promise<TaskItemResult> => {
+    return axiosClient.patch(
+      ENDPOINTS.PROJECT.UPDATE_TASK_STATUS(projectId, taskId),
+      { status },
+    );
+  },
 };

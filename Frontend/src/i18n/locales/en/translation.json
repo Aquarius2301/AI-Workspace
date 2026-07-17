@@ -382,6 +382,16 @@
         "title": "Visibility"
       },
       "success": "Project updated successfully!"
+    },
+    "updateTaskStatus": {
+      "title": "Update Task Status",
+      "titleLabel": "Title",
+      "descriptionLabel": "Description",
+      "priorityLabel": "Priority",
+      "assigneeLabel": "Assigned To",
+      "dueDateLabel": "Due Date",
+      "statusLabel": "Status",
+      "success": "Task status updated successfully!"
     }
   },
   "profilePage": {

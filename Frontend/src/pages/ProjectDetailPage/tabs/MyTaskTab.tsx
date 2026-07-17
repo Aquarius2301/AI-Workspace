@@ -13,6 +13,7 @@ import { useSearch, useMyTasksByProject } from "@/hooks";
 import { useTranslation } from "react-i18next";
 import type { TaskItemResult } from "@/types";
 import type { PageSize } from "@/types";
+import { UpdateTaskStatusModal } from "../modals/UpdateTaskStatusModal";
 
 const { Text } = Typography;
 
@@ -53,6 +54,8 @@ export function MyTaskTab({ projectId, selectedTaskId }: MyTaskTabProps) {
     targetPage,
     queryParams.pageSize as PageSize,
   );
+
+  const [selectedTask, setSelectedTask] = useState<TaskItemResult | null>(null);
 
   const hasSearchQuery =
     !!queryParams.search || !!queryParams.taskStatus || !!queryParams.priority;
@@ -164,6 +167,7 @@ export function MyTaskTab({ projectId, selectedTaskId }: MyTaskTabProps) {
                   </Flex>
                 }
                 isHoverable
+                onClick={() => setSelectedTask(task)}
                 style={
                   isSelected
                     ? {
@@ -198,6 +202,16 @@ export function MyTaskTab({ projectId, selectedTaskId }: MyTaskTabProps) {
         }}
         hasSearchQuery={hasSearchQuery}
       />
+
+      {/* ── Update task status modal ── */}
+      {selectedTask && (
+        <UpdateTaskStatusModal
+          isOpen={true}
+          onClose={() => setSelectedTask(null)}
+          projectId={projectId}
+          task={selectedTask}
+        />
+      )}
     </Flex>
   );
 }

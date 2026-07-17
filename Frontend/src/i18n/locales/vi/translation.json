@@ -382,6 +382,16 @@
         "title": "Phạm Vi"
       },
       "success": "Cập nhật dự án thành công!"
+    },
+    "updateTaskStatus": {
+      "title": "Cập Nhật Trạng Thái",
+      "titleLabel": "Tiêu đề",
+      "descriptionLabel": "Mô tả",
+      "priorityLabel": "Độ ưu tiên",
+      "assigneeLabel": "Người được giao",
+      "dueDateLabel": "Hạn chót",
+      "statusLabel": "Trạng thái",
+      "success": "Cập nhật trạng thái thành công!"
     }
   },
   "profilePage": {
