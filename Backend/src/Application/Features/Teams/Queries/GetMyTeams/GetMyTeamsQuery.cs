@@ -1,6 +1,5 @@
 using AIWorkspace.Application.Common;
 using AIWorkspace.Application.Common.Models;
-using AIWorkspace.Application.Helpers;
 using AIWorkspace.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -42,51 +41,36 @@ public sealed class GetMyTeamsQueryHandler
         var search = request.Search;
         var pagination = request.Pagination;
 
-        // Fetch all teams where user is a member, including team members for counting
-        var teams = await _context
-            .TeamMembers.AsNoTracking()
-            .Where(tm => tm.UserId == userId)
-            .Include(tm => tm.Team)
-                .ThenInclude(t => t.TeamMembers)
-            .Select(tm => tm.Team)
-            .ToListAsync(cancellationToken);
+        // Build query at DB level — start from TeamMembers and join to Teams
+        var query = _context.TeamMembers.AsNoTracking().Where(tm => tm.UserId == userId);
 
-        // Apply search filter using CollationSearchHelper (in-memory because EF Core cannot translate it)
+        // Apply search filter at DB level using SQL Server collation
         if (!string.IsNullOrWhiteSpace(search))
         {
-            teams = teams
-                .Where(t =>
-                    CollationSearchHelper.Contains(t.Name, search)
-                    || CollationSearchHelper.Contains(t.Description, search)
-                )
-                .ToList();
+            query = query.Where(tm =>
+                EF.Functions.Collate(tm.Team.Name, "SQL_Latin1_General_CP1_CI_AI").Contains(search)
+                || EF.Functions.Collate(tm.Team.Description ?? "", "SQL_Latin1_General_CP1_CI_AI")
+                    .Contains(search)
+            );
         }
 
-        // Get total count after filtering
-        var total = teams.Count;
+        // Get total count at DB level
+        var total = await query.CountAsync(cancellationToken);
 
-        // Apply pagination
-        var pagedTeams = teams
+        // Apply pagination and projection at DB level — single round-trip
+        var items = await query
+            .OrderBy(tm => tm.Team.Name)
             .Skip((pagination.Page - 1) * pagination.PageSize)
             .Take(pagination.PageSize)
-            .ToList();
-
-        // Project to result
-        var items = pagedTeams
-            .Select(team =>
-            {
-                var currentUserMembership = team.TeamMembers.First(tm => tm.UserId == userId);
-
-                return new GetMyTeamsResult(
-                    team.Id,
-                    team.Name,
-                    team.Description,
-                    team.Slug,
-                    team.TeamMembers.Count,
-                    currentUserMembership.Role
-                );
-            })
-            .ToList();
+            .Select(tm => new GetMyTeamsResult(
+                tm.Team.Id,
+                tm.Team.Name,
+                tm.Team.Description,
+                tm.Team.Slug,
+                tm.Team.TeamMembers.Count,
+                tm.Role
+            ))
+            .ToListAsync(cancellationToken);
 
         return new PaginationResult<GetMyTeamsResult>(
             pagination.Page,

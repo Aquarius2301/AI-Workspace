@@ -18,11 +18,9 @@ public sealed class RevokeAllRefreshCommandHandler : IRequestHandler<RevokeAllRe
 
     public async Task Handle(RevokeAllRefreshCommand request, CancellationToken cancellationToken)
     {
-        var refreshTokens = await _context
+        // Bulk delete directly at DB level — no need to load entities into memory
+        await _context
             .RefreshTokens.Where(x => x.UserId == request.UserId)
-            .ToListAsync(cancellationToken);
-
-        _context.RefreshTokens.RemoveRange(refreshTokens);
-        await _context.SaveChangesAsync(cancellationToken);
+            .ExecuteDeleteAsync(cancellationToken);
     }
 }

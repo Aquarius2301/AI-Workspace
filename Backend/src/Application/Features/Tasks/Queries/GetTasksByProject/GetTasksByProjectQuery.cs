@@ -1,22 +1,11 @@
 using AIWorkspace.Application.Common;
 using AIWorkspace.Application.Common.Exceptions;
-using AIWorkspace.Application.Helpers;
 using AIWorkspace.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace AIWorkspace.Application.Features.Tasks;
 
-/// <summary>
-/// Query to get all tasks within a specific project.
-/// The requesting user must be a project member or a team Admin/CoAdmin.
-/// </summary>
-/// <param name="CurrentUserId">The ID of the authenticated user</param>
-/// <param name="ProjectId">The ID of the project</param>
-/// <param name="Search">Optional search term to filter by task title or description</param>
-/// <param name="Priority">Optional priority filter</param>
-/// <param name="AssigneeId">Optional assignee filter</param>
-/// <param name="CancellationToken">Cancellation token</param>
 public sealed record GetTasksByProjectQuery(
     Guid CurrentUserId,
     Guid ProjectId,
@@ -26,14 +15,12 @@ public sealed record GetTasksByProjectQuery(
     CancellationToken CancellationToken
 ) : IRequest<List<TaskItemResult>>;
 
-/// <summary>
-/// Handler for <see cref="GetTasksByProjectQuery"/>.
-/// Returns all tasks for a project with optional filtering by search, priority, and assignee.
-/// Search uses CollationSearchHelper for Vietnamese diacritics-insensitive matching.
-/// </summary>
 public sealed class GetTasksByProjectQueryHandler
     : IRequestHandler<GetTasksByProjectQuery, List<TaskItemResult>>
 {
+    // Maximum tasks returned for Kanban view to prevent unbounded loading
+    private const int MaxTaskLimit = 200;
+
     private readonly IAppDbContext _context;
 
     public GetTasksByProjectQueryHandler(IAppDbContext context)
@@ -80,13 +67,19 @@ public sealed class GetTasksByProjectQueryHandler
             throw new NotFoundException(ErrorCodes.NotFound);
         }
 
-        // Build query for all tasks in this project
-        var query = _context
-            .TaskItems.AsNoTracking()
-            .Where(t => t.ProjectId == projectId)
-            .Include(t => t.Project)
-            .Include(t => t.AssignedTo)
-            .AsQueryable();
+        // Build query at DB level — all filters pushed to SQL
+        var query = _context.TaskItems.AsNoTracking().Where(t => t.ProjectId == projectId);
+
+        // Apply search filter at DB level using SQL Server collation
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            query = query.Where(t =>
+                EF.Functions.Collate(t.Title, "SQL_Latin1_General_CP1_CI_AI")
+                    .Contains(request.Search)
+                || EF.Functions.Collate(t.Description ?? "", "SQL_Latin1_General_CP1_CI_AI")
+                    .Contains(request.Search)
+            );
+        }
 
         // Apply priority filter at DB level if provided
         if (request.Priority.HasValue)
@@ -100,21 +93,10 @@ public sealed class GetTasksByProjectQueryHandler
             query = query.Where(t => t.AssignedToId == request.AssigneeId.Value);
         }
 
-        // Materialize to memory for CollationSearchHelper (cannot translate to SQL)
-        var tasks = await query.OrderByDescending(t => t.CreatedAt).ToListAsync(cancellationToken);
-
-        // Apply search filter in-memory using Vietnamese diacritics-insensitive matching
-        if (!string.IsNullOrWhiteSpace(request.Search))
-        {
-            tasks = tasks
-                .Where(t =>
-                    CollationSearchHelper.Contains(t.Title, request.Search)
-                    || CollationSearchHelper.Contains(t.Description, request.Search)
-                )
-                .ToList();
-        }
-
-        return tasks
+        // Single round-trip: filter + sort + limit at DB, projection via Select
+        return await query
+            .OrderByDescending(t => t.CreatedAt)
+            .Take(MaxTaskLimit)
             .Select(t => new TaskItemResult(
                 t.Id,
                 t.ProjectId,
@@ -122,12 +104,12 @@ public sealed class GetTasksByProjectQueryHandler
                 t.Title,
                 t.Description,
                 t.AssignedToId,
-                t.AssignedTo?.Name,
+                t.AssignedTo != null ? t.AssignedTo.Name : null,
                 t.Priority,
                 t.Status,
                 t.CreatedAt,
                 t.DueDate
             ))
-            .ToList();
+            .ToListAsync(cancellationToken);
     }
 }

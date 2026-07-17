@@ -1,5 +1,6 @@
 using AIWorkspace.Application.Common;
 using AIWorkspace.Application.Common.Exceptions;
+using AIWorkspace.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,12 +10,12 @@ public sealed record GetIdTeamBySlugQuery(
     string Slug,
     Guid CurrentUserId,
     CancellationToken CancellationToken
-) : IRequest<GetIdTeamResult> { }
+) : IRequest<GetTeamResult> { }
 
 public sealed record GetIdTeamResult(Guid Id);
 
 public sealed class GetIdTeamBySlugQueryHandler
-    : IRequestHandler<GetIdTeamBySlugQuery, GetIdTeamResult>
+    : IRequestHandler<GetIdTeamBySlugQuery, GetTeamResult>
 {
     private readonly IAppDbContext _context;
 
@@ -23,7 +24,7 @@ public sealed class GetIdTeamBySlugQueryHandler
         _context = context;
     }
 
-    public async Task<GetIdTeamResult> Handle(
+    public async Task<GetTeamResult> Handle(
         GetIdTeamBySlugQuery request,
         CancellationToken cancellationToken
     )
@@ -31,14 +32,21 @@ public sealed class GetIdTeamBySlugQueryHandler
         var team =
             await _context
                 .Teams.AsNoTracking()
-                .FirstOrDefaultAsync(
-                    t =>
-                        t.Slug == request.Slug
-                        && t.TeamMembers.Any(tm => tm.UserId == request.CurrentUserId),
-                    cancellationToken
+                .Where(t =>
+                    t.Slug == request.Slug
+                    && t.TeamMembers.Any(tm => tm.UserId == request.CurrentUserId)
                 )
+                .Select(t => new GetTeamResult(
+                    t.Id,
+                    t.Name,
+                    t.Description,
+                    t.TeamMembers.Where(tm => tm.UserId == request.CurrentUserId)
+                        .Select(tm => tm.Role)
+                        .First()
+                ))
+                .FirstOrDefaultAsync(cancellationToken)
             ?? throw new NotFoundException(ErrorCodes.TeamNotFound);
 
-        return new GetIdTeamResult(team.Id);
+        return team;
     }
 }
