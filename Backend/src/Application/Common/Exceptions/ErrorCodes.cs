@@ -31,6 +31,8 @@ public static class ErrorCodes
 
     // ─── Task ────────────────────────────────────────────────
     public const string TaskNotFound = "TaskNotFound";
+    public const string TaskTitleRequired = "TaskTitleRequired";
+    public const string TaskTitleMaxLength = "TaskTitleMaxLength";
 
     // ─── Project ─────────────────────────────────────────────
     public const string ProjectNameRequired = "ProjectNameRequired";

@@ -1,20 +1,26 @@
-import { Flex, Input, Grid, Empty } from "antd";
+import { useState } from "react";
+import { Flex, Input, Grid, Empty, Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { AITaskPrioritySelect } from "@/components";
 import { useSearch, useTasksByProject } from "@/hooks";
 import { TaskList } from "../components/TaskList";
 import { TaskListMobile } from "../components/TaskListMobile";
+import { CreateTaskModal } from "../modals/CreateTaskModal";
 
 const { useBreakpoint } = Grid;
 
 interface TaskTabProps {
   projectId: string;
+  canEdit?: boolean;
 }
 
-export function TaskTab({ projectId }: TaskTabProps) {
+export function TaskTab({ projectId, canEdit }: TaskTabProps) {
   const { t } = useTranslation();
   const screens = useBreakpoint();
   const isMobile = !screens.md;
+
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   const { searchProps, priorityProps, queryParams } = useSearch({
     hasPriorityFilter: true,
@@ -48,6 +54,15 @@ export function TaskTab({ projectId }: TaskTabProps) {
               onChange={priorityProps.onPriorityChange}
               allowClear
             />
+            {canEdit && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                {t("projectDetailPage.createTask.title")}
+              </Button>
+            )}
           </Flex>
         )}
         <Flex justify="center" style={{ padding: 40 }}>
@@ -62,6 +77,14 @@ export function TaskTab({ projectId }: TaskTabProps) {
             }
           />
         </Flex>
+
+        {isCreateModalOpen && (
+          <CreateTaskModal
+            isOpen={true}
+            onClose={() => setIsCreateModalOpen(false)}
+            projectId={projectId}
+          />
+        )}
       </Flex>
     );
   }
@@ -84,6 +107,15 @@ export function TaskTab({ projectId }: TaskTabProps) {
               onChange={priorityProps.onPriorityChange}
               allowClear
             />
+            {canEdit && (
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setIsCreateModalOpen(true)}
+              >
+                {t("projectDetailPage.createTask.title")}
+              </Button>
+            )}
           </Flex>
         )}
         <Flex justify="center" style={{ padding: 40 }}>
@@ -98,6 +130,14 @@ export function TaskTab({ projectId }: TaskTabProps) {
             }
           />
         </Flex>
+
+        {isCreateModalOpen && (
+          <CreateTaskModal
+            isOpen={true}
+            onClose={() => setIsCreateModalOpen(false)}
+            projectId={projectId}
+          />
+        )}
       </Flex>
     );
   }
@@ -119,6 +159,15 @@ export function TaskTab({ projectId }: TaskTabProps) {
             onChange={priorityProps.onPriorityChange}
             allowClear
           />
+          {canEdit && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setIsCreateModalOpen(true)}
+            >
+              {t("projectDetailPage.createTask.title")}
+            </Button>
+          )}
         </Flex>
       )}
 
@@ -127,6 +176,15 @@ export function TaskTab({ projectId }: TaskTabProps) {
         <TaskListMobile tasks={tasks ?? []} isLoading={isLoading} />
       ) : (
         <TaskList tasks={tasks ?? []} isLoading={isLoading} />
+      )}
+
+      {/* ── Create task modal ── */}
+      {isCreateModalOpen && (
+        <CreateTaskModal
+          isOpen={true}
+          onClose={() => setIsCreateModalOpen(false)}
+          projectId={projectId}
+        />
       )}
     </Flex>
   );

@@ -132,7 +132,7 @@ export default function ProjectDetailPage() {
               {
                 key: "taskList",
                 label: t("projectDetailPage.taskList.title"),
-                children: <TaskTab projectId={projectId} />,
+                children: <TaskTab projectId={projectId} canEdit={project?.canEdit} />,
               },
               {
                 key: "members",

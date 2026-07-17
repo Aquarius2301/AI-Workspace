@@ -383,6 +383,23 @@
       },
       "success": "Project updated successfully!"
     },
+    "createTask": {
+      "title": "Create Task",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter task title",
+      "titleRequired": "Please enter a task title",
+      "titleMax": "Task title must not exceed 200 characters",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Task description (optional)",
+      "descriptionMax": "Description must not exceed 2000 characters",
+      "priorityLabel": "Priority",
+      "assigneeLabel": "Assigned To",
+      "assigneePlaceholder": "Select assignee",
+      "dueDateLabel": "Due Date",
+      "dueDatePlaceholder": "Select due date",
+      "dueDatePastWarning": "You are setting a due date before today",
+      "success": "Task created successfully!"
+    },
     "updateTaskStatus": {
       "title": "Update Task Status",
       "titleLabel": "Title",

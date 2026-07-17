@@ -1,6 +1,7 @@
 import type {
   CreateProjectRequest,
   CreateProjectResponse,
+  CreateTaskRequest,
   MyProjectItem,
   PageResponse,
   PageSize,
@@ -86,6 +87,13 @@ export const projectApi = {
 
   create: (request: CreateProjectRequest): Promise<CreateProjectResponse> => {
     return axiosClient.post(ENDPOINTS.PROJECT.BASE, request);
+  },
+
+  createTask: (
+    projectId: string,
+    data: CreateTaskRequest,
+  ): Promise<TaskItemResult> => {
+    return axiosClient.post(ENDPOINTS.PROJECT.CREATE_TASK(projectId), data);
   },
 
   update: (id: string, data: UpdateProjectRequest): Promise<void> => {

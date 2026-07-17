@@ -1,4 +1,5 @@
 using AIWorkspace.Api.Helpers;
+using AIWorkspace.Application.Common.Exceptions;
 using AIWorkspace.Application.Features.Tasks;
 using AIWorkspace.Domain.Enums;
 using MediatR;
@@ -21,6 +22,50 @@ public class TaskController : ControllerBase
     public TaskController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    /// <summary>
+    /// Creates a new task within a project.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The user must have the <b>Admin</b> or <b>CoAdmin</b>
+    /// role in the project's team, or the <b>Leader</b> role in the project.
+    /// </remarks>
+    /// <param name="projectId">The ID of the project to create the task in.</param>
+    /// <param name="request">The request body containing task details.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Returns the created task item.</response>
+    /// <response code="400">Title is required (BadRequest).</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have sufficient role (Forbidden).</response>
+    /// <response code="404">Project not found (ProjectNotFound).</response>
+    [HttpPost]
+    public async Task<IActionResult> CreateTask(
+        Guid projectId,
+        [FromBody] CreateTaskRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        if (string.IsNullOrWhiteSpace(request.Title))
+            throw new BadRequestException(ErrorCodes.TaskTitleRequired);
+
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        var result = await _mediator.Send(
+            new CreateTaskCommand(
+                userId,
+                projectId,
+                request.Title,
+                request.Description,
+                request.AssignedToId,
+                request.Priority,
+                request.DueDate,
+                cancellationToken
+            ),
+            cancellationToken
+        );
+
+        return Ok(result);
     }
 
     /// <summary>
@@ -65,6 +110,17 @@ public class TaskController : ControllerBase
         return Ok(result);
     }
 }
+
+/// <summary>
+/// Request DTO for creating a task.
+/// </summary>
+public sealed record CreateTaskRequest(
+    string Title,
+    string? Description,
+    Guid? AssignedToId,
+    TaskPriority Priority,
+    DateTimeOffset? DueDate
+);
 
 /// <summary>
 /// Request DTO for updating task status.

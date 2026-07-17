@@ -17,3 +17,11 @@ export interface TaskItemResult {
   createdAt: string;
   dueDate: string | null;
 }
+
+export interface CreateTaskRequest {
+  title: string;
+  description?: string;
+  assignedToId?: string;
+  priority: TaskPriority;
+  dueDate?: string;
+}

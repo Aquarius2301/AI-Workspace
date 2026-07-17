@@ -383,6 +383,23 @@
       },
       "success": "Cập nhật dự án thành công!"
     },
+    "createTask": {
+      "title": "Tạo Việc Mới",
+      "titleLabel": "Tiêu đề",
+      "titlePlaceholder": "Nhập tiêu đề việc",
+      "titleRequired": "Vui lòng nhập tiêu đề việc",
+      "titleMax": "Tiêu đề việc không được vượt quá 200 ký tự",
+      "descriptionLabel": "Mô tả",
+      "descriptionPlaceholder": "Mô tả việc (không bắt buộc)",
+      "descriptionMax": "Mô tả không được vượt quá 2000 ký tự",
+      "priorityLabel": "Độ ưu tiên",
+      "assigneeLabel": "Người được giao",
+      "assigneePlaceholder": "Chọn người được giao",
+      "dueDateLabel": "Hạn chót",
+      "dueDatePlaceholder": "Chọn hạn chót",
+      "dueDatePastWarning": "Bạn đang đặt hạn chót trước ngày hôm nay",
+      "success": "Tạo việc thành công!"
+    },
     "updateTaskStatus": {
       "title": "Cập Nhật Trạng Thái",
       "titleLabel": "Tiêu đề",

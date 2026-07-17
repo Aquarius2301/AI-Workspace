@@ -1,5 +1,5 @@
 import { projectApi } from "@/api/project.api";
-import type { PageSize, TaskPriority, TaskStatus } from "@/types";
+import type { CreateTaskRequest, PageSize, TaskPriority, TaskStatus } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const TASK_QUERY_KEY = ["tasks"] as const;
@@ -44,6 +44,23 @@ export const useMyTasksByProject = (
       ),
     enabled: !!projectId && enabled,
   });
+
+export const useCreateTask = (projectId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: CreateTaskRequest) =>
+      projectApi.createTask(projectId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_LIST_QUERY_KEY, projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_MY_LIST_QUERY_KEY, projectId],
+      });
+    },
+  });
+};
 
 export const useUpdateTaskStatus = (projectId: string) => {
   const queryClient = useQueryClient();
