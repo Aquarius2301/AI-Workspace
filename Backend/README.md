@@ -11,7 +11,7 @@ Backend/
 ├── src/
 │   ├── Domain/                 # Innermost layer — Enterprise business rules
 │   │   ├── Entities/           # Domain models (User, Team, Project, TaskItem, ...)
-│   │   └── Enums/              # Enum types (TeamMemberRole, TaskItemStatus, TaskPriority, ProjectVisibility, ...)
+│   │   └── Enums/             # Enum types (TeamMemberRole, TaskItemStatus, TaskPriority, ProjectVisibility, ProjectRole, ...)
 │   │
 │   ├── Application/            # Use case / CQRS layer
 │   │   ├── Common/             # Shared abstractions
@@ -21,14 +21,14 @@ Backend/
 │   │   │   ├── Models/         # Pagination models
 │   │   │   └── Services/       # Service interfaces (IJwtService, IImageKitService)
 │   │   ├── Features/           # CQRS grouped by domain
-│   │   │   ├── Auth/           #   Login, Register, Refresh, Logout, Sessions, Me
-│   │   │   ├── Projects/       #   CreateProject, GetMyProjects, GetProject, GetProjectMembers
+│   │   │   ├── Auth/           #   Login, Register, Refresh, Logout, Sessions, Me, RevokeSession, RevokeAllRefresh
+│   │   │   ├── Projects/       #   CreateProject, UpdateProject, GetMyProjects, GetProject, GetIdProjectBySlug, GetProjectMembers, GetProjectsByTeam
 │   │   │   ├── Summaries/      #   GetSummary (dashboard overview)
-│   │   │   ├── Tasks/          #   Task queries
-│   │   │   ├── Teams/          #   Create/Update/Delete team, members, roles
+│   │   │   ├── Tasks/          #   CreateTask, UpdateMyTaskStatus, UpdateTaskStatus, GetTasksByProject, GetMyTasksByProject
+│   │   │   ├── Teams/          #   Create/Update/Delete team, members, roles, available members, remove member
 │   │   │   ├── Uploads/        #   Upload picture
 │   │   │   └── Users/          #   UpdateProfile, ChangePassword
-│   │   └── Helpers/            # Utilities (PasswordHasher, SlugHelper, CollationSearch)
+│   │   └── Helpers/            # Utilities (PasswordHasherHelper, SlugHelper, ColationSearchHelper)
 │   │
 │   ├── Infrastructure/         # External concerns implementation
 │   │   ├── Persistence/        # EF Core DbContext + Entity configurations
@@ -38,8 +38,8 @@ Backend/
 │   │   └── Settings/           # Strongly-typed config (AuthSetting, UploadSetting, RateLimitSetting, FrontendSetting)
 │   │
 │   └── Api/                    # Presentation / Host layer
-│       ├── Controllers/        # API controllers (Auth, Team, Project, User, Summary, Upload)
-│       ├── Middleware/          # Request pipeline (Exception, RequestLogging, ActiveTracking)
+│       ├── Controllers/        # API controllers (Auth, Team, Project, User, Summary, Upload, Task)
+│       ├── Middleware/         # Request pipeline (Exception, RequestLogging, ActiveTracking)
 │       ├── Filters/            # API response wrapper & filter
 │       ├── Extensions/         # DI registration extensions (Auth, CORS, Database, RateLimit, Swagger...)
 │       ├── Helpers/            # ClaimHelper, CookieHelper
@@ -68,7 +68,7 @@ Infrastructure → Application
 | `Team`          | Collaboration group with name, slug, description                                  |
 | `TeamMember`    | User membership in team with role (Admin / CoAdmin / Member)                      |
 | `Project`       | Work unit scoped to team, with visibility (Public / Private)                      |
-| `ProjectMember` | Explicit user access to project with role                                         |
+| `ProjectMember` | Explicit user access to project with role (Leader / Member)                       |
 | `TaskItem`      | Trackable work item with title, description, priority, status, assignee, due date |
 | `Picture`       | Uploaded image record with file ID, URL, active status, user link                 |
 | `RefreshToken`  | JWT refresh token with absolute expiry and device info                            |
@@ -90,30 +90,39 @@ Infrastructure → Application
 
 ### Teams
 
-| Method | Path                                 | Auth Required | Description                 |
-| ------ | ------------------------------------ | ------------- | --------------------------- |
-| GET    | `/api/teams`                         | Yes           | List my teams (paginated)   |
-| POST   | `/api/teams`                         | Yes           | Create team                 |
-| GET    | `/api/teams/{id}`                    | Yes           | Get team details            |
-| PUT    | `/api/teams/{id}`                    | Yes           | Update team (Admin)         |
-| DELETE | `/api/teams/{id}`                    | Yes           | Delete team (Admin)         |
-| GET    | `/api/teams/{id}/members`            | Yes           | List members (paginated)    |
-| POST   | `/api/teams/{id}/members`            | Yes           | Add members (Admin/CoAdmin) |
-| PUT    | `/api/teams/{id}/members/{memberId}` | Yes           | Update member role (Admin)  |
-| GET    | `/api/teams/{id}/available-members`  | Yes           | Users not yet in team       |
-| GET    | `/api/teams/{teamId}/projects`       | Yes           | List projects in team       |
+| Method | Path                                 | Auth Required | Description                   |
+| ------ | ------------------------------------ | ------------- | ----------------------------- |
+| GET    | `/api/teams`                         | Yes           | List my teams (paginated)     |
+| POST   | `/api/teams`                         | Yes           | Create team                   |
+| GET    | `/api/teams/{id}`                    | Yes           | Get team details              |
+| PUT    | `/api/teams/{id}`                    | Yes           | Update team (Admin)           |
+| DELETE | `/api/teams/{id}`                    | Yes           | Delete team (Admin)           |
+| GET    | `/api/teams/{id}/members`            | Yes           | List members (paginated)      |
+| POST   | `/api/teams/{id}/members`            | Yes           | Add members (Admin/CoAdmin)   |
+| PUT    | `/api/teams/{id}/members/{memberId}` | Yes           | Update member role (Admin)    |
+| DELETE | `/api/teams/{id}/members/{memberId}` | Yes           | Remove member (Admin/CoAdmin) |
+| GET    | `/api/teams/{id}/available-members`  | Yes           | Users not yet in team         |
+| GET    | `/api/teams/{teamId}/projects`       | Yes           | List projects in team         |
 
 ### Projects
 
-| Method | Path                                 | Auth Required | Description                      |
-| ------ | ------------------------------------ | ------------- | -------------------------------- |
-| GET    | `/api/projects`                      | Yes           | List my projects (paginated)     |
-| POST   | `/api/projects`                      | Yes           | Create project (Admin/CoAdmin)   |
-| GET    | `/api/projects/{id}`                 | Yes           | Get project by ID                |
-| GET    | `/api/projects/{slug}`               | Yes           | Get project ID by slug           |
-| GET    | `/api/projects/{projectId}/members`  | Yes           | List project members (paginated) |
-| GET    | `/api/projects/{projectId}/tasks/me` | Yes           | My tasks in project (paginated)  |
-| GET    | `/api/projects/{projectId}/tasks`    | Yes           | All project tasks (filterable)   |
+| Method | Path                                | Auth Required | Description                      |
+| ------ | ----------------------------------- | ------------- | -------------------------------- |
+| GET    | `/api/projects`                     | Yes           | List my projects (paginated)     |
+| POST   | `/api/projects`                     | Yes           | Create project (Admin/CoAdmin)   |
+| GET    | `/api/projects/{id}`                | Yes           | Get project by ID                |
+| PUT    | `/api/projects/{id}`                | Yes           | Update project (Admin/CoAdmin)   |
+| GET    | `/api/projects/{slug}`              | Yes           | Get project ID by slug           |
+| GET    | `/api/projects/{projectId}/members` | Yes           | List project members (paginated) |
+
+### Tasks
+
+| Method | Path                                              | Auth Required | Description                                |
+| ------ | ------------------------------------------------- | ------------- | ------------------------------------------ |
+| POST   | `/api/projects/{projectId}/tasks`                 | Yes           | Create task (team Admin/CoAdmin or Leader) |
+| GET    | `/api/projects/{projectId}/tasks`                 | Yes           | All project tasks (filterable, flat list)  |
+| GET    | `/api/projects/{projectId}/tasks/me`              | Yes           | My tasks in project (paginated)            |
+| PATCH  | `/api/projects/{projectId}/tasks/{taskId}/status` | Yes           | Update status of task assigned to me       |
 
 ### Users
 
@@ -166,7 +175,7 @@ Key settings in `appsettings.json`:
 
 ## 🔒 Security
 
-- **Passwords**: Hashed with ASP.NET Core Identity `PasswordHasher` (PBKDF2)
+- **Passwords**: Hashed with PBKDF2 via ASP.NET Core Identity `PasswordHasher` (wrapped in `PasswordHasherHelper`)
 - **JWT**: Access tokens (15 min) + opaque refresh tokens (7 days absolute expiry)
 - **Refresh Token Rotation**: Old token revoked on each refresh → prevents reuse attacks
 - **Absolute Expiry**: Refresh token expiry is based on original `CreatedAt` — user must re-login after 7 days even if they refresh frequently
@@ -203,12 +212,25 @@ dotnet run --project Backend/src/Api --seed
 ### Database
 
 ```bash
-# Add migration (from Backend directory)
-dotnet ef migrations add MigrationName --project src/Infrastructure --startup-project src/Api
+# Add migration (from repository root)
+bash Backend/script/add-migration.sh MigrationName
 
 # Update database
-dotnet ef database update --project src/Infrastructure --startup-project src/Api
+bash Backend/script/update-database.sh
 ```
+
+## 📜 Helper Scripts
+
+Located in `Backend/script/`:
+
+| Script               | Purpose                                    |
+| -------------------- | ------------------------------------------ |
+| `run.sh`             | Quick run (`dotnet run --project src/Api`) |
+| `run-with-seed.sh`   | Run API with `--seed` flag                 |
+| `add-migration.sh`   | Add EF Core migration (takes a name arg)   |
+| `update-database.sh` | Apply pending migrations to the database   |
+| `list-migration.sh`  | List applied migrations                    |
+| `clean-and-build.sh` | Clean `bin`/`obj` and rebuild the solution |
 
 ## 🧪 Seed Data
 
