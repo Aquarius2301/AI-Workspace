@@ -10,5 +10,6 @@ export const useSummary = (enabled: boolean = true) => {
     queryKey: SUMMARY_QUERY_KEY,
     queryFn: summaryApi.get,
     enabled,
+    staleTime: 1000 * 30, // 30s — dashboard data should be relatively fresh
   });
 };

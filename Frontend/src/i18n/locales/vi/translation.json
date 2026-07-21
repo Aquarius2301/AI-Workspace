@@ -200,6 +200,7 @@
         "placeholder": "Mô tả nhóm (không bắt buộc)",
         "max": "Vui lòng không nhập mô tả quá 500 kí tự"
       },
+      "goTo": "Đi tới nhóm này sau khi tạo",
       "helper": "Người tạo ra team sẽ là Quản trị viên của nhóm",
       "success": "Tạo nhóm thành công!"
     }
@@ -257,7 +258,8 @@
         "visibility": {
           "title": "Hiển thị"
         },
-        "success": "Tạo dự án thành công!"
+        "success": "Tạo dự án thành công!",
+        "goToProject": "Đi tới dự án này sau khi tạo"
       }
     },
     "members": {
@@ -280,17 +282,134 @@
         "success": "Cập nhật thành công!"
       },
       "deleteMember": {
-        "title": "Xóa thành viên"
+        "title": "Xóa thành viên",
+        "confirmation": "Bạn có chắc muốn xóa {{name}} khỏi nhóm này?",
+        "success": "{{name}} đã bị xóa khỏi nhóm"
       },
 
       "notFound": {
         "title": "Không tìm thấy kết quả",
         "description": "Thử điều chỉnh từ khóa tìm kiếm"
       }
+    },
+    "deleteTeam": {
+      "menu": "Xóa Nhóm",
+      "confirmTitle": "Xóa Nhóm",
+      "confirmWarning": "Hành động này không thể hoàn tác. Tất cả dự án, công việc và dữ liệu thành viên liên quan đến nhóm này sẽ bị xóa vĩnh viễn.",
+      "confirmButton": "Tôi hiểu, tiếp tục",
+      "verifyTitle": "Nhập tên nhóm để xác nhận",
+      "verifyLabel": "Vui lòng nhập {{teamName}} để xác nhận xóa",
+      "verifyPlaceholder": "Nhập tên nhóm",
+      "verifyError": "Tên nhóm không khớp",
+      "success": "Xóa nhóm thành công"
     }
   },
   "projectPage": {
-    "title": "Dự án của tôi"
+    "title": "Dự án của tôi",
+    "searchProjects": "Tìm kiếm dự án...",
+    "memberCount": "thành viên",
+    "completed": "hoàn thành",
+    "view": "Nhấn vào để xem",
+    "notFound": {
+      "title": "Không tìm thấy kết quả",
+      "description": "Thử điều chỉnh từ khóa tìm kiếm"
+    },
+    "empty": {
+      "title": "Hiện tại, bạn chưa có dự án nào.",
+      "description": "Hãy nhấn \"Tạo dự án\" để tạo dự án mới."
+    }
+  },
+  "projectDetailPage": {
+    "creator": "Người tạo",
+    "team": "Nhóm",
+    "notFound": {
+      "title": "Không Tìm Thấy Dự Án",
+      "description": "Dự án bạn đang tìm không tồn tại hoặc đã bị xóa.",
+      "button": "Quay Lại Dự Án của tôi"
+    },
+    "myTasks": {
+      "title": "Việc Của Tôi",
+      "search": "Tìm kiếm việc...",
+      "view": "Nhấn vào để xem",
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "empty": {
+        "title": "Hiện tại, bạn chưa có việc nào.",
+        "description": "Các việc được giao cho bạn sẽ hiển thị ở đây"
+      }
+    },
+    "taskList": {
+      "title": "Danh Sách Việc",
+      "search": "Tìm kiếm việc...",
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "empty": {
+        "title": "Chưa có việc nào",
+        "description": "Các việc trong dự án này sẽ hiển thị ở đây"
+      }
+    },
+    "members": {
+      "title": "Thành Viên",
+      "searchMembers": "Tìm kiếm thành viên...",
+      "email": "Email",
+      "joinedAt": "Tham gia",
+      "notFound": {
+        "title": "Không tìm thấy kết quả",
+        "description": "Thử điều chỉnh từ khóa tìm kiếm"
+      },
+      "empty": {
+        "title": "Không có thành viên nào",
+        "description": "Dự án này chưa có thành viên"
+      }
+    },
+    "editProject": {
+      "title": "Chỉnh Sửa Dự Án",
+      "name": {
+        "title": "Tên Dự Án",
+        "required": "Vui lòng nhập tên dự án",
+        "max": "Tên dự án không được vượt quá 100 ký tự"
+      },
+      "description": {
+        "title": "Mô Tả",
+        "placeholder": "Mô tả dự án (không bắt buộc)",
+        "max": "Mô tả không được vượt quá 500 ký tự"
+      },
+      "visibility": {
+        "title": "Phạm Vi"
+      },
+      "success": "Cập nhật dự án thành công!"
+    },
+    "createTask": {
+      "title": "Tạo Việc Mới",
+      "titleLabel": "Tiêu đề",
+      "titlePlaceholder": "Nhập tiêu đề việc",
+      "titleRequired": "Vui lòng nhập tiêu đề việc",
+      "titleMax": "Tiêu đề việc không được vượt quá 200 ký tự",
+      "descriptionLabel": "Mô tả",
+      "descriptionPlaceholder": "Mô tả việc (không bắt buộc)",
+      "descriptionMax": "Mô tả không được vượt quá 2000 ký tự",
+      "priorityLabel": "Độ ưu tiên",
+      "assigneeLabel": "Người được giao",
+      "assigneePlaceholder": "Chọn người được giao",
+      "dueDateLabel": "Hạn chót",
+      "dueDatePlaceholder": "Chọn hạn chót",
+      "dueDatePastWarning": "Bạn đang đặt hạn chót trước ngày hôm nay",
+      "success": "Tạo việc thành công!"
+    },
+    "updateTaskStatus": {
+      "title": "Cập Nhật Trạng Thái",
+      "titleLabel": "Tiêu đề",
+      "descriptionLabel": "Mô tả",
+      "priorityLabel": "Độ ưu tiên",
+      "assigneeLabel": "Người được giao",
+      "dueDateLabel": "Hạn chót",
+      "statusLabel": "Trạng thái",
+      "success": "Cập nhật trạng thái thành công!"
+    }
   },
   "profilePage": {
     "title": "Hồ Sơ",

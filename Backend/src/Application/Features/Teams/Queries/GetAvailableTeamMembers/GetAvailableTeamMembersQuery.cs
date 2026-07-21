@@ -1,7 +1,6 @@
 using AIWorkspace.Application.Common;
 using AIWorkspace.Application.Common.Behaviors;
 using AIWorkspace.Application.Common.Models;
-using AIWorkspace.Application.Helpers;
 using AIWorkspace.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -50,41 +49,35 @@ public sealed class GetAvailableTeamMembersQueryHandler
 
         // Role authorization is handled by TeamRoleBehavior (Admin/CoAdmin only)
 
-        // Get all users who are NOT members of this team
-        var availableUsers = await _context
+        // Build query at DB level — users not in this team
+        var query = _context
             .Users.AsNoTracking()
-            .Where(u => !_context.TeamMembers.Any(tm => tm.TeamId == teamId && tm.UserId == u.Id))
-            .ToListAsync(cancellationToken);
+            .Where(u => !_context.TeamMembers.Any(tm => tm.TeamId == teamId && tm.UserId == u.Id));
 
-        // Apply search filter using CollationSearchHelper (in-memory)
+        // Apply search filter at DB level using SQL Server collation
         if (!string.IsNullOrWhiteSpace(search))
         {
-            availableUsers = availableUsers
-                .Where(u =>
-                    CollationSearchHelper.Contains(u.Name, search)
-                    || CollationSearchHelper.Contains(u.Email, search)
-                )
-                .ToList();
+            query = query.Where(u =>
+                EF.Functions.Collate(u.Name, "SQL_Latin1_General_CP1_CI_AI").Contains(search)
+                || EF.Functions.Collate(u.Email, "SQL_Latin1_General_CP1_CI_AI").Contains(search)
+            );
         }
 
-        // Get total count after filtering
-        var total = availableUsers.Count;
+        // Get total count at DB level
+        var total = await query.CountAsync(cancellationToken);
 
-        // Apply pagination
-        var pagedUsers = availableUsers
+        // Apply pagination and projection at DB level — single round-trip
+        var items = await query
+            .OrderBy(u => u.Name)
             .Skip((pagination.Page - 1) * pagination.PageSize)
             .Take(pagination.PageSize)
-            .ToList();
-
-        // Project to result
-        var items = pagedUsers
             .Select(u => new GetAvailableTeamMembersResult(
                 u.Id,
                 u.Name,
                 u.Email,
-                u.AvatarPicture?.Url
+                u.AvatarPicture != null ? u.AvatarPicture.Url : null
             ))
-            .ToList();
+            .ToListAsync(cancellationToken);
 
         return new PaginationResult<GetAvailableTeamMembersResult>(
             pagination.Page,

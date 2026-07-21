@@ -115,7 +115,7 @@ public class TeamController : ControllerBase
     /// </remarks>
     /// <param name="request">Team creation data including name and optional description.</param>
     /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
-    /// <response code="200">Team created successfully.</response>
+    /// <response code="200">Returns the team's slug (CreateTeamResult) if team created successfully.</response>
     /// <response code="400">Validation failed (TeamNameRequired, TeamNameMaxLength, TeamDescriptionMaxLength).</response>
     /// <response code="401">User is not authenticated (Unauthorized).</response>
     /// <response code="500">An unexpected internal server error occurred (InternalServerError).</response>
@@ -127,11 +127,11 @@ public class TeamController : ControllerBase
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
-        await _mediator.Send(
+        var result = await _mediator.Send(
             new CreateTeamCommand(userId, request.Name, request.Description, cancellationToken)
         );
 
-        return Ok("Success");
+        return Ok(result);
     }
 
     /// <summary>
@@ -339,6 +339,40 @@ public class TeamController : ControllerBase
 
         await _mediator.Send(
             new UpdateTeamMemberRoleCommand(userId, id, memberId, request.Role, cancellationToken)
+        );
+
+        return Ok("Success");
+    }
+
+    /// <summary>
+    /// Removes a member from the team, deletes their project memberships, and unassigns their tasks.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication.
+    /// <b>Admin</b> can remove Member or CoAdmin (but not another Admin).
+    /// <b>CoAdmin</b> can only remove Member.
+    /// Users cannot remove themselves.
+    /// </remarks>
+    /// <param name="id">The unique identifier of the team.</param>
+    /// <param name="memberId">The unique identifier of the member to remove.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Member removed successfully.</response>
+    /// <response code="400">User tried to remove themselves (BadRequest).</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have permission (Forbidden).</response>
+    /// <response code="404">Team member not found (UserNotFound).</response>
+    /// <response code="500">An unexpected internal server error occurred (InternalServerError).</response>
+    [HttpDelete("{id:guid}/members/{memberId:guid}")]
+    public async Task<IActionResult> RemoveTeamMember(
+        Guid id,
+        Guid memberId,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new RemoveTeamMemberCommand(userId, id, memberId, cancellationToken)
         );
 
         return Ok("Success");

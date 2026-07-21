@@ -28,11 +28,58 @@ export interface ProjectDetail {
   visibility: ProjectVisibility;
 }
 
+export interface ProjectDetailResult {
+  id: string;
+  name: string;
+  description: string | null;
+  slug: string;
+  creatorName: string;
+  teamName: string;
+  visibility: string;
+  canView: boolean;
+  canEdit: boolean;
+  memberCount: number;
+  completedTaskCount: number;
+  totalTaskCount: number;
+}
+
+export interface MyProjectItem {
+  id: string;
+  name: string;
+  description: string | null;
+  slug: string;
+  teamName: string;
+  teamId: string;
+  visibility: string;
+  userRole: string;
+  memberCount: number;
+  completedTaskCount: number;
+  totalTaskCount: number;
+}
+
+export interface CreateProjectResponse {
+  slug: string;
+}
+
 export interface CreateProjectRequest {
   teamId: string;
   name: string;
   description?: string;
   visibility: ProjectVisibility;
+}
+
+export interface UpdateProjectRequest {
+  name?: string;
+  description?: string;
+  visibility?: ProjectVisibility;
+}
+
+export interface ProjectMemberItem {
+  userId: string;
+  userName: string;
+  userEmail: string;
+  role: string;
+  joinedAt: string;
 }
 
 export interface CreateProjectMemberRequest {

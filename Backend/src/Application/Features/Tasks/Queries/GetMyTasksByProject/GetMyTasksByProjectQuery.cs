@@ -1,27 +1,12 @@
 using AIWorkspace.Application.Common;
 using AIWorkspace.Application.Common.Exceptions;
 using AIWorkspace.Application.Common.Models;
-using AIWorkspace.Application.Helpers;
 using AIWorkspace.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace AIWorkspace.Application.Features.Tasks;
 
-/// <summary>
-/// Result item containing task information.
-/// </summary>
-/// <param name="Id">The unique identifier of the task</param>
-/// <param name="ProjectId">The unique identifier of the project</param>
-/// <param name="ProjectName">The name of the project</param>
-/// <param name="Title">The title of the task</param>
-/// <param name="Description">The optional description of the task</param>
-/// <param name="AssignedToId">The optional ID of the assigned user</param>
-/// <param name="AssignedToName">The optional name of the assigned user</param>
-/// <param name="Priority">The priority of the task</param>
-/// <param name="Status">The current status of the task</param>
-/// <param name="CreatedAt">The date and time when the task was created</param>
-/// <param name="DueDate">The optional due date of the task</param>
 public sealed record TaskItemResult(
     Guid Id,
     Guid ProjectId,
@@ -30,22 +15,12 @@ public sealed record TaskItemResult(
     string? Description,
     Guid? AssignedToId,
     string? AssignedToName,
-    string Priority,
-    string Status,
+    TaskPriority Priority,
+    TaskItemStatus Status,
     DateTimeOffset CreatedAt,
     DateTimeOffset? DueDate
 );
 
-/// <summary>
-/// Query to get a paginated list of tasks assigned to the current user within a specific project.
-/// </summary>
-/// <param name="CurrentUserId">The ID of the authenticated user</param>
-/// <param name="ProjectId">The ID of the project</param>
-/// <param name="Search">Optional search term to filter by task title or description</param>
-/// <param name="Status">Optional status filter</param>
-/// <param name="Priority">Optional priority filter</param>
-/// <param name="Pagination">Pagination parameters</param>
-/// <param name="CancellationToken">Cancellation token</param>
 public sealed record GetMyTasksByProjectQuery(
     Guid CurrentUserId,
     Guid ProjectId,
@@ -56,11 +31,6 @@ public sealed record GetMyTasksByProjectQuery(
     CancellationToken CancellationToken
 ) : IRequest<PaginationResult<TaskItemResult>>;
 
-/// <summary>
-/// Handler for <see cref="GetMyTasksByProjectQuery"/>.
-/// Returns tasks assigned to the current user within a project,
-/// with optional filtering by search, status, and priority.
-/// </summary>
 public sealed class GetMyTasksByProjectQueryHandler
     : IRequestHandler<GetMyTasksByProjectQuery, PaginationResult<TaskItemResult>>
 {
@@ -113,37 +83,16 @@ public sealed class GetMyTasksByProjectQueryHandler
         // Build query for tasks assigned to current user in this project
         var query = _context
             .TaskItems.AsNoTracking()
-            .Where(t => t.ProjectId == projectId && t.AssignedToId == currentUserId)
-            .Include(t => t.Project)
-            .Include(t => t.AssignedTo)
-            .AsQueryable();
+            .Where(t => t.ProjectId == projectId && t.AssignedToId == currentUserId);
 
-        // Apply search filter in-memory using Vietnamese diacritics-insensitive matching
+        // Apply search filter at DB level using SQL Server collation
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
-            var tasks = await query.ToListAsync(cancellationToken);
-
-            tasks = tasks
-                .Where(t =>
-                    CollationSearchHelper.Contains(t.Title, request.Search)
-                    || CollationSearchHelper.Contains(t.Description, request.Search)
-                )
-                .ToList();
-
-            var total = tasks.Count;
-
-            var pagedTasks = tasks
-                .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
-                .Take(request.Pagination.PageSize)
-                .ToList();
-
-            var items = pagedTasks.Select(MapToResult).ToList();
-
-            return new PaginationResult<TaskItemResult>(
-                request.Pagination.Page,
-                request.Pagination.PageSize,
-                total,
-                items
+            query = query.Where(t =>
+                EF.Functions.Collate(t.Title, "SQL_Latin1_General_CP1_CI_AI")
+                    .Contains(request.Search)
+                || EF.Functions.Collate(t.Description ?? "", "SQL_Latin1_General_CP1_CI_AI")
+                    .Contains(request.Search)
             );
         }
 
@@ -161,36 +110,30 @@ public sealed class GetMyTasksByProjectQueryHandler
 
         var totalCount = await query.CountAsync(cancellationToken);
 
-        var taskList = await query
+        var items = await query
             .OrderByDescending(t => t.CreatedAt)
             .Skip((request.Pagination.Page - 1) * request.Pagination.PageSize)
             .Take(request.Pagination.PageSize)
+            .Select(t => new TaskItemResult(
+                t.Id,
+                t.ProjectId,
+                t.Project.Name,
+                t.Title,
+                t.Description,
+                t.AssignedToId,
+                t.AssignedTo != null ? t.AssignedTo.Name : null,
+                t.Priority,
+                t.Status,
+                t.CreatedAt,
+                t.DueDate
+            ))
             .ToListAsync(cancellationToken);
-
-        var resultItems = taskList.Select(MapToResult).ToList();
 
         return new PaginationResult<TaskItemResult>(
             request.Pagination.Page,
             request.Pagination.PageSize,
             totalCount,
-            resultItems
-        );
-    }
-
-    private static TaskItemResult MapToResult(Domain.Entities.TaskItem task)
-    {
-        return new TaskItemResult(
-            task.Id,
-            task.ProjectId,
-            task.Project.Name,
-            task.Title,
-            task.Description,
-            task.AssignedToId,
-            task.AssignedTo?.Name,
-            task.Priority.ToString(),
-            task.Status.ToString(),
-            task.CreatedAt,
-            task.DueDate
+            items
         );
     }
 }

@@ -1,8 +1,10 @@
+import { useNavigate } from "react-router-dom";
 import { AITaskStatusTag } from "@/components";
 import type { TaskItemSummary } from "@/types";
 import { formatIsoLocaleDate } from "@/utils";
 import { Flex, theme } from "antd";
 import Text from "antd/es/typography/Text";
+import { ROUTE } from "@/constants";
 
 interface RecentTaskItemProps {
   task: TaskItemSummary;
@@ -11,6 +13,11 @@ interface RecentTaskItemProps {
 
 export function RecentTaskItem({ task, isLast }: RecentTaskItemProps) {
   const { token } = theme.useToken();
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`${ROUTE.PROJECT}/${task.projectSlug}?taskId=${task.id}`);
+  };
 
   return (
     <Flex
@@ -20,7 +27,16 @@ export function RecentTaskItem({ task, isLast }: RecentTaskItemProps) {
         borderBottom: isLast
           ? undefined
           : `1px solid ${token.colorBorderSecondary}`,
+        cursor: "pointer",
+        transition: "opacity 0.2s",
       }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.opacity = "0.75";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.opacity = "1";
+      }}
+      onClick={handleClick}
     >
       <Flex
         align="center"

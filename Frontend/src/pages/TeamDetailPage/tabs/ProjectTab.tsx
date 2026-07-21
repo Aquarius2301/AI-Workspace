@@ -22,6 +22,7 @@ import {
 import type { ProjectItem, TeamRole } from "@/types";
 import { CreateProjectModal } from "../modals/CreateProjectModal";
 import { getPercentage } from "@/utils";
+import { ROUTE } from "@/constants";
 
 const { useBreakpoint } = Grid;
 
@@ -168,15 +169,7 @@ export function ProjectTab({ teamId, role }: ProjectTabProps) {
             }
             isHoverable={project.canView}
             onClick={() =>
-              project.canView && (
-                <Button
-                  onClick={() =>
-                    navigate(`/teams/${teamId}/projects/${project.slug}`)
-                  }
-                >
-                  {t("teamDetailPage.projects.view")}
-                </Button>
-              )
+              project.canView && navigate(`${ROUTE.PROJECT}/${project.slug}`)
             }
           />
         )}

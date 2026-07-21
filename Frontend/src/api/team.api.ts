@@ -2,6 +2,7 @@ import type {
   AddTeamMemberRequest,
   AvailableTeamMemberItem,
   CreateTeamRequest,
+  CreateTeamResponse,
   PageResponse,
   PageSize,
   TeamDetail,
@@ -25,7 +26,7 @@ export const teamApi = {
     });
   },
 
-  create: (request: CreateTeamRequest): Promise<void> => {
+  create: (request: CreateTeamRequest): Promise<CreateTeamResponse> => {
     return axiosClient.post(ENDPOINTS.TEAM.BASE, request);
   },
 
@@ -74,5 +75,13 @@ export const teamApi = {
     data: UpdateMemberRoleRequest,
   ): Promise<TeamMemberItem> => {
     return axiosClient.put(ENDPOINTS.TEAM.UPDATE_MEMBERS(id, memberId), data);
+  },
+
+  delete: (id: string): Promise<void> => {
+    return axiosClient.delete(ENDPOINTS.TEAM.BY_ID(id));
+  },
+
+  deleteMember: (id: string, memberId: string): Promise<void> => {
+    return axiosClient.delete(ENDPOINTS.TEAM.UPDATE_MEMBERS(id, memberId));
   },
 };

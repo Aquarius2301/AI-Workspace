@@ -1,30 +1,33 @@
 # AI Workspace — Frontend
 
-The frontend for AI Workspace is a modern **React 19** single-page application built with **TypeScript**, **Vite**, and **Ant Design 6**. It provides a responsive dashboard for managing teams, projects, and tasks with AI-powered capabilities.
+The frontend for AI Workspace is a modern **React 19** single-page application built with **TypeScript**, **Vite**, and **Ant Design 6**. It provides a responsive dashboard for managing teams, projects, and tasks with multi-language support and theming.
 
 ## 🖥 Tech Stack
 
-| Technology              | Version  | Purpose                         |
-| ----------------------- | -------- | ------------------------------- |
-| React                   | ^19.2.7  | UI library                      |
-| TypeScript              | ~6.0.2   | Type-safe development           |
-| Vite                    | ^8.1.0   | Build tool and dev server       |
-| Ant Design              | ^6.5.0   | UI component library            |
-| TanStack React Query    | ^5.101.2 | Server state fetching & caching |
-| React Router            | ^7.18.0  | Client-side routing             |
-| Axios                   | ^1.18.1  | HTTP client for API calls       |
-| i18next + react-i18next | latest   | Internationalization (EN / VI)  |
-| oxlint                  | ^1.69.0  | Linter                          |
+| Technology              | Version       | Purpose                         |
+| ----------------------- | ------------- | ------------------------------- |
+| React                   | ^19.2         | UI library                      |
+| TypeScript              | ~6.0          | Type-safe development           |
+| Vite                    | ^8.1          | Build tool and dev server       |
+| Ant Design              | ^6.5          | UI component library            |
+| TanStack React Query    | ^5.101        | Server state fetching & caching |
+| React Router            | ^7.18         | Client-side routing             |
+| Axios                   | ^1.18         | HTTP client for API calls       |
+| i18next + react-i18next | ^26.3 / ^17.0 | Internationalization (EN / VI)  |
+| oxlint                  | ^1.69         | Linter                          |
 
 ## 🗺 Routing
 
-| Path           | Page                     | Auth Required |
-| -------------- | ------------------------ | ------------- |
-| `/`            | HomePage (landing)       | No            |
-| `/login`       | LoginPage                | No            |
-| `/overview`    | OverviewPage (dashboard) | Yes           |
-| `/teams`       | TeamPage (team list)     | Yes           |
-| `/teams/:slug` | TeamDetailPage           | Yes           |
+| Path              | Page                       | Auth Required |
+| ----------------- | -------------------------- | ------------- |
+| `/`               | HomePage (landing)         | No            |
+| `/login`          | LoginPage                  | No            |
+| `/overview`       | OverviewPage (dashboard)   | Yes           |
+| `/teams`          | TeamPage (team list)       | Yes           |
+| `/teams/:slug`    | TeamDetailPage             | Yes           |
+| `/projects`       | ProjectPage (project list) | Yes           |
+| `/projects/:slug` | ProjectDetailPage          | Yes           |
+| `/profile/me`     | ProfilePage (user profile) | Yes           |
 
 The `ProtectedRoute` wrapper checks authentication via `GET /api/auth/me` on mount and redirects unauthenticated users to `/login`. It also syncs the user's language preference to i18next.
 
@@ -39,6 +42,7 @@ Frontend/
 │   │   ├── auth.api.ts       #   Login, register, refresh, logout, sessions
 │   │   ├── team.api.ts       #   Teams CRUD, members
 │   │   ├── project.api.ts    #   Project CRUD, tasks
+│   │   ├── user.api.ts       #   Update profile, change password
 │   │   ├── summary.api.ts    #   Dashboard summary
 │   │   ├── config.api.ts     #   Axios instance with interceptors (auto-refresh, 401 queue)
 │   │   └── index.ts          #   Re-exports
@@ -56,10 +60,10 @@ Frontend/
 │   │   │   ├── NotFound.tsx
 │   │   │   └── index.ts
 │   │   ├── business/         #   Domain-specific components
-│   │   │   ├── task/
-│   │   │   ├── teamRole/
-│   │   │   ├── visibility/
-│   │   │   ├── projectRole/
+│   │   │   ├── task/         #   AITaskStatusTag/Select, AITaskPriorityTag/Select
+│   │   │   ├── team/         #   AITeamRoleTag/Select
+│   │   │   ├── visibility/   #   AIVisibilityTag/Select
+│   │   │   ├── project/      #   AIProjectRoleTag/Select
 │   │   │   └── index.ts
 │   │   └── layout/           #   App shell
 │   │       ├── AISidebar.tsx
@@ -68,7 +72,7 @@ Frontend/
 │   ├── constants/             # App-wide constants
 │   │   ├── endpoints.ts      #   API endpoint paths
 │   │   ├── routes.ts         #   Route paths
-│   │   ├── theme.ts          #   Ant Design theme tokens (light/dark)
+│   │   ├── theme.ts         #   Ant Design theme tokens (light/dark)
 │   │   └── index.ts
 │   │
 │   ├── contexts/              # React contexts
@@ -81,6 +85,7 @@ Frontend/
 │   │   │   ├── useTeam.hook.ts
 │   │   │   ├── useProject.hook.ts
 │   │   │   ├── useSummary.hook.ts
+│   │   │   ├── useUser.hook.ts
 │   │   │   └── index.ts
 │   │   ├── useDebounce.hook.ts
 │   │   ├── useGetCacheData.hook.ts  # Reactive cache reader
@@ -103,6 +108,9 @@ Frontend/
 │   │   ├── OverviewPage/     #   Dashboard with stats, task breakdown, recent tasks, team summaries
 │   │   ├── TeamPage/         #   Team listing with search + create modal
 │   │   ├── TeamDetailPage/   #   Single team: info, members, projects
+│   │   ├── ProjectPage/      #   Project listing with search + filters
+│   │   ├── ProjectDetailPage/#   Single project: info, members, tasks
+│   │   ├── ProfilePage/      #   User profile: update info, change password
 │   │   └── index.ts          #   Lazy-loaded exports
 │   │
 │   ├── router/                # Route configuration
@@ -114,6 +122,7 @@ Frontend/
 │   │   ├── project.type.ts   #   Project types
 │   │   ├── task.type.ts      #   Task item types
 │   │   ├── summary.type.ts   #   Dashboard summary types
+│   │   ├── user.type.ts      #   User types
 │   │   ├── common.type.ts    #   Shared types (ApiResponse, Pagination)
 │   │   └── index.ts          #   Re-exports
 │   │
@@ -121,11 +130,13 @@ Frontend/
 │   │   ├── date.util.ts      #   Date formatting
 │   │   ├── error.util.ts     #   Error handling + i18n translation
 │   │   ├── common.util.ts    #   Common utilities
+│   │   ├── image.util.ts     #   Image helpers
+│   │   ├── userAgent.util.ts #   User-agent parsing (sessions)
 │   │   └── index.ts
 │   │
 │   ├── App.tsx                # Root component (QueryClientProvider, ConfigProvider, Router)
 │   ├── main.tsx               # Application entry point (ThemeProvider, StrictMode)
-│   └── index.css              # Global styles (body reset)
+│   └── index.css             # Global styles (body reset)
 │
 ├── index.html                 # HTML entry point
 ├── vite.config.ts             # Vite config (React plugin, @ path alias)
@@ -182,7 +193,9 @@ npm run preview
 npm run lint
 ```
 
-Uses [oxlint](https://oxc.dev/docs/guide/usage/lint) for fast, Rust-powered linting (drop-in replacement for ESLint).
+Uses [oxlint](https://oxc.dev/docs/guide/usage/lint) for fast, Rust-powered linting.
+
+> **Note**: `package.json` currently includes `@types/axios` in devDependencies. This package is deprecated since axios 1.x ships its own types — it can be removed in a future cleanup.
 
 ## 🎨 Theme
 
@@ -221,4 +234,4 @@ The user's language preference is stored server-side and synced on login via the
 | `react-router-dom`      | Declarative routing with protected route guard pattern                                     |
 | `axios`                 | Interceptors for auto-refresh token, 401 queue mechanism, centralized error handling       |
 | `i18next`               | Proven i18n framework with browser language detection and localStorage caching             |
-| `oxlint`                | Fast Rust-based linter (drop-in replacement for ESLint)                                    |
+| `oxlint`                | Fast Rust-based linter                                                                     |

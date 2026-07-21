@@ -13,6 +13,8 @@ export const useAuthMe = (enabled: boolean = true) => {
     queryKey: AUTH_ME_QUERY_KEY,
     queryFn: authApi.me,
     enabled,
+    staleTime: Infinity,
+    gcTime: 1000 * 60 * 30,
   });
 };
 

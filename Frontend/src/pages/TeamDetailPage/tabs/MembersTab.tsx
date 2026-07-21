@@ -8,15 +8,19 @@ import {
   Grid,
   type MenuProps,
   Dropdown,
+  App,
+  theme,
 } from "antd";
+import { WarningOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
-import { useTeamMembers, useSearch } from "@/hooks";
+import { useTeamMembers, useSearch, useDeleteMember } from "@/hooks";
 import {
   AIList,
   UserAvatar,
   AICardItem,
   AITeamRoleSelect,
   AITeamRoleTag,
+  AIModal,
 } from "@/components";
 import type { TeamMemberItem, TeamRole } from "@/types";
 import {
@@ -25,7 +29,7 @@ import {
   EllipsisOutlined,
 } from "@ant-design/icons";
 
-import { formatIsoLocaleDate } from "@/utils";
+import { formatIsoLocaleDate, getErrorMessage } from "@/utils";
 import { EditMemberRoleModal } from "../modals/EditMemberRoleModal";
 import { AddMemberModal } from "../modals/AddMemberModal";
 const { Text } = Typography;
@@ -40,6 +44,8 @@ interface MembersTabProps {
 
 export function MembersTab({ teamId, userId, role, enabled }: MembersTabProps) {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
+  const { message } = App.useApp();
   const screens = useBreakpoint();
   const isMobile = !screens.md;
   const { searchProps, roleProps, paginationProps, queryParams } = useSearch({
@@ -54,6 +60,8 @@ export function MembersTab({ teamId, userId, role, enabled }: MembersTabProps) {
     queryParams.pageSize,
     enabled,
   );
+
+  const deleteMember = useDeleteMember();
 
   const hasSearchQuery = !!queryParams.search || !!queryParams.role;
   const isDataEmpty = !isLoading && membersData && membersData.total === 0;
@@ -74,8 +82,31 @@ export function MembersTab({ teamId, userId, role, enabled }: MembersTabProps) {
   // ── Add member modal state ──
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
+  // ── Delete member confirm state ──
+  const [deleteMemberTarget, setDeleteMemberTarget] =
+    useState<TeamMemberItem | null>(null);
+
+  const handleDeleteMember = async () => {
+    if (!deleteMemberTarget) return;
+
+    try {
+      await deleteMember.mutateAsync({
+        id: teamId,
+        memberId: deleteMemberTarget.userId,
+      });
+      message.success(
+        t("teamDetailPage.members.deleteMember.success", {
+          name: deleteMemberTarget.userName,
+        }),
+      );
+      setDeleteMemberTarget(null);
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    }
+  };
+
   const menu = (member: TeamMemberItem): MenuProps["items"] => {
-    var modals = [
+    const items = [
       {
         key: "editRole",
         icon: <EditOutlined />,
@@ -87,12 +118,13 @@ export function MembersTab({ teamId, userId, role, enabled }: MembersTabProps) {
         icon: <DeleteOutlined />,
         danger: true,
         label: t("teamDetailPage.members.deleteMember.title"),
+        onClick: () => setDeleteMemberTarget(member),
       },
     ];
 
-    if (isCoAdmin) modals.shift();
+    if (isCoAdmin) items.shift();
 
-    return modals;
+    return items;
   };
 
   return (
@@ -184,10 +216,6 @@ export function MembersTab({ teamId, userId, role, enabled }: MembersTabProps) {
           total: membersData?.total ?? 0,
         }}
         hasSearchQuery={hasSearchQuery}
-        // empty={{   // No empty since a project has at least 1 member
-        //   icon: Empty.PRESENTED_IMAGE_SIMPLE,
-        //   title: t("teamDetailPage.members.empty"),
-        // }}
         notFound={{
           icon: Empty.PRESENTED_IMAGE_SIMPLE,
           title: t("teamDetailPage.members.notFound.title"),
@@ -213,6 +241,32 @@ export function MembersTab({ teamId, userId, role, enabled }: MembersTabProps) {
           currentUserRole={role}
         />
       )}
+      {/* ── Delete member confirm modal ── */}
+      <AIModal
+        title={t("teamDetailPage.members.deleteMember.title")}
+        open={!!deleteMemberTarget}
+        onCancel={() => setDeleteMemberTarget(null)}
+        onOk={handleDeleteMember}
+        isLoading={deleteMember.isPending}
+        footer={[
+          { type: "cancel" as const },
+          {
+            type: "delete" as const,
+            text: t("teamDetailPage.members.deleteMember.title"),
+          },
+        ]}
+      >
+        <Flex vertical align="center" gap={12} style={{ padding: "16px 0" }}>
+          <WarningOutlined
+            style={{ fontSize: 48, color: token.colorWarning }}
+          />
+          <Text style={{ textAlign: "center", fontSize: 14 }}>
+            {t("teamDetailPage.members.deleteMember.confirmation", {
+              name: deleteMemberTarget?.userName,
+            })}
+          </Text>
+        </Flex>
+      </AIModal>
     </Flex>
   );
 }

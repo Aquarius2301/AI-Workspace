@@ -1,10 +1,14 @@
-import { Form, App, Input } from "antd";
+import { Form, App, Input, Checkbox } from "antd";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AIModal, AIVisibilitySelect } from "@/components";
 import type { CreateProjectRequest } from "@/types";
 import { PROJECT_VISIBILIES } from "@/types";
+import { ROUTE } from "@/constants";
 import { useCreateProject } from "@/hooks";
 import { getErrorMessage, getFormFieldErrors } from "@/utils";
+import Text from "antd/es/typography/Text";
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -19,16 +23,21 @@ export function CreateProjectModal({
 }: CreateProjectModalProps) {
   const { t } = useTranslation();
   const [form] = Form.useForm<CreateProjectRequest>();
+  const [isRedirect, setIsRedirect] = useState(false);
   const { message } = App.useApp();
   const create = useCreateProject();
+  const navigate = useNavigate();
 
   // ── Create project ──
   const handleCreate = async (values: CreateProjectRequest) => {
     try {
-      await create.mutateAsync({
+      const res = await create.mutateAsync({
         ...values,
         teamId,
       });
+      if (isRedirect) {
+        navigate(`${ROUTE.PROJECT}/${res.slug}`);
+      }
       message.success(t("teamDetailPage.projects.createProject.success"));
       onClose();
       form.resetFields();
@@ -115,6 +124,13 @@ export function CreateProjectModal({
         >
           <AIVisibilitySelect style={{ width: "100%" }} />
         </Form.Item>
+
+        <Checkbox
+          value={isRedirect}
+          onChange={(e) => setIsRedirect(e.target.checked)}
+        >
+          <Text>{t("teamDetailPage.projects.createProject.goToProject")}</Text>
+        </Checkbox>
       </Form>
     </AIModal>
   );

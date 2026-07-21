@@ -44,19 +44,14 @@ public sealed class RefreshTokenCleanupBackground : BackgroundService
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
 
-        var expiredTokens = await context
-            .RefreshTokens.AsNoTracking()
-            .Where(rt => rt.ExpiresAt < DateTimeOffset.UtcNow)
-            .ToListAsync(ct);
+        // Bulk delete expired tokens directly at DB level
+        var deletedCount = await context
+            .RefreshTokens.Where(rt => rt.ExpiresAt < DateTimeOffset.UtcNow)
+            .ExecuteDeleteAsync(ct);
 
-        if (expiredTokens.Count > 0)
+        if (deletedCount > 0)
         {
-            context.RefreshTokens.RemoveRange(expiredTokens);
-            await context.SaveChangesAsync(ct);
-            _logger.LogInformation(
-                "Cleaned up {Count} expired refresh tokens",
-                expiredTokens.Count
-            );
+            _logger.LogInformation("Cleaned up {Count} expired refresh tokens", deletedCount);
         }
     }
 }

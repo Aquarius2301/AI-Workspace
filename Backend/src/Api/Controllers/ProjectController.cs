@@ -172,7 +172,7 @@ public class ProjectController : ControllerBase
     /// </remarks>
     /// <param name="request">Project creation data including team ID, name, optional description, and visibility.</param>
     /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
-    /// <response code="200">Project created successfully.</response>
+    /// <response code="200">Returns the project's slug (CreateTeamResult) if project created successfully.</response>
     /// <response code="400">Project name is required (ProjectNameRequired).</response>
     /// <response code="401">User is not authenticated (Unauthorized).</response>
     /// <response code="403">User does not have the Admin or CoAdmin role in the team (Forbidden).</response>
@@ -189,10 +189,49 @@ public class ProjectController : ControllerBase
 
         var userId = ClaimHelper.GetCurrentUserId();
 
-        await _mediator.Send(
+        var result = await _mediator.Send(
             new CreateProjectCommand(
                 userId,
                 request.TeamId,
+                request.Name,
+                request.Description,
+                request.Visibility,
+                cancellationToken
+            ),
+            cancellationToken
+        );
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Updates an existing project's name, description, or visibility.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The current user must have the <b>Admin</b> or <b>CoAdmin</b> role in the project's team.
+    /// Only provided fields will be updated (partial update).
+    /// </remarks>
+    /// <param name="id">The unique identifier of the project to update.</param>
+    /// <param name="request">Update data including optional name, description, and visibility.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Project updated successfully.</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have the Admin or CoAdmin role in the team (Forbidden).</response>
+    /// <response code="404">Project not found (ProjectNotFound).</response>
+    /// <response code="500">An unexpected internal server error occurred (InternalServerError).</response>
+    [HttpPut("{id:guid}")]
+    public async Task<IActionResult> UpdateProject(
+        Guid id,
+        [FromBody] UpdateProjectRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new UpdateProjectCommand(
+                userId,
+                id,
                 request.Name,
                 request.Description,
                 request.Visibility,
@@ -302,4 +341,10 @@ public sealed record CreateProjectRequest(
     string Name,
     string? Description,
     ProjectVisibility Visibility
+);
+
+public sealed record UpdateProjectRequest(
+    string? Name,
+    string? Description,
+    ProjectVisibility? Visibility
 );

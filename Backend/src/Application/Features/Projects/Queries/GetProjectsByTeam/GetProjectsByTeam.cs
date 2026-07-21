@@ -1,8 +1,6 @@
 using AIWorkspace.Application.Common;
 using AIWorkspace.Application.Common.Exceptions;
 using AIWorkspace.Application.Common.Models;
-using AIWorkspace.Application.Helpers;
-using AIWorkspace.Domain.Entities;
 using AIWorkspace.Domain.Enums;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -68,75 +66,55 @@ public sealed class GetProjectsByTeamQueryHandler
         var isTeamAdminOrCoAdmin =
             teamMembership.Role is TeamMemberRole.Admin or TeamMemberRole.CoAdmin;
 
-        // Fetch all projects for the team with related data
-        var projects = await _context
-            .Projects.AsNoTracking()
-            .Where(p => p.TeamId == teamId)
-            .Include(p => p.Creator)
-            .Include(p => p.ProjectMembers)
-            .Include(p => p.TaskItems)
-            .ToListAsync(cancellationToken);
+        // Build query at DB level — no client-side evaluation
+        var query = _context.Projects.AsNoTracking().Where(p => p.TeamId == teamId);
 
-        // Build the result list with CanView computed for each project
-        var projectResults = projects
-            .Select(p =>
-            {
-                var hasProjectMembership = p.ProjectMembers.Any(pm => pm.UserId == currentUserId);
-                var canView = isTeamAdminOrCoAdmin || hasProjectMembership;
+        // Non-admin users can only see public projects or projects they belong to
+        if (!isTeamAdminOrCoAdmin)
+        {
+            query = query.Where(p =>
+                p.Visibility == ProjectVisibility.Public
+                || p.ProjectMembers.Any(pm => pm.UserId == currentUserId)
+            );
+        }
 
-                return new
-                {
-                    Project = p,
-                    CanView = canView,
-                    ShouldShow = p.Visibility == ProjectVisibility.Public || canView,
-                };
-            })
-            .ToList();
-
-        // Apply show filter: only include projects that ShouldShow
-        var filtered = projectResults.Where(x => x.ShouldShow).ToList();
-
-        // Apply search filter on project name
+        // Apply search filter at DB level using SQL Server collation
         if (!string.IsNullOrWhiteSpace(search))
         {
-            filtered = filtered
-                .Where(x =>
-                    CollationSearchHelper.Contains(x.Project.Name, search)
-                    || CollationSearchHelper.Contains(x.Project.Description, search)
-                )
-                .ToList();
+            query = query.Where(p =>
+                EF.Functions.Collate(p.Name, "SQL_Latin1_General_CP1_CI_AI").Contains(search)
+                || EF.Functions.Collate(p.Description ?? "", "SQL_Latin1_General_CP1_CI_AI")
+                    .Contains(search)
+            );
         }
 
-        // Apply visibility filter if provided
+        // Apply visibility filter at DB level if provided
         if (visibility.HasValue)
         {
-            filtered = filtered.Where(x => x.Project.Visibility == visibility.Value).ToList();
+            query = query.Where(p => p.Visibility == visibility.Value);
         }
 
-        // Get total count after filtering
-        var total = filtered.Count;
+        // Get total count at DB level
+        var total = await query.CountAsync(cancellationToken);
 
-        // Apply pagination
-        var pagedResults = filtered
+        // Apply pagination and projection at DB level — single round-trip
+        var items = await query
+            .OrderBy(p => p.Name)
             .Skip((pagination.Page - 1) * pagination.PageSize)
             .Take(pagination.PageSize)
-            .ToList();
-
-        // Project to result items
-        var items = pagedResults
-            .Select(x => new ProjectItem(
-                x.Project.Id,
-                x.Project.Name,
-                x.Project.Slug,
-                x.Project.Description,
-                x.Project.Creator.Name,
-                x.Project.Visibility.ToString(),
-                x.CanView,
-                x.Project.ProjectMembers.Count,
-                x.Project.TaskItems.Count(t => t.Status == TaskItemStatus.Done),
-                x.Project.TaskItems.Count
+            .Select(p => new ProjectItem(
+                p.Id,
+                p.Name,
+                p.Slug,
+                p.Description,
+                p.Creator.Name,
+                p.Visibility.ToString(),
+                isTeamAdminOrCoAdmin || p.ProjectMembers.Any(pm => pm.UserId == currentUserId),
+                p.ProjectMembers.Count,
+                p.TaskItems.Count(t => t.Status == TaskItemStatus.Done),
+                p.TaskItems.Count
             ))
-            .ToList();
+            .ToListAsync(cancellationToken);
 
         return new PaginationResult<ProjectItem>(
             pagination.Page,

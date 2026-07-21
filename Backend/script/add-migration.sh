@@ -18,3 +18,10 @@ dotnet ef migrations add "$1" \
   --output-dir "$OUTPUT_DIR"
 
 echo "✅ Migration '$1' created in $PROJECT/$OUTPUT_DIR"
+
+read -r -p "🔄 Press Enter to update database to the latest migration (or Ctrl+C to skip)..."
+echo "🔄 Updating database to latest migration..."
+dotnet ef database update \
+  --project "$PROJECT" \
+  --startup-project "$STARTUP_PROJECT"
+echo "✅ Database updated successfully!"
