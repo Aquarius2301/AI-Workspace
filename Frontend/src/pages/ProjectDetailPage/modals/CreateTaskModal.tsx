@@ -1,7 +1,7 @@
 import { Form, Input, DatePicker, Select, Typography, App } from "antd";
 import { useTranslation } from "react-i18next";
 import { AIModal, AITaskPrioritySelect } from "@/components";
-import type { CreateTaskRequest, TaskPriority } from "@/types";
+import type { CreateTaskRequest } from "@/types";
 import { TASK_PRIORITY } from "@/types";
 import { useCreateTask, useProjectMembers } from "@/hooks";
 import { getErrorMessage, getFormFieldErrors } from "@/utils";
@@ -31,7 +31,14 @@ export function CreateTaskModal({
     dueDateValue && dayjs(dueDateValue).isBefore(dayjs(), "day");
 
   // ── Fetch project members for assignee dropdown ──
-  const { data: memberData } = useProjectMembers(projectId, undefined, undefined, 1, 100, isOpen);
+  const { data: memberData } = useProjectMembers(
+    projectId,
+    undefined,
+    undefined,
+    1,
+    100,
+    isOpen,
+  );
   const members = memberData?.items ?? [];
 
   // ── Create task ──
@@ -122,10 +129,7 @@ export function CreateTaskModal({
           label={t("projectDetailPage.createTask.priorityLabel")}
           rules={[{ required: true }]}
         >
-          <AITaskPrioritySelect
-            allowClear={false}
-            style={{ width: "100%" }}
-          />
+          <AITaskPrioritySelect allowClear={false} style={{ width: "100%" }} />
         </Form.Item>
 
         {/* ── Assignee ── */}
@@ -154,7 +158,15 @@ export function CreateTaskModal({
           />
         </Form.Item>
         {isPastDueDate && (
-          <Text type="warning" style={{ fontSize: 13, marginTop: -12, marginBottom: 12, display: "block" }}>
+          <Text
+            type="warning"
+            style={{
+              fontSize: 13,
+              marginTop: -12,
+              marginBottom: 12,
+              display: "block",
+            }}
+          >
             {t("projectDetailPage.createTask.dueDatePastWarning")}
           </Text>
         )}
