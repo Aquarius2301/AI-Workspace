@@ -157,6 +157,38 @@ public class TaskController : ControllerBase
 
         return Ok();
     }
+
+    /// <summary>
+    /// Updates the status of any task in the project by an admin/leader.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The user must have <b>Admin</b> or <b>CoAdmin</b>
+    /// role in the project's team, or the <b>Leader</b> role in the project.
+    /// Unlike <c>UpdateMyTaskStatus</c>, this endpoint does not restrict by assigned user.
+    /// </remarks>
+    [HttpPatch("{taskId:guid}/admin-status")]
+    public async Task<IActionResult> UpdateTaskStatusByAdmin(
+        Guid projectId,
+        Guid taskId,
+        [FromBody] UpdateTaskStatusByAdminRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        var result = await _mediator.Send(
+            new UpdateTaskStatusByAdminCommand(
+                userId,
+                projectId,
+                taskId,
+                request.Status,
+                cancellationToken
+            ),
+            cancellationToken
+        );
+
+        return Ok(result);
+    }
 }
 
 /// <summary>
@@ -174,6 +206,8 @@ public sealed record CreateTaskRequest(
 /// Request DTO for updating task status.
 /// </summary>
 public sealed record UpdateMyTaskStatusRequest(TaskItemStatus Status);
+
+public sealed record UpdateTaskStatusByAdminRequest(TaskItemStatus Status);
 
 public sealed record UpdateTaskRequest(
     string? Title,

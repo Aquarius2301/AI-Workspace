@@ -1,9 +1,10 @@
-import { useMemo } from "react";
+import { useMemo, type DragEvent } from "react";
 import { Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 import { AITaskStatusTag } from "@/components";
 import { TASK_STATUS } from "@/types";
 import type { TaskItemResult, TaskStatus } from "@/types";
+import { useUpdateTaskStatus, useAdminUpdateTaskStatus } from "@/hooks";
 import { TaskCard } from "./TaskCard";
 
 const { Text } = Typography;
@@ -28,6 +29,8 @@ export function TaskList({
   projectId,
 }: TaskListProps) {
   const { t } = useTranslation();
+  const updateTaskStatus = useUpdateTaskStatus(projectId ?? "");
+  const adminUpdateTaskStatus = useAdminUpdateTaskStatus(projectId ?? "");
 
   const grouped = useMemo(() => {
     const groups: Record<TaskStatus, TaskItemResult[]> = {
@@ -43,10 +46,37 @@ export function TaskList({
     return groups;
   }, [tasks]);
 
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop =
+    (columnStatus: TaskStatus) => (e: DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const taskId = e.dataTransfer.getData("text/plain");
+      if (!taskId || !projectId) return;
+
+      // Don't update if the task is already in this column
+      const task = tasks.find((t) => t.id === taskId);
+      if (!task || task.status === columnStatus) return;
+
+      if (canEdit) {
+        adminUpdateTaskStatus.mutate({ taskId, status: columnStatus });
+      } else {
+        updateTaskStatus.mutate({ taskId, status: columnStatus });
+      }
+    };
+
   return (
     <Flex gap={16} style={{ overflowX: "auto", paddingBottom: 8 }}>
       {TASK_STATUS.map((status) => (
-        <div key={status} style={{ flex: 1, minWidth: 280, maxWidth: 420 }}>
+        <div
+          key={status}
+          style={{ flex: 1, minWidth: 280, maxWidth: 420 }}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop(status)}
+        >
           {/* Column header */}
           <Flex align="center" gap={8} style={{ marginBottom: 12 }}>
             <span

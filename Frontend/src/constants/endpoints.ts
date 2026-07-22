@@ -34,6 +34,8 @@ export const ENDPOINTS = {
       `${PROJECT}/${projectId}/tasks/${taskId}`,
     UPDATE_TASK_STATUS: (projectId: string, taskId: string) =>
       `${PROJECT}/${projectId}/tasks/${taskId}/status`,
+    ADMIN_UPDATE_TASK_STATUS: (projectId: string, taskId: string) =>
+      `${PROJECT}/${projectId}/tasks/${taskId}/admin-status`,
   },
   TEAM: {
     BASE: TEAM,

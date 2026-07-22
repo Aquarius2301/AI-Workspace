@@ -126,4 +126,15 @@ export const projectApi = {
       { status },
     );
   },
+
+  adminUpdateTaskStatus: (
+    projectId: string,
+    taskId: string,
+    status: TaskStatus,
+  ): Promise<TaskItemResult> => {
+    return axiosClient.patch(
+      ENDPOINTS.PROJECT.ADMIN_UPDATE_TASK_STATUS(projectId, taskId),
+      { status },
+    );
+  },
 };

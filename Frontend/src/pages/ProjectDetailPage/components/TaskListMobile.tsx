@@ -62,6 +62,7 @@ export function TaskListMobile({
                   task={task}
                   canEdit={canEdit}
                   projectId={projectId}
+                  isMobile
                 />
               ))
             ) : (
