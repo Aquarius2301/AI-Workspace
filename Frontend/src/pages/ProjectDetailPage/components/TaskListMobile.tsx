@@ -12,9 +12,16 @@ const { Text } = Typography;
 interface TaskListMobileProps {
   tasks: TaskItemResult[];
   isLoading: boolean;
+  canEdit?: boolean;
+  projectId?: string;
 }
 
-export function TaskListMobile({ tasks, isLoading }: TaskListMobileProps) {
+export function TaskListMobile({
+  tasks,
+  isLoading,
+  canEdit,
+  projectId,
+}: TaskListMobileProps) {
   const { t } = useTranslation();
 
   const grouped = useMemo(() => {
@@ -50,7 +57,12 @@ export function TaskListMobile({ tasks, isLoading }: TaskListMobileProps) {
               </>
             ) : grouped[status].length > 0 ? (
               grouped[status].map((task) => (
-                <TaskCard key={task.id} task={task} />
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  canEdit={canEdit}
+                  projectId={projectId}
+                />
               ))
             ) : (
               <Flex justify="center" style={{ padding: "24px 0" }}>

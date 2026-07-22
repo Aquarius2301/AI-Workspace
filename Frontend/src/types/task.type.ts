@@ -25,3 +25,11 @@ export interface CreateTaskRequest {
   priority: TaskPriority;
   dueDate?: string;
 }
+
+export interface UpdateTaskRequest {
+  title?: string;
+  description?: string;
+  assignedToId?: string;
+  priority?: TaskPriority;
+  dueDate?: string;
+}

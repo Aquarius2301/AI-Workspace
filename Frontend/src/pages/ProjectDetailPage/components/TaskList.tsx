@@ -11,6 +11,8 @@ const { Text } = Typography;
 interface TaskListProps {
   tasks: TaskItemResult[];
   isLoading: boolean;
+  canEdit?: boolean;
+  projectId?: string;
 }
 
 const COLORS: Record<TaskStatus, string> = {
@@ -19,7 +21,12 @@ const COLORS: Record<TaskStatus, string> = {
   done: "#52c41a",
 };
 
-export function TaskList({ tasks, isLoading }: TaskListProps) {
+export function TaskList({
+  tasks,
+  isLoading,
+  canEdit,
+  projectId,
+}: TaskListProps) {
   const { t } = useTranslation();
 
   const grouped = useMemo(() => {
@@ -70,7 +77,12 @@ export function TaskList({ tasks, isLoading }: TaskListProps) {
               </>
             ) : grouped[status].length > 0 ? (
               grouped[status].map((task) => (
-                <TaskCard key={task.id} task={task} />
+                <TaskCard
+                  key={task.id}
+                  task={task}
+                  canEdit={canEdit}
+                  projectId={projectId}
+                />
               ))
             ) : (
               <Flex justify="center" style={{ padding: "24px 0" }}>

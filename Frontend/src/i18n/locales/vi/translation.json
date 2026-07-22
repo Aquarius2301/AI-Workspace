@@ -400,6 +400,10 @@
       "dueDatePastWarning": "Bạn đang đặt hạn chót trước ngày hôm nay",
       "success": "Tạo việc thành công!"
     },
+    "deleteTask": {
+      "confirmation": "Bạn có chắc chắn muốn xóa việc này không?",
+      "success": "Xóa việc thành công!"
+    },
     "updateTaskStatus": {
       "title": "Cập Nhật Trạng Thái",
       "titleLabel": "Tiêu đề",

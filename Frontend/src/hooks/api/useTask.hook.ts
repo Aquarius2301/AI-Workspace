@@ -1,5 +1,11 @@
 import { projectApi } from "@/api/project.api";
-import type { CreateTaskRequest, PageSize, TaskPriority, TaskStatus } from "@/types";
+import type {
+  CreateTaskRequest,
+  PageSize,
+  TaskPriority,
+  TaskStatus,
+  UpdateTaskRequest,
+} from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const TASK_QUERY_KEY = ["tasks"] as const;
@@ -51,6 +57,44 @@ export const useCreateTask = (projectId: string) => {
   return useMutation({
     mutationFn: (data: CreateTaskRequest) =>
       projectApi.createTask(projectId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_LIST_QUERY_KEY, projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_MY_LIST_QUERY_KEY, projectId],
+      });
+    },
+  });
+};
+
+export const useUpdateTask = (projectId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({
+      taskId,
+      data,
+    }: {
+      taskId: string;
+      data: UpdateTaskRequest;
+    }) => projectApi.updateTask(projectId, taskId, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_LIST_QUERY_KEY, projectId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [...TASKS_MY_LIST_QUERY_KEY, projectId],
+      });
+    },
+  });
+};
+
+export const useDeleteTask = (projectId: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (taskId: string) => projectApi.deleteTask(projectId, taskId),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [...TASKS_LIST_QUERY_KEY, projectId],

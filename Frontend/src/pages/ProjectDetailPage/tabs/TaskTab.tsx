@@ -173,9 +173,19 @@ export function TaskTab({ projectId, canEdit }: TaskTabProps) {
 
       {/* ── Kanban board ── */}
       {isMobile ? (
-        <TaskListMobile tasks={tasks ?? []} isLoading={isLoading} />
+        <TaskListMobile
+          tasks={tasks ?? []}
+          isLoading={isLoading}
+          canEdit={canEdit}
+          projectId={projectId}
+        />
       ) : (
-        <TaskList tasks={tasks ?? []} isLoading={isLoading} />
+        <TaskList
+          tasks={tasks ?? []}
+          isLoading={isLoading}
+          canEdit={canEdit}
+          projectId={projectId}
+        />
       )}
 
       {/* ── Create task modal ── */}

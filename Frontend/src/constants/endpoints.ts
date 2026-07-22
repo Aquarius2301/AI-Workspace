@@ -28,6 +28,10 @@ export const ENDPOINTS = {
     GET_MY_TASKS: (projectId: string) => `${PROJECT}/${projectId}/tasks/me`,
     GET_MEMBERS: (projectId: string) => `${PROJECT}/${projectId}/members`,
     CREATE_TASK: (projectId: string) => `${PROJECT}/${projectId}/tasks`,
+    UPDATE_TASK: (projectId: string, taskId: string) =>
+      `${PROJECT}/${projectId}/tasks/${taskId}`,
+    DELETE_TASK: (projectId: string, taskId: string) =>
+      `${PROJECT}/${projectId}/tasks/${taskId}`,
     UPDATE_TASK_STATUS: (projectId: string, taskId: string) =>
       `${PROJECT}/${projectId}/tasks/${taskId}/status`,
   },

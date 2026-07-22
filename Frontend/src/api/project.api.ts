@@ -14,6 +14,7 @@ import type {
   TaskPriority,
   TaskStatus,
   UpdateProjectRequest,
+  UpdateTaskRequest,
 } from "@/types";
 import axiosClient from "./config.api";
 import { ENDPOINTS } from "@/constants";
@@ -94,6 +95,21 @@ export const projectApi = {
     data: CreateTaskRequest,
   ): Promise<TaskItemResult> => {
     return axiosClient.post(ENDPOINTS.PROJECT.CREATE_TASK(projectId), data);
+  },
+
+  updateTask: (
+    projectId: string,
+    taskId: string,
+    data: UpdateTaskRequest,
+  ): Promise<TaskItemResult> => {
+    return axiosClient.put(
+      ENDPOINTS.PROJECT.UPDATE_TASK(projectId, taskId),
+      data,
+    );
+  },
+
+  deleteTask: (projectId: string, taskId: string): Promise<void> => {
+    return axiosClient.delete(ENDPOINTS.PROJECT.DELETE_TASK(projectId, taskId));
   },
 
   update: (id: string, data: UpdateProjectRequest): Promise<void> => {

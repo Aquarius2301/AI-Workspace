@@ -109,6 +109,54 @@ public class TaskController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpPut("{taskId:guid}")]
+    public async Task<IActionResult> UpdateTask(
+        Guid projectId,
+        Guid taskId,
+        [FromBody] UpdateTaskRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        if (request.Title is not null && string.IsNullOrWhiteSpace(request.Title))
+            throw new BadRequestException(ErrorCodes.TaskTitleRequired);
+
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        var result = await _mediator.Send(
+            new UpdateTaskCommand(
+                userId,
+                projectId,
+                taskId,
+                request.Title,
+                request.Description,
+                request.AssignedToId,
+                request.Priority,
+                request.DueDate,
+                cancellationToken
+            ),
+            cancellationToken
+        );
+
+        return Ok(result);
+    }
+
+    [HttpDelete("{taskId:guid}")]
+    public async Task<IActionResult> DeleteTask(
+        Guid projectId,
+        Guid taskId,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new DeleteTaskCommand(userId, projectId, taskId, cancellationToken),
+            cancellationToken
+        );
+
+        return Ok();
+    }
 }
 
 /// <summary>
@@ -126,3 +174,11 @@ public sealed record CreateTaskRequest(
 /// Request DTO for updating task status.
 /// </summary>
 public sealed record UpdateMyTaskStatusRequest(TaskItemStatus Status);
+
+public sealed record UpdateTaskRequest(
+    string? Title,
+    string? Description,
+    Guid? AssignedToId,
+    TaskPriority? Priority,
+    DateTimeOffset? DueDate
+);
