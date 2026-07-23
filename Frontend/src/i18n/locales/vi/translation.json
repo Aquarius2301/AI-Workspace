@@ -366,6 +366,18 @@
         "noAvailable": "Không có người dùng nào khả dụng",
         "creatorLabel": "(Người tạo dự án - Trưởng nhóm)"
       },
+      "editRole": {
+        "title": "Chỉnh sửa vai trò",
+        "searchRole": "Chọn vai trò",
+        "save": "Lưu",
+        "success": "Cập nhật vai trò thành công!",
+        "creatorNote": "Người tạo dự án luôn là Trưởng nhóm và không thể thay đổi."
+      },
+      "deleteMember": {
+        "title": "Xóa Thành Viên",
+        "confirmation": "Bạn có chắc muốn xóa {{name}} khỏi dự án này?",
+        "success": "{{name}} đã bị xóa khỏi dự án"
+      },
       "notFound": {
         "title": "Không tìm thấy kết quả",
         "description": "Thử điều chỉnh từ khóa tìm kiếm"

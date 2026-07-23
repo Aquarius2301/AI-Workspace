@@ -135,6 +135,42 @@ export const useAddProjectMembers = () => {
   });
 };
 
+export const useUpdateProjectMemberRole = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: {
+      projectId: string;
+      memberId: string;
+      data: { role?: ProjectRole };
+    }) =>
+      projectApi.updateMemberRole(
+        params.projectId,
+        params.memberId,
+        params.data,
+      ),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_MEMBERS_QUERY_KEY,
+      });
+    },
+  });
+};
+
+export const useRemoveProjectMember = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { projectId: string; memberId: string }) =>
+      projectApi.removeMember(params.projectId, params.memberId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_MEMBERS_QUERY_KEY,
+      });
+    },
+  });
+};
+
 export const useCreateProject = () => {
   const queryClient = useQueryClient();
 

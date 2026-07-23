@@ -106,6 +106,23 @@ export const projectApi = {
     return axiosClient.post(ENDPOINTS.PROJECT.ADD_MEMBERS(projectId), data);
   },
 
+  updateMemberRole: (
+    projectId: string,
+    memberId: string,
+    data: { role?: ProjectRole },
+  ): Promise<void> => {
+    return axiosClient.put(
+      ENDPOINTS.PROJECT.UPDATE_MEMBER(projectId, memberId),
+      data,
+    );
+  },
+
+  removeMember: (projectId: string, memberId: string): Promise<void> => {
+    return axiosClient.delete(
+      ENDPOINTS.PROJECT.DELETE_MEMBER(projectId, memberId),
+    );
+  },
+
   create: (request: CreateProjectRequest): Promise<CreateProjectResponse> => {
     return axiosClient.post(ENDPOINTS.PROJECT.BASE, request);
   },

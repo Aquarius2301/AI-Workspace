@@ -366,6 +366,18 @@
         "noAvailable": "No users available",
         "creatorLabel": "(Project Creator - Leader)"
       },
+      "editRole": {
+        "title": "Edit Role",
+        "searchRole": "Select role",
+        "save": "Save",
+        "success": "Role updated successfully!",
+        "creatorNote": "The project creator is always assigned the Leader role and cannot be changed."
+      },
+      "deleteMember": {
+        "title": "Remove Member",
+        "confirmation": "Are you sure you want to remove {{name}} from this project?",
+        "success": "{{name}} has been removed from the project"
+      },
       "notFound": {
         "title": "No results found",
         "description": "Try adjusting your search keywords"

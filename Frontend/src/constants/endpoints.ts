@@ -30,6 +30,10 @@ export const ENDPOINTS = {
     AVAILABLE_MEMBERS: (projectId: string) =>
       `${PROJECT}/${projectId}/available-members`,
     ADD_MEMBERS: (projectId: string) => `${PROJECT}/${projectId}/members`,
+    UPDATE_MEMBER: (projectId: string, memberId: string) =>
+      `${PROJECT}/${projectId}/members/${memberId}`,
+    DELETE_MEMBER: (projectId: string, memberId: string) =>
+      `${PROJECT}/${projectId}/members/${memberId}`,
     CREATE_TASK: (projectId: string) => `${PROJECT}/${projectId}/tasks`,
     UPDATE_TASK: (projectId: string, taskId: string) =>
       `${PROJECT}/${projectId}/tasks/${taskId}`,

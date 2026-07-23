@@ -394,6 +394,75 @@ public class ProjectController : ControllerBase
     }
 
     /// <summary>
+    /// Updates the role of a specific project member.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The current user must have the <b>Admin</b> or <b>CoAdmin</b> role in the project's team.
+    /// The project creator's role cannot be changed (they are always Leader).
+    /// </remarks>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="memberId">The unique identifier of the member to update.</param>
+    /// <param name="request">Update data with the new role.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Member role updated successfully.</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have the required role (Forbidden).</response>
+    /// <response code="404">Project or member not found (NotFound).</response>
+    [HttpPut("{projectId:guid}/members/{memberId:guid}")]
+    public async Task<IActionResult> UpdateProjectMemberRole(
+        Guid projectId,
+        Guid memberId,
+        [FromBody] UpdateProjectMemberRoleRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new UpdateProjectMemberRoleCommand(
+                userId,
+                projectId,
+                memberId,
+                request.Role,
+                cancellationToken
+            )
+        );
+
+        return Ok("Success");
+    }
+
+    /// <summary>
+    /// Removes a member from the project and unassigns their tasks.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The current user must have the <b>Admin</b> or <b>CoAdmin</b> role in the project's team.
+    /// The project creator cannot be removed.
+    /// Assigned tasks will be unassigned (assignee set to null).
+    /// </remarks>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="memberId">The unique identifier of the member to remove.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Member removed successfully.</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have the required role (Forbidden).</response>
+    /// <response code="404">Project or member not found (NotFound).</response>
+    [HttpDelete("{projectId:guid}/members/{memberId:guid}")]
+    public async Task<IActionResult> RemoveProjectMember(
+        Guid projectId,
+        Guid memberId,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new RemoveProjectMemberCommand(userId, projectId, memberId, cancellationToken)
+        );
+
+        return Ok("Success");
+    }
+
+    /// <summary>
     /// Retrieves all tasks within a specific project.
     /// </summary>
     /// <remarks>
@@ -450,3 +519,5 @@ public sealed record UpdateProjectRequest(
     string? Description,
     ProjectVisibility? Visibility
 );
+
+public sealed record UpdateProjectMemberRoleRequest(ProjectRole? Role);
