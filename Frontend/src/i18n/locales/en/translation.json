@@ -358,6 +358,14 @@
       "searchMembers": "Search members...",
       "email": "Email",
       "joinedAt": "Joined",
+      "addMember": {
+        "title": "Add Member",
+        "success": "Member added successfully!",
+        "searchPlaceholder": "Search users...",
+        "selected": "{{count}} user(s) selected",
+        "noAvailable": "No users available",
+        "creatorLabel": "(Project Creator - Leader)"
+      },
       "notFound": {
         "title": "No results found",
         "description": "Try adjusting your search keywords"

@@ -1,5 +1,6 @@
 import { projectApi } from "@/api/project.api";
 import type {
+  AddProjectMembersRequest,
   CreateProjectRequest,
   PageSize,
   ProjectRole,
@@ -14,6 +15,14 @@ export const PROJECT_LIST_QUERY_KEY = [...PROJECT_QUERY_KEY, "list"] as const;
 export const PROJECT_DETAIL_QUERY_KEY = [
   ...PROJECT_QUERY_KEY,
   "detail",
+] as const;
+export const PROJECT_MEMBERS_QUERY_KEY = [
+  ...PROJECT_QUERY_KEY,
+  "members",
+] as const;
+export const PROJECT_AVAILABLE_MEMBERS_QUERY_KEY = [
+  ...PROJECT_QUERY_KEY,
+  "available-members",
 ] as const;
 
 export const useProjectList = (
@@ -80,15 +89,51 @@ export const useProjectMembers = (
 ) =>
   useQuery({
     queryKey: [
-      ...PROJECT_QUERY_KEY,
+      ...PROJECT_MEMBERS_QUERY_KEY,
       projectId,
-      "members",
       { search, role, page, pageSize },
     ],
     queryFn: () =>
       projectApi.getMembers(projectId, search, role, page, pageSize),
     enabled: !!projectId && enabled,
   });
+
+export const useProjectAvailableMembers = (
+  projectId: string,
+  search?: string,
+  page?: number,
+  pageSize?: PageSize,
+  enabled?: boolean,
+) =>
+  useQuery({
+    queryKey: [
+      ...PROJECT_AVAILABLE_MEMBERS_QUERY_KEY,
+      projectId,
+      { search, page, pageSize },
+    ],
+    queryFn: () =>
+      projectApi.getAvailableMembers(projectId, search, page, pageSize),
+    enabled: !!projectId && enabled,
+  });
+
+export const useAddProjectMembers = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: {
+      projectId: string;
+      data: AddProjectMembersRequest;
+    }) => projectApi.addMembers(params.projectId, params.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_MEMBERS_QUERY_KEY,
+      });
+      queryClient.invalidateQueries({
+        queryKey: PROJECT_AVAILABLE_MEMBERS_QUERY_KEY,
+      });
+    },
+  });
+};
 
 export const useCreateProject = () => {
   const queryClient = useQueryClient();

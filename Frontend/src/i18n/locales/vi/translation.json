@@ -358,6 +358,14 @@
       "searchMembers": "Tìm kiếm thành viên...",
       "email": "Email",
       "joinedAt": "Tham gia",
+      "addMember": {
+        "title": "Thêm Thành Viên",
+        "success": "Thêm thành viên thành công!",
+        "searchPlaceholder": "Tìm kiếm người dùng...",
+        "selected": "Đã chọn {{count}} người dùng",
+        "noAvailable": "Không có người dùng nào khả dụng",
+        "creatorLabel": "(Người tạo dự án - Trưởng nhóm)"
+      },
       "notFound": {
         "title": "Không tìm thấy kết quả",
         "description": "Thử điều chỉnh từ khóa tìm kiếm"

@@ -33,11 +33,13 @@ export interface ProjectDetailResult {
   name: string;
   description: string | null;
   slug: string;
+  creatorId: string;
   creatorName: string;
   teamName: string;
   visibility: string;
   canView: boolean;
   canEdit: boolean;
+  canAddMember: boolean;
   memberCount: number;
   completedTaskCount: number;
   totalTaskCount: number;
@@ -85,4 +87,15 @@ export interface ProjectMemberItem {
 export interface CreateProjectMemberRequest {
   userId: string;
   role: ProjectRole;
+}
+
+export interface AvailableProjectMemberItem {
+  id: string;
+  name: string;
+  email: string;
+  avatarUrl: string | null;
+}
+
+export interface AddProjectMembersRequest {
+  members: { userId: string; role?: ProjectRole }[];
 }

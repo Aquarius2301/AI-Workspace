@@ -246,7 +246,13 @@ export default function ProjectDetailPage() {
               {
                 key: "members",
                 label: t("projectDetailPage.members.title"),
-                children: <MembersTab projectId={projectId} />,
+                children: (
+                  <MembersTab
+                    projectId={projectId}
+                    canAddMember={project?.canAddMember}
+                    creatorId={project?.creatorId}
+                  />
+                ),
               },
             ]}
           />

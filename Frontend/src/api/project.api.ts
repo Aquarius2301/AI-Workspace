@@ -1,4 +1,6 @@
 import type {
+  AddProjectMembersRequest,
+  AvailableProjectMemberItem,
   CreateProjectRequest,
   CreateProjectResponse,
   CreateTaskRequest,
@@ -84,6 +86,24 @@ export const projectApi = {
     return axiosClient.get(ENDPOINTS.PROJECT.GET_MEMBERS(projectId), {
       params: { search, role, page, pageSize },
     });
+  },
+
+  getAvailableMembers: (
+    projectId: string,
+    search?: string,
+    page?: number,
+    pageSize?: PageSize,
+  ): Promise<PageResponse<AvailableProjectMemberItem>> => {
+    return axiosClient.get(ENDPOINTS.PROJECT.AVAILABLE_MEMBERS(projectId), {
+      params: { search, page, pageSize },
+    });
+  },
+
+  addMembers: (
+    projectId: string,
+    data: AddProjectMembersRequest,
+  ): Promise<void> => {
+    return axiosClient.post(ENDPOINTS.PROJECT.ADD_MEMBERS(projectId), data);
   },
 
   create: (request: CreateProjectRequest): Promise<CreateProjectResponse> => {

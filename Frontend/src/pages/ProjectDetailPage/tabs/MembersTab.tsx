@@ -1,4 +1,5 @@
-import { Flex, Input, Typography, Empty } from "antd";
+import { useState } from "react";
+import { Flex, Input, Typography, Empty, Button } from "antd";
 import { useTranslation } from "react-i18next";
 import { useProjectMembers, useSearch } from "@/hooks";
 import {
@@ -10,14 +11,21 @@ import {
 } from "@/components";
 import type { ProjectMemberItem } from "@/types";
 import { formatIsoLocaleDate } from "@/utils";
+import { AddProjectMemberModal } from "../modals/AddProjectMemberModal";
 
 const { Text } = Typography;
 
 interface MembersTabProps {
   projectId: string;
+  canAddMember?: boolean;
+  creatorId?: string;
 }
 
-export function MembersTab({ projectId }: MembersTabProps) {
+export function MembersTab({
+  projectId,
+  canAddMember,
+  creatorId,
+}: MembersTabProps) {
   const { t } = useTranslation();
   const { searchProps, projectRoleProps, paginationProps, queryParams } =
     useSearch({
@@ -32,6 +40,8 @@ export function MembersTab({ projectId }: MembersTabProps) {
     queryParams.pageSize,
   );
 
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   const hasSearchQuery = !!queryParams.search || !!queryParams.projectRole;
   const isDataEmpty = !isLoading && membersData && membersData.total === 0;
   const showFilters = !(isDataEmpty && !hasSearchQuery);
@@ -39,22 +49,29 @@ export function MembersTab({ projectId }: MembersTabProps) {
   return (
     <Flex vertical gap={16}>
       {/* ── Filter bar ── */}
-      {showFilters && (
-        <Flex gap={12} align="center" wrap>
-          <Input
-            placeholder={t("projectDetailPage.members.searchMembers")}
-            allowClear
-            value={searchProps.search}
-            onChange={(e) => searchProps.onSearchChange(e.target.value)}
-            style={{ maxWidth: 360 }}
-          />
-          <AIProjectRoleSelect
-            value={projectRoleProps.projectRole}
-            onChange={(value) => projectRoleProps.onProjectRoleChange(value)}
-            allowClear
-          />
-        </Flex>
-      )}
+      <Flex wrap justify="space-between" gap={8}>
+        {showFilters && (
+          <Flex gap={12} align="center" wrap>
+            <Input
+              placeholder={t("projectDetailPage.members.searchMembers")}
+              allowClear
+              value={searchProps.search}
+              onChange={(e) => searchProps.onSearchChange(e.target.value)}
+              style={{ maxWidth: 360 }}
+            />
+            <AIProjectRoleSelect
+              value={projectRoleProps.projectRole}
+              onChange={(value) => projectRoleProps.onProjectRoleChange(value)}
+              allowClear
+            />
+          </Flex>
+        )}
+        {canAddMember && (
+          <Button type="primary" onClick={() => setIsAddModalOpen(true)}>
+            {t("projectDetailPage.members.addMember.title")}
+          </Button>
+        )}
+      </Flex>
 
       {/* ── Member list ── */}
       <AIList<ProjectMemberItem>
@@ -105,6 +122,16 @@ export function MembersTab({ projectId }: MembersTabProps) {
           subTitle: t("projectDetailPage.members.notFound.description"),
         }}
       />
+
+      {/* ── Add member modal ── */}
+      {isAddModalOpen && (
+        <AddProjectMemberModal
+          isOpen
+          onClose={() => setIsAddModalOpen(false)}
+          projectId={projectId}
+          creatorId={creatorId!}
+        />
+      )}
     </Flex>
   );
 }

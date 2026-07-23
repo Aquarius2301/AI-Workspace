@@ -27,6 +27,9 @@ export const ENDPOINTS = {
     GET_TASKS: (projectId: string) => `${PROJECT}/${projectId}/tasks`,
     GET_MY_TASKS: (projectId: string) => `${PROJECT}/${projectId}/tasks/me`,
     GET_MEMBERS: (projectId: string) => `${PROJECT}/${projectId}/members`,
+    AVAILABLE_MEMBERS: (projectId: string) =>
+      `${PROJECT}/${projectId}/available-members`,
+    ADD_MEMBERS: (projectId: string) => `${PROJECT}/${projectId}/members`,
     CREATE_TASK: (projectId: string) => `${PROJECT}/${projectId}/tasks`,
     UPDATE_TASK: (projectId: string, taskId: string) =>
       `${PROJECT}/${projectId}/tasks/${taskId}`,

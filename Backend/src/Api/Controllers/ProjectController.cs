@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AIWorkspace.Api.Controllers;
 
+using AddProjectMemberRequest = AIWorkspace.Application.Features.Projects.AddProjectMemberRequest;
+
 [ApiController]
 [Route("api/projects")]
 [Authorize]
@@ -257,10 +259,7 @@ public class ProjectController : ControllerBase
     /// <response code="403">User does not have the Admin or CoAdmin role (Forbidden).</response>
     /// <response code="404">Project not found (ProjectNotFound).</response>
     [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteProject(
-        Guid id,
-        CancellationToken cancellationToken
-    )
+    public async Task<IActionResult> DeleteProject(Guid id, CancellationToken cancellationToken)
     {
         var userId = ClaimHelper.GetCurrentUserId();
 
@@ -318,6 +317,80 @@ public class ProjectController : ControllerBase
         );
 
         return Ok(result);
+    }
+
+    /// <summary>
+    /// Retrieves users who are team members but not yet project members.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The current user must have the <b>Admin</b> or <b>CoAdmin</b> role in the project's team.
+    /// Returns a paginated list of users who are members of the project's team but not yet project members.
+    /// </remarks>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="search">Optional search term to filter available users by name or email.</param>
+    /// <param name="page">Page number (default: 1).</param>
+    /// <param name="pageSize">Number of items per page (default: 20).</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Returns a paginated list of available users.</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have the Admin or CoAdmin role (Forbidden).</response>
+    /// <response code="404">Project not found (ProjectNotFound).</response>
+    /// <response code="500">An unexpected internal server error occurred (InternalServerError).</response>
+    [HttpGet("{projectId:guid}/available-members")]
+    public async Task<IActionResult> GetAvailableProjectMembers(
+        Guid projectId,
+        [FromQuery] string? search = null,
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        var result = await _mediator.Send(
+            new GetAvailableProjectMembersQuery(
+                userId,
+                projectId,
+                new PaginationRequest(page, pageSize),
+                search,
+                cancellationToken
+            )
+        );
+
+        return Ok(result);
+    }
+
+    /// <summary>
+    /// Adds members to a project.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The current user must have the <b>Admin</b> or <b>CoAdmin</b> role in the project's team.
+    /// <b>CoAdmin</b> users can only add new members with the <b>Member</b> role (not Leader).
+    /// If the user being added is the project creator, they are automatically assigned the <b>Leader</b> role.
+    /// Duplicate members (already in the project) are silently skipped.
+    /// </remarks>
+    /// <param name="projectId">The unique identifier of the project.</param>
+    /// <param name="request">List of members to add, each specifying UserId and optional Role.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Members added successfully (duplicates are skipped silently).</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have the required role (Forbidden).</response>
+    /// <response code="404">Project not found (ProjectNotFound).</response>
+    /// <response code="500">An unexpected internal server error occurred (InternalServerError).</response>
+    [HttpPost("{projectId:guid}/members")]
+    public async Task<IActionResult> AddProjectMembers(
+        Guid projectId,
+        [FromBody] AddProjectMemberRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new AddProjectMemberCommand(userId, projectId, request.Members, cancellationToken)
+        );
+
+        return Ok("Success");
     }
 
     /// <summary>

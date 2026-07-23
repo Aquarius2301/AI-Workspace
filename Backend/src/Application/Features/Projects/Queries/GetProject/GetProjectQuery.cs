@@ -17,11 +17,13 @@ public sealed record GetProjectResult(
     string Name,
     string? Description,
     string Slug,
+    Guid CreatorId,
     string CreatorName,
     string TeamName,
     string Visibility,
     bool CanView,
     bool CanEdit,
+    bool CanAddMember,
     int MemberCount,
     int CompletedTaskCount,
     int TotalTaskCount
@@ -52,6 +54,7 @@ public sealed class GetProjectQueryHandler : IRequestHandler<GetProjectQuery, Ge
                 .Select(p => new
                 {
                     p.Id,
+                    p.CreatorId,
                     p.Name,
                     p.Description,
                     p.Slug,
@@ -122,11 +125,13 @@ public sealed class GetProjectQueryHandler : IRequestHandler<GetProjectQuery, Ge
             project.Name,
             project.Description,
             project.Slug,
+            project.CreatorId,
             project.CreatorName,
             project.TeamName,
             project.Visibility.ToString(),
             canView,
             canEdit,
+            isTeamAdminOrCoAdmin,
             project.MemberCount,
             project.CompletedTaskCount,
             project.TotalTaskCount
