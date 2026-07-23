@@ -244,6 +244,35 @@ public class ProjectController : ControllerBase
     }
 
     /// <summary>
+    /// Deletes a project and all its related data.
+    /// </summary>
+    /// <remarks>
+    /// This action requires authentication. The current user must have the <b>Admin</b> or <b>CoAdmin</b> role in the project's team.
+    /// This action is irreversible. All tasks, members, and associated data will be permanently deleted.
+    /// </remarks>
+    /// <param name="id">The unique identifier of the project to delete.</param>
+    /// <param name="cancellationToken">Token used to cancel the request if needed.</param>
+    /// <response code="200">Project deleted successfully.</response>
+    /// <response code="401">User is not authenticated (Unauthorized).</response>
+    /// <response code="403">User does not have the Admin or CoAdmin role (Forbidden).</response>
+    /// <response code="404">Project not found (ProjectNotFound).</response>
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> DeleteProject(
+        Guid id,
+        CancellationToken cancellationToken
+    )
+    {
+        var userId = ClaimHelper.GetCurrentUserId();
+
+        await _mediator.Send(
+            new DeleteProjectCommand(userId, id, cancellationToken),
+            cancellationToken
+        );
+
+        return Ok("Success");
+    }
+
+    /// <summary>
     /// Retrieves tasks assigned to the current user within a specific project.
     /// </summary>
     /// <remarks>

@@ -1,5 +1,5 @@
 import { Flex, Space, Typography } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { AICardItem, AIVisibilityTag } from "@/components";
 import { Button } from "antd";
@@ -15,6 +15,7 @@ interface ProjectInfoCardProps {
   isLoading?: boolean;
   canEdit?: boolean;
   onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export function ProjectInfoCard({
@@ -26,6 +27,7 @@ export function ProjectInfoCard({
   isLoading = false,
   canEdit,
   onEdit,
+  onDelete,
 }: ProjectInfoCardProps) {
   const { t } = useTranslation();
 
@@ -40,12 +42,20 @@ export function ProjectInfoCard({
             </Text>
             <AIVisibilityTag visibility={visibility} />
           </Space>
-          {canEdit && onEdit && (
-            <Button
-              type="text"
-              icon={<EditOutlined />}
-              onClick={onEdit}
-            />
+          {canEdit && (
+            <Flex gap={4}>
+              {onEdit && (
+                <Button type="text" icon={<EditOutlined />} onClick={onEdit} />
+              )}
+              {onDelete && (
+                <Button
+                  type="text"
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={onDelete}
+                />
+              )}
+            </Flex>
           )}
         </Flex>
       }

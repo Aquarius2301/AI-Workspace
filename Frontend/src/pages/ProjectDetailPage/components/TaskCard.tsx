@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Flex, Typography, Button, Radio, Space, theme } from "antd";
+import { Flex, Typography, Button, Radio, Space, theme, Divider } from "antd";
 import {
   UserOutlined,
   CalendarOutlined,
@@ -20,7 +20,7 @@ import { EditTaskModal } from "../modals/EditTaskModal";
 import { App } from "antd";
 import { useTranslation } from "react-i18next";
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 interface TaskCardProps {
   task?: TaskItemResult;
@@ -54,6 +54,15 @@ export function TaskCard({
     [currentUser?.id, task?.assignedToId],
   );
   const canChangeStatus = canEdit || isMyTask;
+
+  const isOverdue = useMemo(
+    () =>
+      task?.dueDate &&
+      new Date(task.dueDate) < new Date() &&
+      task.status !== "done",
+    [task?.dueDate, task?.status],
+  );
+
   // Loading state: render skeleton only
   if (isLoading) {
     return <AICard isLoading />;
@@ -86,10 +95,22 @@ export function TaskCard({
     setIsDragging(false);
   };
 
+  // Mobile: tap → mở status modal
+  // Desktop: double-click → mở status modal (vì click dùng cho drag)
+  const openStatusModal = () => {
+    setSelectedStatus(task.status);
+    setIsStatusOpen(true);
+  };
+
   const handleCardTap = () => {
     if (isMobile) {
-      setSelectedStatus(task.status);
-      setIsStatusOpen(true);
+      openStatusModal();
+    }
+  };
+
+  const handleDoubleClick = () => {
+    if (!isMobile) {
+      openStatusModal();
     }
   };
 
@@ -125,10 +146,12 @@ export function TaskCard({
         onDragStart={isMobile ? undefined : handleDragStart}
         onDragEnd={isMobile ? undefined : handleDragEnd}
         onClick={handleCardTap}
+        onDoubleClick={isMobile ? undefined : handleDoubleClick}
         style={{
           opacity: isDragging ? 0.4 : 1,
           transition: "opacity 0.15s",
           cursor: isMobile ? "pointer" : canChangeStatus ? "grab" : undefined,
+          userSelect: "none",
         }}
       >
         <AICard
@@ -152,14 +175,20 @@ export function TaskCard({
                       size="small"
                       type="text"
                       icon={<EditOutlined />}
-                      onClick={() => setIsEditModalOpen(true)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsEditModalOpen(true);
+                      }}
                     />
                     <Button
                       size="small"
                       type="text"
                       danger
                       icon={<DeleteOutlined />}
-                      onClick={() => setIsDeleteModalOpen(true)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsDeleteModalOpen(true);
+                      }}
                     />
                   </Flex>
                 )}
@@ -197,7 +226,10 @@ export function TaskCard({
                 <span />
               )}
               {task.dueDate && (
-                <Text type="secondary" style={{ fontSize: 11.5 }}>
+                <Text
+                  type={isOverdue ? "danger" : "secondary"}
+                  style={{ fontSize: 11.5 }}
+                >
                   <CalendarOutlined style={{ marginRight: 4 }} />
                   {formatIsoLocaleDate(task.dueDate)}
                 </Text>
@@ -207,6 +239,7 @@ export function TaskCard({
         </AICard>
       </div>
 
+      {/* ── Delete confirmation modal ── */}
       <AIModal
         title={t("modal.delete")}
         open={isDeleteModalOpen}
@@ -221,6 +254,7 @@ export function TaskCard({
         <Text>{t("projectDetailPage.deleteTask.confirmation")}</Text>
       </AIModal>
 
+      {/* ── Edit Task Modal ── */}
       {isEditModalOpen && projectId && (
         <EditTaskModal
           isOpen={true}
@@ -230,9 +264,9 @@ export function TaskCard({
         />
       )}
 
-      {/* Mobile: status update modal */}
+      {/* ── Status & Detail Modal (nâng cấp: hiển thị full task info) ── */}
       <AIModal
-        title={t("projectDetailPage.updateTaskStatus.title")}
+        title={task.title}
         open={isStatusOpen}
         onCancel={() => setIsStatusOpen(false)}
         onOk={handleStatusChange}
@@ -244,18 +278,108 @@ export function TaskCard({
           { type: "update", text: t("modal.update") },
         ]}
       >
-        <Radio.Group
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-        >
-          <Space direction="vertical">
-            {TASK_STATUS.map((status) => (
-              <Radio key={status} value={status}>
-                {t(`taskStatusSelect.${status}`)}
-              </Radio>
-            ))}
-          </Space>
-        </Radio.Group>
+        <Flex vertical gap={12} style={{ marginTop: 8 }}>
+          {/* Full description */}
+          {task.description && (
+            <div>
+              <Text type="secondary" style={{ fontSize: 12 }}>
+                {t("projectDetailPage.taskDetail.description")}
+              </Text>
+              <Paragraph style={{ margin: "4px 0 0 0", fontSize: 13 }}>
+                {task.description}
+              </Paragraph>
+            </div>
+          )}
+
+          {/* Info grid */}
+          <Flex gap={16} wrap>
+            <div>
+              <Text type="secondary" style={{ fontSize: 12, display: "block" }}>
+                {t("projectDetailPage.taskDetail.priority")}
+              </Text>
+              <AITaskPriorityTag priority={task.priority} />
+            </div>
+            <div>
+              <Text type="secondary" style={{ fontSize: 12, display: "block" }}>
+                {t("projectDetailPage.taskDetail.assignee")}
+              </Text>
+              <Text style={{ fontSize: 13 }}>{task.assignedToName ?? "—"}</Text>
+            </div>
+            {task.dueDate && (
+              <div>
+                <Text
+                  type="secondary"
+                  style={{ fontSize: 12, display: "block" }}
+                >
+                  {t("projectDetailPage.taskDetail.dueDate")}
+                </Text>
+                <Text
+                  style={{ fontSize: 13 }}
+                  type={isOverdue ? "danger" : undefined}
+                >
+                  {formatIsoLocaleDate(task.dueDate)}
+                </Text>
+              </div>
+            )}
+            <div>
+              <Text type="secondary" style={{ fontSize: 12, display: "block" }}>
+                {t("projectDetailPage.taskDetail.createdAt")}
+              </Text>
+              <Text style={{ fontSize: 13 }}>
+                {formatIsoLocaleDate(task.createdAt)}
+              </Text>
+            </div>
+          </Flex>
+
+          <Divider style={{ margin: "4px 0" }} />
+
+          {/* Status selector */}
+          <div>
+            <Text strong style={{ fontSize: 13 }}>
+              {t("projectDetailPage.updateTaskStatus.statusLabel")}
+            </Text>
+            <Radio.Group
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              style={{ marginTop: 8, width: "100%" }}
+            >
+              <Space direction="vertical" style={{ width: "100%" }}>
+                {TASK_STATUS.map((status) => (
+                  <Radio key={status} value={status} style={{ fontSize: 13 }}>
+                    {t(`taskStatusSelect.${status}`)}
+                  </Radio>
+                ))}
+              </Space>
+            </Radio.Group>
+          </div>
+
+          {/* Edit/Delete buttons */}
+          {canEdit && (
+            <Flex gap={8} style={{ marginTop: 4 }}>
+              <Button
+                size="small"
+                icon={<EditOutlined />}
+                onClick={() => {
+                  setIsStatusOpen(false);
+                  setIsEditModalOpen(true);
+                }}
+              >
+                {t("modal.edit")}
+              </Button>
+              <Button
+                size="small"
+                danger
+                icon={<DeleteOutlined />}
+                onClick={() => {
+                  setIsStatusOpen(false);
+                  setIsDeleteModalOpen(true);
+                }}
+              >
+                {t("modal.delete")}
+              </Button>
+            </Flex>
+          )}
+        </Flex>
       </AIModal>
     </>
   );

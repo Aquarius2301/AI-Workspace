@@ -88,6 +88,7 @@
     "cancel": "Cancel",
     "create": "Create",
     "update": "Update",
+    "edit": "Edit",
     "delete": "Delete",
     "close": "Close"
   },
@@ -403,6 +404,25 @@
     "deleteTask": {
       "confirmation": "Are you sure you want to delete this task?",
       "success": "Task deleted successfully!"
+    },
+    "deleteProject": {
+      "title": "Delete Project",
+      "confirmTitle": "Delete Project",
+      "confirmWarning": "This action cannot be undone. All tasks, members, and associated data will be permanently deleted.",
+      "confirmButton": "I understand, continue",
+      "verifyTitle": "Enter project name to confirm",
+      "verifyLabel": "Please type {{projectName}} to confirm deletion",
+      "verifyPlaceholder": "Enter project name",
+      "verifyError": "Project name does not match",
+      "success": "Project deleted successfully"
+    },
+    "taskDetail": {
+      "description": "Description",
+      "priority": "Priority",
+      "assignee": "Assignee",
+      "dueDate": "Due Date",
+      "createdAt": "Created At",
+      "status": "Status"
     },
     "updateTaskStatus": {
       "title": "Update Task Status",

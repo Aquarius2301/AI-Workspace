@@ -32,6 +32,7 @@ export const ENDPOINTS = {
       `${PROJECT}/${projectId}/tasks/${taskId}`,
     DELETE_TASK: (projectId: string, taskId: string) =>
       `${PROJECT}/${projectId}/tasks/${taskId}`,
+    DELETE_PROJECT: (id: string) => `${PROJECT}/${id}`,
     UPDATE_TASK_STATUS: (projectId: string, taskId: string) =>
       `${PROJECT}/${projectId}/tasks/${taskId}/status`,
     ADMIN_UPDATE_TASK_STATUS: (projectId: string, taskId: string) =>

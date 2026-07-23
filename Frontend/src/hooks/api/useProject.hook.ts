@@ -102,6 +102,19 @@ export const useCreateProject = () => {
   });
 };
 
+export const useDeleteProject = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => projectApi.deleteProject(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: PROJECT_LIST_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: MY_PROJECT_LIST_QUERY_KEY });
+      queryClient.invalidateQueries({ queryKey: SUMMARY_QUERY_KEY });
+    },
+  });
+};
+
 export const useUpdateProject = () => {
   const queryClient = useQueryClient();
 
@@ -115,4 +128,3 @@ export const useUpdateProject = () => {
     },
   });
 };
-

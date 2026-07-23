@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Flex, Tabs } from "antd";
+import { Flex, Tabs, Typography, Input, App } from "antd";
 import {
   useParams,
   Link,
@@ -8,20 +8,30 @@ import {
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { AppLayout } from "@/layouts";
-import { useProjectDetailById, useProjectDetailBySlug } from "@/hooks";
+import {
+  useProjectDetailById,
+  useProjectDetailBySlug,
+  useDeleteProject,
+} from "@/hooks";
 import { ROUTE } from "@/constants";
+import { AIModal } from "@/components";
 import { ProjectInfoCard } from "./components/ProjectInfoCard";
 import { EditProjectModal } from "./modals/EditProjectModal";
 import { MyTaskTab } from "./tabs/MyTaskTab";
 import { MembersTab } from "./tabs/MembersTab";
 import { TaskTab } from "./tabs/TaskTab";
 import { NotFound } from "@/components";
+import { getErrorMessage } from "@/utils";
+
+const { Text } = Typography;
 
 export default function ProjectDetailPage() {
   const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
+  const { message } = App.useApp();
   const [searchParams, setSearchParams] = useSearchParams();
+  const deleteProject = useDeleteProject();
 
   // ── Get project ID from slug ──
   const { data: slugData, isLoading: isSlugLoading } = useProjectDetailBySlug(
@@ -46,7 +56,9 @@ export default function ProjectDetailPage() {
   const taskIdParam = searchParams.get("taskId");
 
   // ── Tab state ──
-  const [activeTab, setActiveTab] = useState(taskIdParam ? "myTasks" : "myTasks");
+  const [activeTab, setActiveTab] = useState(
+    taskIdParam ? "myTasks" : "myTasks",
+  );
 
   // ── Selected task ──
   const [selectedTaskId, setSelectedTaskId] = useState<string | undefined>(
@@ -63,6 +75,33 @@ export default function ProjectDetailPage() {
 
   // ── Edit modal state ──
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // ── Delete project state ──
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteStep, setDeleteStep] = useState<"confirm" | "verify">("confirm");
+  const [verifyName, setVerifyName] = useState("");
+
+  const handleDeleteStart = () => {
+    setDeleteStep("confirm");
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    setDeleteStep("verify");
+  };
+
+  const handleDeleteExecute = async () => {
+    if (!projectId) return;
+
+    try {
+      await deleteProject.mutateAsync(projectId);
+      message.success(t("projectDetailPage.deleteProject.success"));
+      setIsDeleteModalOpen(false);
+      navigate(ROUTE.PROJECT);
+    } catch (error) {
+      message.error(getErrorMessage(error));
+    }
+  };
 
   // ── Not found state ──
   if (!isLoading && !slugData) {
@@ -96,6 +135,7 @@ export default function ProjectDetailPage() {
           teamName={project?.teamName!}
           canEdit={project?.canEdit}
           onEdit={() => setIsEditModalOpen(true)}
+          onDelete={handleDeleteStart}
         />
 
         {/* ── Edit project modal ── */}
@@ -108,6 +148,73 @@ export default function ProjectDetailPage() {
             initialDescription={project.description}
             initialVisibility={project.visibility}
           />
+        )}
+
+        {/* ── Delete project modal (2-step verification) ── */}
+        {project && (
+          <AIModal
+            title={t("projectDetailPage.deleteProject.confirmTitle")}
+            open={isDeleteModalOpen}
+            onCancel={() => {
+              setIsDeleteModalOpen(false);
+              setVerifyName("");
+              setDeleteStep("confirm");
+            }}
+            onOk={
+              deleteStep === "confirm"
+                ? handleDeleteConfirm
+                : handleDeleteExecute
+            }
+            isLoading={deleteProject.isPending}
+            footer={
+              deleteStep === "confirm"
+                ? [
+                    { type: "cancel", text: t("modal.cancel") },
+                    { type: "delete", text: t("modal.delete") },
+                  ]
+                : [
+                    { type: "cancel", text: t("modal.cancel") },
+                    {
+                      type: "delete",
+                      text: t("modal.delete"),
+                      disabled: verifyName !== project.name,
+                    },
+                  ]
+            }
+          >
+            {deleteStep === "confirm" ? (
+              <Flex vertical gap={12}>
+                <Text>
+                  {t("projectDetailPage.deleteProject.confirmWarning")}
+                </Text>
+              </Flex>
+            ) : (
+              <Flex vertical gap={12}>
+                <Text>
+                  {t("projectDetailPage.deleteProject.verifyLabel", {
+                    projectName: project.name,
+                  })}
+                </Text>
+                <Input
+                  placeholder={t(
+                    "projectDetailPage.deleteProject.verifyPlaceholder",
+                  )}
+                  value={verifyName}
+                  onChange={(e) => setVerifyName(e.target.value)}
+                  status={
+                    verifyName && verifyName !== project.name
+                      ? "error"
+                      : undefined
+                  }
+                />
+                {verifyName && verifyName !== project.name && (
+                  <Text type="danger" style={{ fontSize: 13 }}>
+                    {t("projectDetailPage.deleteProject.verifyError")}
+                  </Text>
+                )}
+              </Flex>
+            )}
+          </AIModal>
         )}
 
         {/* ── Tabs ── */}
@@ -132,7 +239,9 @@ export default function ProjectDetailPage() {
               {
                 key: "taskList",
                 label: t("projectDetailPage.taskList.title"),
-                children: <TaskTab projectId={projectId} canEdit={project?.canEdit} />,
+                children: (
+                  <TaskTab projectId={projectId} canEdit={project?.canEdit} />
+                ),
               },
               {
                 key: "members",

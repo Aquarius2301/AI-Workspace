@@ -112,6 +112,10 @@ export const projectApi = {
     return axiosClient.delete(ENDPOINTS.PROJECT.DELETE_TASK(projectId, taskId));
   },
 
+  deleteProject: (id: string): Promise<void> => {
+    return axiosClient.delete(ENDPOINTS.PROJECT.DELETE_PROJECT(id));
+  },
+
   update: (id: string, data: UpdateProjectRequest): Promise<void> => {
     return axiosClient.put(ENDPOINTS.PROJECT.BY_ID(id), data);
   },

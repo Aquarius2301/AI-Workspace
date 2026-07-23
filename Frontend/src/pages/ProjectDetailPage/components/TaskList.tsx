@@ -1,7 +1,6 @@
 import { useMemo, type DragEvent } from "react";
 import { Flex, Typography } from "antd";
 import { useTranslation } from "react-i18next";
-import { AITaskStatusTag } from "@/components";
 import { TASK_STATUS } from "@/types";
 import type { TaskItemResult, TaskStatus } from "@/types";
 import { useUpdateTaskStatus, useAdminUpdateTaskStatus } from "@/hooks";
@@ -46,6 +45,25 @@ export function TaskList({
     return groups;
   }, [tasks]);
 
+  const overdueCounts = useMemo(() => {
+    const counts: Record<TaskStatus, number> = {
+      toDo: 0,
+      doing: 0,
+      done: 0,
+    };
+    const now = new Date();
+    tasks.forEach((task) => {
+      if (
+        task.dueDate &&
+        new Date(task.dueDate) < now &&
+        task.status !== "done"
+      ) {
+        counts[task.status]++;
+      }
+    });
+    return counts;
+  }, [tasks]);
+
   const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
@@ -57,7 +75,6 @@ export function TaskList({
       const taskId = e.dataTransfer.getData("text/plain");
       if (!taskId || !projectId) return;
 
-      // Don't update if the task is already in this column
       const task = tasks.find((t) => t.id === taskId);
       if (!task || task.status === columnStatus) return;
 
@@ -78,24 +95,30 @@ export function TaskList({
           onDrop={handleDrop(status)}
         >
           {/* Column header */}
-          <Flex align="center" gap={8} style={{ marginBottom: 12 }}>
-            <span
-              style={{
-                width: 10,
-                height: 10,
-                borderRadius: "50%",
-                background: COLORS[status],
-                display: "inline-block",
-                flexShrink: 0,
-              }}
-            />
-            <Text strong style={{ fontSize: 15 }}>
-              {t(`taskStatusSelect.${status}`)}
-            </Text>
-            <AITaskStatusTag status={status} />
-            <Text type="secondary" style={{ fontSize: 13 }}>
-              {grouped[status].length}
-            </Text>
+          <Flex vertical gap={2} style={{ marginBottom: 12 }}>
+            <Flex align="center" gap={6}>
+              <span
+                style={{
+                  width: 10,
+                  height: 10,
+                  borderRadius: "50%",
+                  background: COLORS[status],
+                  display: "inline-block",
+                  flexShrink: 0,
+                }}
+              />
+              <Text strong style={{ fontSize: 15, textTransform: "uppercase" }}>
+                {t(`taskStatusSelect.${status}`)}
+              </Text>
+              <Text type="secondary" style={{ fontSize: 13 }}>
+                ({grouped[status].length})
+              </Text>
+            </Flex>
+            {overdueCounts[status] > 0 && (
+              <Text type="danger" style={{ fontSize: 12, marginLeft: 16 }}>
+                {t("taskStatusSelect.overdue")}: {overdueCounts[status]}
+              </Text>
+            )}
           </Flex>
 
           {/* Task list */}

@@ -38,6 +38,25 @@ export function TaskListMobile({
     return groups;
   }, [tasks]);
 
+  const overdueCounts = useMemo(() => {
+    const counts: Record<TaskStatus, number> = {
+      toDo: 0,
+      doing: 0,
+      done: 0,
+    };
+    const now = new Date();
+    tasks.forEach((task) => {
+      if (
+        task.dueDate &&
+        new Date(task.dueDate) < now &&
+        task.status !== "done"
+      ) {
+        counts[task.status]++;
+      }
+    });
+    return counts;
+  }, [tasks]);
+
   return (
     <Tabs
       items={TASK_STATUS.map((status) => ({
@@ -45,7 +64,12 @@ export function TaskListMobile({
         label: (
           <Flex align="center" gap={4}>
             <AITaskStatusTag status={status} />
-            <Text>{grouped[status].length}</Text>
+            <Text>({grouped[status].length})</Text>
+            {overdueCounts[status] > 0 && (
+              <Text type="danger" style={{ fontSize: 11 }}>
+                !{overdueCounts[status]}
+              </Text>
+            )}
           </Flex>
         ),
         children: (

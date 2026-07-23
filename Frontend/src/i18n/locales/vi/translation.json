@@ -88,6 +88,7 @@
     "cancel": "Hủy",
     "create": "Tạo",
     "update": "Cập Nhật",
+    "edit": "Chỉnh Sửa",
     "delete": "Xóa",
     "close": "Đóng"
   },
@@ -400,9 +401,44 @@
       "dueDatePastWarning": "Bạn đang đặt hạn chót trước ngày hôm nay",
       "success": "Tạo việc thành công!"
     },
+    "editTask": {
+      "title": "Chỉnh Sửa Việc",
+      "titleLabel": "Tiêu đề",
+      "titlePlaceholder": "Nhập tiêu đề việc",
+      "titleMax": "Tiêu đề việc không được vượt quá 200 ký tự",
+      "descriptionLabel": "Mô tả",
+      "descriptionPlaceholder": "Mô tả việc (không bắt buộc)",
+      "descriptionMax": "Mô tả không được vượt quá 2000 ký tự",
+      "priorityLabel": "Độ ưu tiên",
+      "assigneeLabel": "Người được giao",
+      "assigneePlaceholder": "Chọn người được giao",
+      "dueDateLabel": "Hạn chót",
+      "dueDatePlaceholder": "Chọn hạn chót",
+      "dueDatePastWarning": "Bạn đang đặt hạn chót trước ngày hôm nay",
+      "success": "Cập nhật việc thành công!"
+    },
     "deleteTask": {
       "confirmation": "Bạn có chắc chắn muốn xóa việc này không?",
       "success": "Xóa việc thành công!"
+    },
+    "deleteProject": {
+      "title": "Xóa Dự Án",
+      "confirmTitle": "Xóa Dự Án",
+      "confirmWarning": "Hành động này không thể hoàn tác. Tất cả công việc, thành viên và dữ liệu liên quan sẽ bị xóa vĩnh viễn.",
+      "confirmButton": "Tôi hiểu, tiếp tục",
+      "verifyTitle": "Nhập tên dự án để xác nhận",
+      "verifyLabel": "Vui lòng nhập {{projectName}} để xác nhận xóa",
+      "verifyPlaceholder": "Nhập tên dự án",
+      "verifyError": "Tên dự án không khớp",
+      "success": "Xóa dự án thành công"
+    },
+    "taskDetail": {
+      "description": "Mô tả",
+      "priority": "Độ ưu tiên",
+      "assignee": "Người được giao",
+      "dueDate": "Hạn chót",
+      "createdAt": "Ngày tạo",
+      "status": "Trạng thái"
     },
     "updateTaskStatus": {
       "title": "Cập Nhật Trạng Thái",
